@@ -13,26 +13,24 @@ export default function HeroSection() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // Animasi foto background: efek zoom-in halus & fade in
       if (imageRef.current) {
         tl.fromTo(
           imageRef.current,
-          { scale: 1.08, opacity: 0.6 },
-          { scale: 1, opacity: 1, duration: 1.5 }
+          { scale: 1.1, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 1.2 }
         );
       }
 
-      // Animasi teks masuk secara berurutan (stagger/timeline)
       tl.fromTo(
         titleRef.current,
-        { y: 35, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1 },
-        "-=1.0"
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 },
+        "-=0.8"
       ).fromTo(
         descRef.current,
-        { y: 25, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9 },
-        "-=0.7"
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7 },
+        "-=0.5"
       );
     }, containerRef);
 
@@ -40,42 +38,38 @@ export default function HeroSection() {
   }, []);
 
   return (
-<section id="beranda" ref={containerRef} className="relative w-full overflow-hidden bg-forest">
-       {/* Foto FULL tanpa potongan — tinggi section mengikuti foto */}
-       <img
-         ref={imageRef}
-         src="/LUP.png"
-         alt="Lembur Udjo Parahyangan Landscape"
-         className="w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover block will-change-transform"
-         style={{ objectPosition: "50% 0%" }}
-       />
+    <section id="beranda" ref={containerRef} className="relative w-screen overflow-hidden bg-forest">
+      <div className="relative h-[220px] sm:h-[320px] md:h-[400px] lg:h-[480px]">
+        <img
+          ref={imageRef}
+          src="/LUP.png"
+          alt="Lembur Udjo Parahyangan"
+          className="w-full h-full object-cover object-top"
+          style={{ objectPosition: "center top" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-forest/80 via-forest/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-forest/90 via-transparent to-transparent" />
+      </div>
 
-      {/* Gradient overlay agar teks putih terbaca jelas */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-forest/60 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-forest/70 via-transparent to-black/30" />
-
-      {/* Konten di atas foto */}
-      <div className="absolute inset-0 flex items-center">
-<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-           <div className="max-w-md sm:max-w-lg space-y-2 sm:space-y-3">
-<h1
-               ref={titleRef}
-               className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight drop-shadow-md"
-             >
-               Lembur Udjo Parahyangan
-             </h1>
-
-             {/* Deskripsi: Font putih */}
-             <p
-               ref={descRef}
-               className="text-sm sm:text-base text-white/95 leading-relaxed font-normal max-w-lg drop-shadow-md"
-             >
-               Destinasi wisata budaya Sunda di Kawasan Bale Pare, Kota Baru Parahyangan — tempat angklung, tradisi, dan alam menyatu dalam satu pengalaman yang hidup dan penuh makna.
-             </p>
+      <div className="absolute top-0 left-0 w-full h-full flex items-end pb-6 sm:pb-8 md:pb-10">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-sm sm:max-w-md">
+            <h1
+              ref={titleRef}
+              className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight drop-shadow-lg"
+            >
+              Lembur Udjo <span className="text-amber-400">Parahyangan</span>
+            </h1>
+            <p
+              ref={descRef}
+              className="text-xs sm:text-sm md:text-base text-white/90 leading-relaxed mt-1 sm:mt-2 font-medium"
+            >
+              Destinasi wisata budaya Sunda di Kawasan Bale Pare, Kota Baru
+              Parahyangan.
+            </p>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
