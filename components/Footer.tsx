@@ -1,5 +1,3 @@
-
-
 export default function Footer() {
   const navLinks = [
     { href: "#beranda", label: "Beranda" },
@@ -15,15 +13,16 @@ export default function Footer() {
   return (
     <footer className="bg-white border-t border-stone-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-10 pb-8 border-b border-stone-200">
-          <div className="lg:col-span-4">
+        {/* Stack: 1 col on mobile, 3 col on lg */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 pb-8 border-b border-stone-200">
+          <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded overflow-hidden">
                 <img src="/LOGO_Lembur.udjo.png" alt="Logo" width={40} height={40} className="w-full h-full object-contain" />
               </div>
               <div>
-<h3 className="font-serif text-sm sm:text-base font-bold text-forest">Lembur Udjo</h3>
-                  <p className="text-[8px] sm:text-[9px] text-amber-600 tracking-widest uppercase">Parahyangan</p>
+                <h3 className="font-serif text-sm sm:text-base font-bold text-forest">Lembur Udjo</h3>
+                <p className="text-[10px] sm:text-xs text-amber-600 tracking-widest uppercase">Parahyangan</p>
               </div>
             </div>
             <p className="text-stone-500 text-sm leading-relaxed mb-4">
@@ -35,7 +34,7 @@ export default function Footer() {
                 { label: "Instagram", href: "https://instagram.com/lemburudjo" },
                 { label: "Website", href: "https://www.lemburudjo.com" },
               ].map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-stone-100 hover:text-stone-700 transition-colors">
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-10 h-10 rounded border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-stone-100 hover:text-stone-700 transition-colors min-w-[44px] min-h-[44px]">
                   {s.label === "Instagram" ? (
                     <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
                   ) : (
@@ -46,18 +45,18 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-1">
             <h4 className="font-serif font-bold text-forest mb-4">Navigasi</h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {navLinks.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} className="text-stone-500 hover:text-amber-600 text-sm transition-colors">{item.label}</a>
+                  <a href={item.href} className="text-stone-500 hover:text-amber-600 text-sm transition-colors min-h-[44px] flex items-center py-1">{item.label}</a>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-1 space-y-4">
             <h4 className="font-serif font-bold text-forest mb-4">Informasi</h4>
             <div className="space-y-3 text-sm text-stone-500">
               <div className="flex items-start gap-2">
@@ -82,7 +81,7 @@ export default function Footer() {
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-400">
           <p>© {new Date().getFullYear()} Lembur Udjo Parahyangan</p>
-          <a href="#beranda" className="inline-flex items-center gap-1 px-3 py-1.5 rounded border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors">Kembali ke Atas ↑</a>
+          <a href="#beranda" className="inline-flex items-center gap-1 px-3 py-2 rounded border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors min-h-[44px]">Kembali ke Atas ↑</a>
         </div>
       </div>
     </footer>

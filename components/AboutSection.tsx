@@ -2,10 +2,10 @@ export default function AboutSection() {
   return (
     <section id="about" className="py-16 sm:py-24 md:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           <div className="lg:col-span-5 relative">
             <div className="rounded-lg overflow-hidden">
-              <img src="/founder.jpg" alt="Udjo Ngalagena" className="w-full h-[280px] sm:h-[380px] lg:h-[480px] object-cover rounded-lg" />
+              <img src="/founder.jpg" alt="Udjo Ngalagena" className="w-full aspect-[3/4] sm:aspect-[3/4] object-cover" loading="lazy" />
             </div>
           </div>
 

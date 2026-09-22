@@ -38,31 +38,32 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section id="beranda" ref={containerRef} className="relative w-screen overflow-hidden bg-forest">
-      <div className="relative h-[220px] sm:h-[320px] md:h-[400px] lg:h-[480px]">
+    <section id="beranda" ref={containerRef} className="relative w-full overflow-hidden bg-forest">
+      <div className="relative h-[200px] sm:h-[280px] md:h-[360px] lg:h-[440px]">
         <img
           ref={imageRef}
           src="/LUP.png"
           alt="Lembur Udjo Parahyangan"
-          className="w-full h-full object-cover object-top"
-          style={{ objectPosition: "center top" }}
+          className="w-full h-full object-cover"
+          style={{ objectPosition: "center 20%" }}
+          sizes="(max-width: 768px) 100vw, 100vw"
+          loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-forest/80 via-forest/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-forest/90 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-forest/85 via-forest/55 to-transparent" />
       </div>
 
-      <div className="absolute top-0 left-0 w-full h-full flex items-end pb-6 sm:pb-8 md:pb-10">
+      <div className="absolute top-0 left-0 w-full h-full flex items-end pb-4 sm:pb-6 md:pb-8">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-sm sm:max-w-md">
             <h1
               ref={titleRef}
-              className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight drop-shadow-lg"
+              className="font-serif text-[clamp(1.5rem,5vw,2rem)] sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight drop-shadow-lg whitespace-normal"
             >
               Lembur Udjo <span className="text-amber-400">Parahyangan</span>
             </h1>
             <p
               ref={descRef}
-              className="text-xs sm:text-sm md:text-base text-white/90 leading-relaxed mt-1 sm:mt-2 font-medium"
+              className="text-[clamp(0.75rem,2.5vw,0.875rem)] text-white/90 leading-relaxed mt-1 sm:mt-2 font-medium"
             >
               Destinasi wisata budaya Sunda di Kawasan Bale Pare, Kota Baru
               Parahyangan.

@@ -32,19 +32,25 @@ export default function GallerySection() {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-semibold tracking-widest text-amber-700 uppercase">Galeri</span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-forest tracking-tight mt-3">Dokumentasi Visual</h2>
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
+          {/* Scrollable horizontal tabs */}
+          <div className="flex gap-2 mt-8 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide" style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}>
             {categories.map((cat) => (
-              <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border ${activeCategory === cat ? "bg-forest text-white border-forest" : "bg-white text-stone-600 border-stone-200 hover:bg-stone-50"}`}>
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border whitespace-nowrap active:scale-95 min-h-[44px] ${activeCategory === cat ? "bg-forest text-white border-forest" : "bg-white text-stone-600 border-stone-200 hover:bg-stone-50"}`}
+              >
                 {cat}
               </button>
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* Grid: 1 col mobile, 2 col tablet+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {filteredItems.map((item) => (
             <div key={item.id} onClick={() => setSelectedPhoto(item)} className="group rounded-lg overflow-hidden border border-stone-200 cursor-pointer hover:shadow-sm transition-all">
               <div className="relative aspect-[4/3] bg-stone-100">
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
               </div>
               <div className="p-4">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-600">{item.category}</span>
@@ -55,9 +61,9 @@ export default function GallerySection() {
         </div>
 
         {selectedPhoto && (
-          <div className="fixed inset-0 z-50 bg-white/95 flex items-center justify-center p-4" onClick={() => setSelectedPhoto(null)}>
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setSelectedPhoto(null)}>
             <div className="relative max-w-3xl w-full bg-white rounded-lg overflow-hidden border border-stone-200 shadow-lg" onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => setSelectedPhoto(null)} className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center">✕</button>
+              <button onClick={() => setSelectedPhoto(null)} className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center min-w-[44px] min-h-[44px]" aria-label="Close">✕</button>
               <div className="relative aspect-[16/10] bg-stone-100">
                 <img src={selectedPhoto.image} alt={selectedPhoto.title} className="w-full h-full object-contain" />
               </div>

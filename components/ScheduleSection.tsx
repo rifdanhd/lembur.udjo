@@ -32,31 +32,34 @@ export default function ScheduleSection() {
           <p className="text-stone-600 text-base mt-4">Setiap pengalaman dirancang untuk memberikan pemahaman dan kenangan yang mendalam.</p>
         </div>
 
-<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-           <div className="lg:col-span-7 space-y-3">
-             {schedules.map((item) => {
-               const isSelected = item.id === selectedId;
-               return (
-                 <div key={item.id} onClick={() => setSelectedId(item.id)} className={`p-4 sm:p-5 rounded-lg cursor-pointer border-2 transition-all ${isSelected ? "bg-white border-emerald-500 shadow-sm" : "bg-white border-stone-200 hover:border-emerald-400"}`}>
-                   <div className="flex items-center justify-between mb-2">
-                     <div className="flex items-center gap-2">
-                       <span className={`px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold uppercase ${item.badgeColor}`}>{item.badge}</span>
-                     </div>
-                     {isSelected && <span className="text-xs font-bold text-emerald-700">✓ Terpilih</span>}
-                   </div>
-                   <h3 className="font-serif text-lg sm:text-xl font-bold text-forest mb-1">{item.title}</h3>
-                   <p className="text-sm text-stone-600 leading-relaxed mb-2">{item.desc}</p>
-                   <div className="flex items-center gap-2 sm:gap-4 text-xs text-stone-700 flex-wrap">
-                     <span className="font-bold text-emerald-800">{item.time}</span>
-                     <span>{item.days}</span>
-                   </div>
-                 </div>
-               );
-             })}
-           </div>
+        {/* Stack vertically on mobile, side-by-side on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          <div className="lg:col-span-7 space-y-4">
+            {schedules.map((item) => {
+              const isSelected = item.id === selectedId;
+              return (
+                <div key={item.id} onClick={() => setSelectedId(item.id)} className={`p-4 sm:p-5 rounded-lg cursor-pointer border-2 transition-all ${isSelected ? "bg-white border-emerald-500 shadow-sm" : "bg-white border-stone-200 hover:border-emerald-400"}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold uppercase ${item.badgeColor}`}>{item.badge}</span>
+                    </div>
+                    {isSelected && <span className="text-xs font-bold text-emerald-700 whitespace-nowrap">✓ Terpilih</span>}
+                  </div>
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-forest mb-1">{item.title}</h3>
+                  <p className="text-sm text-stone-600 leading-relaxed mb-2">{item.desc}</p>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-stone-700">
+                    <span className="font-bold text-emerald-800 whitespace-nowrap">{item.time}</span>
+                    <span className="hidden sm:inline">{item.days}</span>
+                    {/* Show days on next line in mobile */}
+                    <span className="sm:hidden text-stone-500">{item.days}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-           <div className="lg:col-span-5">
-             <div className="rounded-lg bg-forest text-white p-5 sm:p-7 shadow-lg">
+          <div className="lg:col-span-5">
+            <div className="rounded-lg bg-forest text-white p-5 sm:p-7 shadow-lg">
               <div className="flex items-center justify-between pb-4 border-b border-emerald-800 mb-5">
                 <div>
                   <span className="text-[10px] font-bold tracking-widest text-amber-300 uppercase">Pengalaman Terpilih</span>
@@ -64,16 +67,16 @@ export default function ScheduleSection() {
                 </div>
               </div>
               <div className="space-y-2 mb-5 text-sm text-emerald-100/90 bg-white/5 p-4 rounded-lg">
-                <div className="flex justify-between"><span className="text-white/60">Waktu:</span><span className="font-semibold">{currentSchedule.time}</span></div>
-                <div className="flex justify-between"><span className="text-white/60">Lokasi:</span><span className="font-semibold text-amber-300">Bale Karesmen, Lembur Udjo</span></div>
+                <div className="flex justify-between items-center"><span className="text-white/60 text-sm">Waktu:</span><span className="font-semibold text-sm whitespace-nowrap">{currentSchedule.time}</span></div>
+                <div className="flex justify-between items-center"><span className="text-white/60 text-sm">Lokasi:</span><span className="font-semibold text-amber-300 text-sm">Bale Karesmen, Lembur Udjo</span></div>
               </div>
               <div className="pb-5 border-b border-emerald-800/50">
                 <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-2">Termasuk:</p>
                 <div className="space-y-1">
                   {currentSchedule.includes.map((inc) => (
-                    <div key={inc} className="flex items-center gap-2 text-sm text-white/80">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                      <span>{inc}</span>
+                    <div key={inc} className="flex items-center gap-2 text-sm text-white/80 min-h-[32px]">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                      <span className="text-sm">{inc}</span>
                     </div>
                   ))}
                 </div>

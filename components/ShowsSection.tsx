@@ -57,7 +57,7 @@ export default function ShowsSection() {
           {shows.map((show) => (
             <div key={show.id} className="group rounded-lg overflow-hidden border border-stone-200 bg-white hover:shadow-sm transition-shadow">
               <div className="relative aspect-[16/9] bg-stone-100">
-                <img src={show.image} alt={show.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <img src={show.image} alt={show.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
                 <div className="absolute top-3 left-3">
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500 text-white">{show.badge}</span>
                 </div>
