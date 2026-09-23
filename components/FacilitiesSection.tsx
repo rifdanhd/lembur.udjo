@@ -9,23 +9,55 @@ const facilities = [
 
 export default function FacilitiesSection() {
   return (
-    <section id="fasilitas" className="py-16 sm:py-24 md:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-semibold tracking-widest text-amber-700 uppercase">Program & Fasilitas</span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-forest tracking-tight mt-3">Program & Pengalaman Kami</h2>
-          <p className="text-stone-600 text-base mt-4">Lembur Udjo Parahyangan menghadirkan beragam pengalaman budaya, edukasi, dan alam dalam satu kesatuan perjalanan.</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {facilities.map((fac) => (
-            <div key={fac.title} className="p-4 sm:p-6 rounded-lg border border-stone-200 bg-stone-50 hover:border-emerald-400 transition-colors">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700">{fac.tag}</span>
-              </div>
-              <h3 className="font-serif text-lg font-bold text-forest mb-2">{fac.title}</h3>
-              <p className="text-sm text-stone-600 leading-relaxed">{fac.desc}</p>
+    <section id="fasilitas" className="py-12 sm:py-16 md:py-20 bg-[#f6f7f9] relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column (InJourney section-head) */}
+          <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-3.5 sm:space-y-4">
+            <span className="text-xs font-bold tracking-widest text-amber-700 uppercase bg-amber-100/70 px-3 py-1 rounded-full inline-block">
+              Fasilitas & Ekosistem
+            </span>
+            <h2 className="font-cinzel text-xl sm:text-2xl md:text-3xl font-bold text-forest tracking-tight leading-tight">
+              Program & Pengalaman Kami
+            </h2>
+            <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
+              Lembur Udjo Parahyangan menghadirkan beragam fasilitas edukasi, agrowalk, konservasi rumpun bambu, dan ruang seni pertunjukan dalam satu kesatuan perjalanan yang berkelanjutan.
+            </p>
+            <div className="pt-1.5">
+              <a
+                href="#kontak"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-forest hover:bg-forest-light active:scale-95 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all min-h-[40px]"
+              >
+                <span>Informasi Kunjungan</span>
+                <span>&rarr;</span>
+              </a>
             </div>
-          ))}
+          </div>
+
+          {/* Right Column: Grid of Facilities (InJourney card-promo style) */}
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            {facilities.map((fac) => (
+              <div 
+                key={fac.title} 
+                className="p-5 rounded-2xl border border-stone-200/80 bg-white hover:border-amber-500 hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                      {fac.tag}
+                    </span>
+                    <span className="text-stone-300 group-hover:text-amber-500 transition-colors text-xs font-bold">&nearr;</span>
+                  </div>
+                  <h3 className="font-cinzel text-sm sm:text-base font-bold text-forest group-hover:text-amber-700 transition-colors mb-1.5">
+                    {fac.title}
+                  </h3>
+                  <p className="text-xs text-stone-600 leading-relaxed font-normal">
+                    {fac.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

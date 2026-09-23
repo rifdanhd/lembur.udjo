@@ -24,65 +24,163 @@ export default function ScheduleSection() {
   const currentSchedule = schedules.find((s) => s.id === selectedId) || schedules[0];
 
   return (
-    <section id="jadwal" className="py-16 sm:py-24 md:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-semibold tracking-widest text-amber-700 uppercase">Program & Jadwal</span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-forest tracking-tight mt-3">Pilih Pengalaman Anda</h2>
-          <p className="text-stone-600 text-base mt-4">Setiap pengalaman dirancang untuk memberikan pemahaman dan kenangan yang mendalam.</p>
+    <section id="jadwal" className="py-12 sm:py-16 md:py-20 bg-white relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* InJourney section-head */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-4 sm:gap-6">
+          <div>
+            <span className="text-xs font-bold tracking-widest text-amber-700 uppercase bg-amber-100/60 px-3 py-1 rounded-full inline-block mb-2.5">
+              Jadwal & Agenda
+            </span>
+            <h2 className="font-cinzel text-xl sm:text-2xl md:text-3xl font-bold text-forest tracking-tight">
+              Pilih Pengalaman Anda
+            </h2>
+            <p className="text-stone-600 text-xs sm:text-sm mt-2 max-w-xl leading-relaxed">
+              Ikuti jadwal pertunjukan angklung interaktif, tradisi helaran, dan workshop budaya Sunda setiap hari.
+            </p>
+          </div>
+          <div className="shrink-0">
+            <a
+              href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20reservasi%20tiket"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 active:scale-95 text-stone-950 font-bold text-xs uppercase tracking-wider shadow-xs transition-all"
+            >
+              <span>Reservasi via WhatsApp</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
         </div>
 
-        {/* Stack vertically on mobile, side-by-side on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          <div className="lg:col-span-7 space-y-4">
+        {/* InJourney upcoming event grid layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          {/* Featured Card (InJourney card-event-featured) */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24">
+            <article className="rounded-2xl bg-forest text-white overflow-hidden shadow-lg border border-emerald-800/60 flex flex-col justify-between">
+              {/* Featured Image */}
+              <div className="relative aspect-[16/10] w-full bg-stone-900 overflow-hidden">
+                <img 
+                  src={
+                    selectedId === "helaran" 
+                      ? "/placeholders/helaran.jpg" 
+                      : selectedId === "agrowalk" 
+                      ? "/placeholders/agrowalk.jpg" 
+                      : "/placeholders/angklung.jpg"
+                  } 
+                  alt={currentSchedule.title} 
+                  className="w-full h-full object-cover" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest via-forest/40 to-transparent" />
+                <div className="absolute top-3 left-3">
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs ${currentSchedule.badgeColor}`}>
+                    {currentSchedule.badge}
+                  </span>
+                </div>
+              </div>
+
+              {/* Featured Body */}
+              <div className="p-5 sm:p-6 space-y-3.5">
+                <div>
+                  <span className="text-[10px] font-bold tracking-widest text-amber-300 uppercase">Pengalaman Terpilih</span>
+                  <h3 className="font-cinzel text-lg sm:text-xl font-bold text-white mt-0.5 leading-snug">
+                    {currentSchedule.title}
+                  </h3>
+                </div>
+
+                <div className="space-y-2 text-xs text-emerald-100 bg-white/5 p-3.5 rounded-xl border border-white/10">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/60">Waktu:</span>
+                    <span className="font-bold text-white">{currentSchedule.time}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/60">Hari:</span>
+                    <span className="font-semibold text-white/90">{currentSchedule.days}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/60">Lokasi:</span>
+                    <span className="font-semibold text-amber-300">Bale Karesmen, Lembur Udjo</span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-1.5">Termasuk Pengalaman:</p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {currentSchedule.includes.map((inc) => (
+                      <div key={inc} className="flex items-center gap-1.5 text-xs text-white/90">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                        <span className="truncate">{inc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-emerald-800/60">
+                  <a
+                    href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20pesan%20tiket%20untuk%20jadwal%20pertunjukan"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-5 rounded-full bg-amber-500 hover:bg-amber-400 active:scale-95 text-stone-950 font-bold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-1.5 min-h-[40px]"
+                  >
+                    <span>Pesan Tiket Sekarang</span>
+                    <span>&rarr;</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          {/* Agenda List (InJourney card-event style) */}
+          <div className="lg:col-span-7 space-y-3.5">
             {schedules.map((item) => {
               const isSelected = item.id === selectedId;
               return (
-                <div key={item.id} onClick={() => setSelectedId(item.id)} className={`p-4 sm:p-5 rounded-lg cursor-pointer border-2 transition-all ${isSelected ? "bg-white border-emerald-500 shadow-sm" : "bg-white border-stone-200 hover:border-emerald-400"}`}>
-                  <div className="flex items-center justify-between mb-2">
+                <div 
+                  key={item.id} 
+                  onClick={() => setSelectedId(item.id)} 
+                  className={`p-4 sm:p-5 rounded-2xl cursor-pointer border-2 transition-all duration-300 ${
+                    isSelected 
+                      ? "bg-stone-50/80 border-emerald-600 shadow-sm ring-1 ring-emerald-500/20" 
+                      : "bg-white border-stone-200/90 hover:border-emerald-300 hover:shadow-xs"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold uppercase ${item.badgeColor}`}>{item.badge}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${item.badgeColor}`}>
+                        {item.badge}
+                      </span>
+                      <span className="text-xs text-stone-500 font-medium">
+                        {item.days}
+                      </span>
                     </div>
-                    {isSelected && <span className="text-xs font-bold text-emerald-700 whitespace-nowrap">✓ Terpilih</span>}
+                    {isSelected && (
+                      <span className="text-xs font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span>✓</span> Terpilih
+                      </span>
+                    )}
                   </div>
-                  <h3 className="font-serif text-lg sm:text-xl font-bold text-forest mb-1">{item.title}</h3>
-                  <p className="text-sm text-stone-600 leading-relaxed mb-2">{item.desc}</p>
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-stone-700">
-                    <span className="font-bold text-emerald-800 whitespace-nowrap">{item.time}</span>
-                    <span className="hidden sm:inline">{item.days}</span>
-                    {/* Show days on next line in mobile */}
-                    <span className="sm:hidden text-stone-500">{item.days}</span>
+
+                  <h3 className="font-cinzel text-base sm:text-lg font-bold text-forest mb-1.5">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-stone-600 leading-relaxed mb-3">
+                    {item.desc}
+                  </p>
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-stone-100">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                      <svg className="w-3.5 h-3.5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{item.time}</span>
+                    </div>
+                    <span className="text-xs font-semibold text-forest group-hover:text-amber-600 inline-flex items-center gap-1">
+                      <span>Pilih Jadwal</span>
+                      <span>&rarr;</span>
+                    </span>
                   </div>
                 </div>
               );
             })}
-          </div>
-
-          <div className="lg:col-span-5">
-            <div className="rounded-lg bg-forest text-white p-5 sm:p-7 shadow-lg">
-              <div className="flex items-center justify-between pb-4 border-b border-emerald-800 mb-5">
-                <div>
-                  <span className="text-[10px] font-bold tracking-widest text-amber-300 uppercase">Pengalaman Terpilih</span>
-                  <h4 className="font-serif text-lg font-bold text-white mt-0.5">{currentSchedule.title}</h4>
-                </div>
-              </div>
-              <div className="space-y-2 mb-5 text-sm text-emerald-100/90 bg-white/5 p-4 rounded-lg">
-                <div className="flex justify-between items-center"><span className="text-white/60 text-sm">Waktu:</span><span className="font-semibold text-sm whitespace-nowrap">{currentSchedule.time}</span></div>
-                <div className="flex justify-between items-center"><span className="text-white/60 text-sm">Lokasi:</span><span className="font-semibold text-amber-300 text-sm">Bale Karesmen, Lembur Udjo</span></div>
-              </div>
-              <div className="pb-5 border-b border-emerald-800/50">
-                <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-2">Termasuk:</p>
-                <div className="space-y-1">
-                  {currentSchedule.includes.map((inc) => (
-                    <div key={inc} className="flex items-center gap-2 text-sm text-white/80 min-h-[32px]">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                      <span className="text-sm">{inc}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="text-xs text-white/50 text-center">Untuk informasi lebih lanjut, silakan hubungi kontak di bawah.</p>
-            </div>
           </div>
         </div>
       </div>
