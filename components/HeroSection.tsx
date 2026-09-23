@@ -1,102 +1,198 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+type Slide = {
+  img: string;
+  eyebrow: string;
+  title: React.ReactNode;
+  genre: string;
+  desc: string;
+  cta: string;
+  ctaHref: string;
+  meta: string;
+  alt: string;
+};
+
+const slides: Slide[] = [
+  {
+    img: "/Pertunjukan_luar.png",
+    eyebrow: "Warisan Budaya UNESCO · Angklung",
+    title: (
+      <>
+        Menanam Budaya, <span className="text-amber-400">Memanen Masa Depan</span>
+      </>
+    ),
+    genre: "Pertunjukan · Angklung · Tradisi",
+    desc: "Destinasi wisata budaya Sunda terkemuka di Kawasan Bale Pare, Kota Baru Parahyangan.",
+    cta: "Jadwal Pertunjukan",
+    ctaHref: "#pertunjukan",
+    meta: "Helaran setiap Minggu pagi",
+    alt: "Pertunjukan angklung di Lembur Udjo Parahyangan",
+  },
+  {
+    img: "/LUP.png",
+    eyebrow: "Kawasan Budaya · Bale Pare KBP",
+    title: (
+      <>
+        Menanam Budaya, <span className="text-amber-400">Memanen Masa Depan</span>
+      </>
+    ),
+    genre: "Edukasi · Agrowalk · Alam",
+    desc: "Hamparan sawah, rumpun bambu, dan seni pertunjukan dalam satu perjalanan yang berkelanjutan.",
+    cta: "Jelajahi Program",
+    ctaHref: "#fasilitas",
+    meta: "Workshop & Agrowalk setiap hari",
+    alt: "Suasana kawasan Lembur Udjo Parahyangan",
+  },
+];
+
+const AUTOPLAY_MS = 7000;
+const PROGRESS_TICK_MS = 50;
 
 export default function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const descRef = useRef<HTMLParagraphElement>(null);
+  const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0); // 0..1
+  const [paused, setPaused] = useState(false);
+  const elapsedRef = useRef(0);
+
+  const goTo = useCallback((i: number) => {
+    setCurrent(i);
+    elapsedRef.current = 0;
+    setProgress(0);
+  }, []);
+
+  const next = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % slides.length);
+    elapsedRef.current = 0;
+    setProgress(0);
+  }, []);
+
+  const prev = useCallback(() => {
+    setCurrent((p) => (p - 1 + slides.length) % slides.length);
+    elapsedRef.current = 0;
+    setProgress(0);
+  }, []);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      if (imageRef.current) {
-        tl.fromTo(imageRef.current, { scale: 1.08, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.2 });
+    const interval = setInterval(() => {
+      if (paused) return;
+      elapsedRef.current += PROGRESS_TICK_MS;
+      if (elapsedRef.current >= AUTOPLAY_MS) {
+        elapsedRef.current = 0;
+        setProgress(0);
+        setCurrent((prev) => (prev + 1) % slides.length);
+      } else {
+        setProgress(elapsedRef.current / AUTOPLAY_MS);
       }
-      tl.fromTo(titleRef.current, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, "-=0.7")
-        .fromTo(descRef.current, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, "-=0.4");
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
+    }, PROGRESS_TICK_MS);
+    return () => clearInterval(interval);
+  }, [paused]);
 
   return (
     <section
       id="beranda"
-      ref={containerRef}
-      className="relative w-full h-[78vh] sm:h-[85vh] min-h-[460px] max-h-[760px] overflow-hidden bg-forest flex items-center justify-center"
+      className="relative w-full h-[100svh] min-h-[580px] overflow-hidden bg-black flex items-end"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
-      {/* Background Image */}
+      {/* Background slides */}
       <div className="absolute inset-0">
-        <img
-          ref={imageRef}
-          src="/placeholders/hero.jpg"
-          alt="Lembur Udjo Parahyangan"
-          className="w-full h-full object-cover object-center"
-          loading="eager"
-        />
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/75 via-black/35 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 pointer-events-none" />
+        {slides.map((slide, i) => (
+          <img
+            key={slide.img}
+            src={slide.img}
+            alt={slide.alt}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-[1200ms] ease-out ${
+              i === current ? "opacity-100 scale-100" : "opacity-0 scale-105"
+            }`}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20" />
+        {/* Overlay kiri agar teks mudah dibaca */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
       </div>
 
-      {/* Hero Content */}
-      <div className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-12 flex flex-col justify-end h-full">
-        <div className="max-w-lg">
-          {/* Eyebrow badge */}
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-semibold uppercase tracking-widest mb-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            Wisata Budaya Sunda Terpadu
-          </div>
-
-          <h1
-            ref={titleRef}
-            className="font-cinzel text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold tracking-tight text-white leading-[1.2] drop-shadow-lg"
-          >
-            Lembur Udjo{" "}
-            <span className="text-amber-400 font-normal">Parahyangan</span>
+      {/* Konten slide */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-14 md:pb-20">
+        <div key={current} className="animate-[fadeInUp_0.7s_ease-out_both]">
+          <p className="text-white/80 text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.2em] sm:tracking-[0.25em] mb-2 sm:mb-3">
+            {slides[current].eyebrow}
+          </p>
+          <h1 className="text-white text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] sm:leading-[1.02]">
+            {slides[current].title}
           </h1>
-
-          <p
-            ref={descRef}
-            className="text-xs sm:text-sm text-white/80 leading-relaxed mt-3 font-normal max-w-md drop-shadow-md"
-          >
-            Destinasi wisata budaya Sunda terkemuka di Kawasan Bale Pare, Kota Baru Parahyangan.
-            Merajut harmoni musik angklung, seni pertunjukan, dan kelestarian alam.
+          <p className="text-white/70 text-[10px] sm:text-xs font-bold uppercase tracking-[0.16em] sm:tracking-[0.18em] mt-3 sm:mt-4">
+            {slides[current].genre}
+          </p>
+          <p className="text-white/80 text-xs sm:text-sm md:text-base mt-2 sm:mt-2.5 max-w-xl leading-relaxed">
+            {slides[current].desc}
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center gap-2.5 mt-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-5 sm:mt-7">
+            {/* CTA pill dengan ikon play */}
             <a
-              href="#pertunjukan"
-              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 active:scale-95 text-stone-900 font-bold text-xs uppercase tracking-wider shadow-md transition-all"
+              href={slides[current].ctaHref}
+              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-white text-stone-950 text-xs font-extrabold uppercase tracking-wider hover:bg-white/85 transition-colors shadow-lg"
             >
-              <span>Jelajahi Pengalaman</span>
-              <span>&rarr;</span>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.74l-11-6.86a1 1 0 0 0-1.5.87Z" />
+              </svg>
+              {slides[current].cta}
             </a>
-            <a
-              href="#jadwal"
-              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white font-semibold text-xs uppercase tracking-wider border border-white/30 backdrop-blur-xs transition-all"
+            {/* Info tambahan di samping CTA */}
+            <span className="text-white/75 text-[11px] sm:text-xs font-semibold tracking-wide">
+              {slides[current].meta}
+            </span>
+          </div>
+        </div>
+
+        {/* Navigasi: dots + prev/next */}
+        <div className="flex items-center justify-between mt-6 sm:mt-9">
+          <div className="flex items-center gap-2">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Slide ${i + 1}`}
+                onClick={() => goTo(i)}
+                className="h-1 rounded-full overflow-hidden bg-white/25 transition-all duration-300 cursor-pointer hover:bg-white/40"
+                style={{ width: i === current ? 56 : 20 }}
+              >
+                {i === current && (
+                  <span
+                    className="block h-full bg-white rounded-full"
+                    style={{ width: paused ? "100%" : `${progress * 100}%` }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={prev}
+              aria-label="Slide sebelumnya"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white hover:bg-white hover:text-stone-950 transition-all duration-300"
             >
-              <span>Jadwal &amp; Reservasi</span>
-            </a>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M15 18 9 12l6-6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Slide berikutnya"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white hover:bg-white hover:text-stone-950 transition-all duration-300"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <a
-        href="#pertunjukan"
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors cursor-pointer group"
-        aria-label="Scroll ke konten pertunjukan"
-      >
-        <span className="text-[9px] uppercase tracking-widest font-semibold group-hover:text-amber-400 transition-colors">Jelajahi</span>
-        <div className="w-7 h-7 rounded-full border border-white/30 flex items-center justify-center animate-bounce group-hover:border-amber-400 group-hover:text-amber-400 transition-all">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </div>
-      </a>
     </section>
   );
 }
