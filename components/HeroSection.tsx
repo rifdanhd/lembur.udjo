@@ -4,46 +4,46 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type Slide = {
   img: string;
-  eyebrow: string;
+  badge: string;
   title: React.ReactNode;
-  genre: string;
   desc: string;
   cta: string;
   ctaHref: string;
-  meta: string;
+  secondaryCta?: string;
+  secondaryHref?: string;
   alt: string;
 };
 
 const slides: Slide[] = [
   {
     img: "/Pertunjukan_luar.png",
-    eyebrow: "Warisan Budaya UNESCO · Angklung",
+    badge: "Warisan Budaya UNESCO · Bale Pare KBP",
     title: (
       <>
         Menanam Budaya, <span className="text-amber-400">Memanen Masa Depan</span>
       </>
     ),
-    genre: "Pertunjukan · Angklung · Tradisi",
-    desc: "Destinasi wisata budaya Sunda terkemuka di Kawasan Bale Pare, Kota Baru Parahyangan.",
-    cta: "Jadwal Pertunjukan",
-    ctaHref: "#pertunjukan",
-    meta: "Helaran setiap Minggu pagi",
-    alt: "Pertunjukan angklung di Lembur Udjo Parahyangan",
+    desc: "Pusat seni, tradisi, dan kebudayaan Sunda terintegrasi di Kawasan Bale Pare, Kota Baru Parahyangan.",
+    cta: "Jelajahi Fasilitas",
+    ctaHref: "#fasilitas",
+    secondaryCta: "Tentang Kami",
+    secondaryHref: "#about",
+    alt: "Pertunjukan seni di Lembur Udjo Parahyangan",
   },
   {
     img: "/LUP.png",
-    eyebrow: "Kawasan Budaya · Bale Pare KBP",
+    badge: "Kawasan Budaya & Pelestarian Tradisi",
     title: (
       <>
-        Menanam Budaya, <span className="text-amber-400">Memanen Masa Depan</span>
+        Harmoni Tradisi, <span className="text-amber-400">Ruang & Keberlanjutan</span>
       </>
     ),
-    genre: "Edukasi · Agrowalk · Alam",
-    desc: "Hamparan sawah, rumpun bambu, dan seni pertunjukan dalam satu perjalanan yang berkelanjutan.",
-    cta: "Jelajahi Program",
-    ctaHref: "#fasilitas",
-    meta: "Workshop & Agrowalk setiap hari",
-    alt: "Suasana kawasan Lembur Udjo Parahyangan",
+    desc: "Hamparan sawah, rumpun bambu, dan seni pertunjukan dalam satu perjalanan budaya yang hidup.",
+    cta: "Eksplorasi Masterplan",
+    ctaHref: "#masterplan",
+    secondaryCta: "Galeri Foto",
+    secondaryHref: "#galeri",
+    alt: "Suasana lanskap kawasan Lembur Udjo Parahyangan",
   },
 ];
 
@@ -55,6 +55,7 @@ export default function HeroSection() {
   const [progress, setProgress] = useState(0); // 0..1
   const [paused, setPaused] = useState(false);
   const elapsedRef = useRef(0);
+  const touchStartRef = useRef<number | null>(null);
 
   const goTo = useCallback((i: number) => {
     setCurrent(i);
@@ -74,6 +75,26 @@ export default function HeroSection() {
     setProgress(0);
   }, []);
 
+  // Touch swipe support for mobile
+  const onTouchStart = (e: React.TouchEvent) => {
+    setPaused(true);
+    touchStartRef.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        next();
+      } else {
+        prev();
+      }
+    }
+    touchStartRef.current = null;
+    setPaused(false);
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (paused) return;
@@ -92,9 +113,11 @@ export default function HeroSection() {
   return (
     <section
       id="beranda"
-      className="relative w-full h-[100svh] min-h-[580px] overflow-hidden bg-black flex items-end"
+      className="relative w-full h-[100svh] min-h-[540px] max-h-[960px] overflow-hidden bg-stone-950 flex flex-col justify-end touch-pan-y"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       {/* Background slides */}
       <div className="absolute inset-0">
@@ -108,47 +131,58 @@ export default function HeroSection() {
             }`}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20" />
-        {/* Overlay kiri agar teks mudah dibaca */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+
+        {/* Gradien atas untuk navbar */}
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/70 via-black/25 to-transparent pointer-events-none" />
+
+        {/* Gradien bawah untuk keterbacaan teks tanpa mematikan gambar */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/15 pointer-events-none" />
+        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-black/75 via-black/30 to-transparent pointer-events-none" />
       </div>
 
-      {/* Konten slide */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-14 md:pb-20">
-        <div key={current} className="animate-[fadeInUp_0.7s_ease-out_both]">
-          <p className="text-white/80 text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.2em] sm:tracking-[0.25em] mb-2 sm:mb-3">
-            {slides[current].eyebrow}
-          </p>
-          <h1 className="text-white text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] sm:leading-[1.02]">
+      {/* Konten Hero */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6 sm:pb-12 md:pb-16 flex flex-col justify-end">
+        <div key={current} className="max-w-2xl animate-[fadeInUp_0.6s_ease-out_both]">
+          {/* Eyebrow badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] sm:text-xs font-extrabold uppercase tracking-wider mb-2.5 sm:mb-3.5 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span>{slides[current].badge}</span>
+          </div>
+
+          {/* Heading Title */}
+          <h1 className="text-white text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.14] sm:leading-[1.05] drop-shadow-md">
             {slides[current].title}
           </h1>
-          <p className="text-white/70 text-[10px] sm:text-xs font-bold uppercase tracking-[0.16em] sm:tracking-[0.18em] mt-3 sm:mt-4">
-            {slides[current].genre}
-          </p>
-          <p className="text-white/80 text-xs sm:text-sm md:text-base mt-2 sm:mt-2.5 max-w-xl leading-relaxed">
+
+          {/* Deskripsi */}
+          <p className="text-white/85 text-xs sm:text-sm md:text-base mt-2 sm:mt-3 leading-relaxed drop-shadow-sm max-w-xl">
             {slides[current].desc}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-5 sm:mt-7">
-            {/* CTA pill dengan ikon play */}
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 mt-4 sm:mt-6">
             <a
               href={slides[current].ctaHref}
-              className="inline-flex items-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-white text-stone-950 text-xs font-extrabold uppercase tracking-wider hover:bg-white/85 transition-colors shadow-lg"
+              className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full bg-white text-stone-950 text-xs font-extrabold uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg active:scale-95"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.74l-11-6.86a1 1 0 0 0-1.5.87Z" />
-              </svg>
-              {slides[current].cta}
+              <span>{slides[current].cta}</span>
+              <span aria-hidden="true">&rarr;</span>
             </a>
-            {/* Info tambahan di samping CTA */}
-            <span className="text-white/75 text-[11px] sm:text-xs font-semibold tracking-wide">
-              {slides[current].meta}
-            </span>
+
+            {slides[current].secondaryCta && (
+              <a
+                href={slides[current].secondaryHref}
+                className="inline-flex items-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-xs font-extrabold uppercase tracking-wider transition-colors active:scale-95"
+              >
+                <span>{slides[current].secondaryCta}</span>
+              </a>
+            )}
           </div>
         </div>
 
-        {/* Navigasi: dots + prev/next */}
-        <div className="flex items-center justify-between mt-6 sm:mt-9">
+        {/* Navigasi Slide: Dots Bar & Panah Navigasi */}
+        <div className="flex items-center justify-between mt-6 sm:mt-8 pt-2">
+          {/* Progress Indicators */}
           <div className="flex items-center gap-2">
             {slides.map((_, i) => (
               <button
@@ -156,12 +190,13 @@ export default function HeroSection() {
                 type="button"
                 aria-label={`Slide ${i + 1}`}
                 onClick={() => goTo(i)}
-                className="h-1 rounded-full overflow-hidden bg-white/25 transition-all duration-300 cursor-pointer hover:bg-white/40"
-                style={{ width: i === current ? 56 : 20 }}
+                className={`h-1 sm:h-1.5 rounded-full overflow-hidden bg-white/30 transition-all duration-300 cursor-pointer hover:bg-white/50 ${
+                  i === current ? "w-10 sm:w-14" : "w-4 sm:w-5"
+                }`}
               >
                 {i === current && (
                   <span
-                    className="block h-full bg-white rounded-full"
+                    className="block h-full bg-amber-400 rounded-full"
                     style={{ width: paused ? "100%" : `${progress * 100}%` }}
                   />
                 )}
@@ -169,12 +204,13 @@ export default function HeroSection() {
             ))}
           </div>
 
+          {/* Prev/Next Buttons */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={prev}
               aria-label="Slide sebelumnya"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white hover:bg-white hover:text-stone-950 transition-all duration-300"
+              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/25 text-white hover:bg-white hover:text-stone-950 transition-all duration-300 cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M15 18 9 12l6-6" />
@@ -184,7 +220,7 @@ export default function HeroSection() {
               type="button"
               onClick={next}
               aria-label="Slide berikutnya"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white hover:bg-white hover:text-stone-950 transition-all duration-300"
+              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/25 text-white hover:bg-white hover:text-stone-950 transition-all duration-300 cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="m9 18 6-6-6-6" />
