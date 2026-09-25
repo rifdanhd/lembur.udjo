@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${inter.variable} ${playfair.variable} ${lobster.variable} ${jakarta.variable}`}>
-    <body className="font-sans text-stone-900 bg-[#fcfaf6]">
+    <body className="font-sans text-stone-900 bg-white">
       {children}
     </body>
     </html>

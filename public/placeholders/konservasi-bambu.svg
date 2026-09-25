@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Placeholder Konservasi Bambu">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d2317"/>
+      <stop offset="100%" stop-color="#163826"/>
+    </linearGradient>
+    <pattern id="stripes" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+      <line x1="0" y1="0" x2="0" y2="40" stroke="#ffffff" stroke-opacity="0.05" stroke-width="10"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect width="800" height="600" fill="url(#stripes)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="6" stroke-linecap="round">
+    <path d="M340 420 V220"/>
+    <path d="M400 460 V160"/>
+    <path d="M460 420 V220"/>
+    <path d="M310 250 q30 -40 70 -20"/>
+    <path d="M430 210 q40 -35 75 -10"/>
+    <path d="M370 190 q-45 -30 -70 5"/>
+  </g>
+  <text x="400" y="520" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" letter-spacing="4">KONSERVASI BAMBU</text>
+  <text x="400" y="555" text-anchor="middle" fill="#ffffff" fill-opacity="0.55" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" letter-spacing="3">PLACEHOLDER &#183; GANTI DENGAN FOTO</text>
+</svg>

@@ -1,9 +1,9 @@
 export default function CompanyProfileSection() {
   return (
-    <section id="profile" className="py-16 md:py-20 bg-[#f6f7f9]">
+    <section id="profile" className="py-16 md:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-[11px] font-extrabold tracking-[0.25em] text-amber-600 uppercase">Tentang Kami</span>
+          <span className="text-[11px] font-extrabold tracking-[0.25em] text-forest uppercase">Tentang Kami</span>
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.05] mt-2">Profil Perusahaan</h2>
           <p className="text-stone-600 text-sm sm:text-base mt-3 leading-relaxed">Lembur Udjo Parahyangan adalah destinasi wisata budaya Sunda terkemuka yang menjaga dan mengembangkan warisan budaya leluhur sejak 1966.</p>
         </div>
@@ -87,8 +87,8 @@ export default function CompanyProfileSection() {
                 desc: "Menyediakan pengalaman belajar yang mendalam dan interaktif.",
               },
             ].map((val) => (
-              <div key={val.title} className="flex items-start gap-4 p-5 rounded-lg bg-[#f6f7f9] border border-stone-100">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white border border-stone-200 text-amber-600">{val.icon}</span>
+              <div key={val.title} className="flex items-start gap-4 p-5 rounded-lg bg-white border border-stone-100">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white border border-stone-200 text-forest">{val.icon}</span>
                 <div>
                   <h4 className="text-xs font-extrabold uppercase tracking-widest text-stone-950">{val.title}</h4>
                   <p className="text-xs text-stone-600 mt-1 leading-relaxed">{val.desc}</p>

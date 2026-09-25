@@ -4,45 +4,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type Slide = {
   img: string;
-  badge: string;
   title: React.ReactNode;
   desc: string;
-  cta: string;
-  ctaHref: string;
-  secondaryCta?: string;
-  secondaryHref?: string;
   alt: string;
 };
 
 const slides: Slide[] = [
   {
     img: "/Pertunjukan_luar.png",
-    badge: "Warisan Budaya UNESCO · Bale Pare KBP",
-    title: (
-      <>
-        Menanam Budaya, <span className="text-amber-400">Memanen Masa Depan</span>
-      </>
-    ),
+    title: "Menanam Budaya, Memanen Masa Depan",
     desc: "Pusat seni, tradisi, dan kebudayaan Sunda terintegrasi di Kawasan Bale Pare, Kota Baru Parahyangan.",
-    cta: "Jelajahi Fasilitas",
-    ctaHref: "#fasilitas",
-    secondaryCta: "Tentang Kami",
-    secondaryHref: "#about",
     alt: "Pertunjukan seni di Lembur Udjo Parahyangan",
   },
   {
     img: "/LUP.png",
-    badge: "Kawasan Budaya & Pelestarian Tradisi",
-    title: (
-      <>
-        Harmoni Tradisi, <span className="text-amber-400">Ruang & Keberlanjutan</span>
-      </>
-    ),
+    title: "Harmoni Tradisi, Ruang & Keberlanjutan",
     desc: "Hamparan sawah, rumpun bambu, dan seni pertunjukan dalam satu perjalanan budaya yang hidup.",
-    cta: "Eksplorasi Masterplan",
-    ctaHref: "#masterplan",
-    secondaryCta: "Galeri Foto",
-    secondaryHref: "#galeri",
     alt: "Suasana lanskap kawasan Lembur Udjo Parahyangan",
   },
 ];
@@ -113,7 +90,7 @@ export default function HeroSection() {
   return (
     <section
       id="beranda"
-      className="relative w-full h-[100svh] min-h-[540px] max-h-[960px] overflow-hidden bg-stone-950 flex flex-col justify-end touch-pan-y"
+      className="relative w-full overflow-hidden bg-stone-950 flex flex-col justify-end touch-pan-y hero-section"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={onTouchStart}
@@ -126,31 +103,26 @@ export default function HeroSection() {
             key={slide.img}
             src={slide.img}
             alt={slide.alt}
-            className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-[1200ms] ease-out ${
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1200ms] ease-out ${
               i === current ? "opacity-100 scale-100" : "opacity-0 scale-105"
             }`}
+            style={{ objectPosition: 'center center' }}
           />
         ))}
 
-        {/* Gradien atas untuk navbar */}
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/70 via-black/25 to-transparent pointer-events-none" />
+        {/* Gradien atas kuat untuk navbar tanpa backdrop-blur */}
+        <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/75 via-black/35 to-transparent pointer-events-none" />
 
-        {/* Gradien bawah untuk keterbacaan teks tanpa mematikan gambar */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/15 pointer-events-none" />
-        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-black/75 via-black/30 to-transparent pointer-events-none" />
+        {/* Gradien bawah untuk keterbacaan teks */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
+        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-black/70 via-black/25 to-transparent pointer-events-none" />
       </div>
 
       {/* Konten Hero */}
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6 sm:pb-12 md:pb-16 flex flex-col justify-end">
         <div key={current} className="max-w-2xl animate-[fadeInUp_0.6s_ease-out_both]">
-          {/* Eyebrow badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] sm:text-xs font-extrabold uppercase tracking-wider mb-2.5 sm:mb-3.5 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span>{slides[current].badge}</span>
-          </div>
-
           {/* Heading Title */}
-          <h1 className="text-white text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.14] sm:leading-[1.05] drop-shadow-md">
+          <h1 className="text-white text-2xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.14] sm:leading-[1.05] drop-shadow-md">
             {slides[current].title}
           </h1>
 
@@ -158,26 +130,6 @@ export default function HeroSection() {
           <p className="text-white/85 text-xs sm:text-sm md:text-base mt-2 sm:mt-3 leading-relaxed drop-shadow-sm max-w-xl">
             {slides[current].desc}
           </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 mt-4 sm:mt-6">
-            <a
-              href={slides[current].ctaHref}
-              className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full bg-white text-stone-950 text-xs font-extrabold uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg active:scale-95"
-            >
-              <span>{slides[current].cta}</span>
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-
-            {slides[current].secondaryCta && (
-              <a
-                href={slides[current].secondaryHref}
-                className="inline-flex items-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-xs font-extrabold uppercase tracking-wider transition-colors active:scale-95"
-              >
-                <span>{slides[current].secondaryCta}</span>
-              </a>
-            )}
-          </div>
         </div>
 
         {/* Navigasi Slide: Dots Bar & Panah Navigasi */}
@@ -196,7 +148,7 @@ export default function HeroSection() {
               >
                 {i === current && (
                   <span
-                    className="block h-full bg-amber-400 rounded-full"
+                    className="block h-full bg-white rounded-full"
                     style={{ width: paused ? "100%" : `${progress * 100}%` }}
                   />
                 )}

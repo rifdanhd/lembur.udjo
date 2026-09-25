@@ -8,9 +8,26 @@ type Card = {
   title: string;
   cta: string;
   href: string;
+  hideOverlay?: boolean;
 };
 
 const cards: Card[] = [
+  {
+    img: "/Trending.jpeg",
+    category: "Kabar",
+    title: "Lembur Udjo Parahyangan Segera Hadir di Bale Pare, KBP",
+    cta: "Lihat di Instagram",
+    href: "https://www.instagram.com/reels/DXI1ymKhmbf/",
+    hideOverlay: true,
+  },
+  {
+    img: "/trending-tradisi-lokal.jpg",
+    category: "Tradisi",
+    title: "Tinggal di Kawasan Modern Tanpa Kehilangan Kehangatan Tradisi Lokal",
+    cta: "Lihat di Instagram",
+    href: "https://www.instagram.com/p/DcktTjymrTu/",
+    hideOverlay: true,
+  },
   {
     img: "/placeholders/helaran.jpg",
     category: "Pertunjukan",
@@ -80,7 +97,7 @@ export default function TrendingCarousel() {
         {/* Header */}
         <div className="flex items-end justify-between mb-5 sm:mb-6">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-amber-600 uppercase block mb-1">
+            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-forest uppercase block mb-1">
               Aktivitas Pilihan
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-tight">
@@ -119,39 +136,46 @@ export default function TrendingCarousel() {
           onScroll={updateArrows}
           className="flex gap-3.5 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar touch-pan-x -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
         >
-          {cards.map((card) => (
-            <a
-              key={card.title}
-              href={card.href}
-              className="group relative block w-[78%] sm:w-[48%] lg:w-[calc((100%-2.5rem)/3)] shrink-0 snap-start"
-            >
-              <div className="relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/5] sm:aspect-[3/4] bg-stone-100 shadow-md">
-                <img
-                  src={card.img}
-                  alt={card.title}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                {/* Gradient agar teks overlay terbaca */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+          {cards.map((card) => {
+            const isExternal = card.href.startsWith("http");
+            return (
+              <a
+                key={card.title}
+                href={card.href}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                className="group relative block w-[78%] sm:w-[48%] lg:w-[calc((100%-2.5rem)/3)] shrink-0 snap-start"
+              >
+                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/5] sm:aspect-[3/4] bg-stone-100 shadow-md">
+                  <img
+                    src={card.img}
+                    alt={card.title}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  {/* Gradient agar teks overlay terbaca */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-                {/* Overlay text */}
-                <div className="absolute left-5 top-5 right-5 text-left">
-                  <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/80">{card.category}</span>
-                  <h3 className="mt-1 text-lg sm:text-xl font-extrabold tracking-tight text-white leading-snug drop-shadow-sm">{card.title}</h3>
+                  {/* Overlay text */}
+                  {!card.hideOverlay && (
+                    <div className="absolute left-5 top-5 right-5 text-left">
+                      <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/80">{card.category}</span>
+                      <h3 className="mt-1 text-lg sm:text-xl font-extrabold tracking-tight text-white leading-snug drop-shadow-sm">{card.title}</h3>
+                    </div>
+                  )}
+
+                  {/* CTA pill putih */}
+                  <span className="absolute bottom-5 left-5 inline-flex items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-wider text-stone-950 shadow-md transition-all duration-300 group-hover:bg-stone-950 group-hover:text-white">
+                    {card.cta}
+                    <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </span>
                 </div>
-
-                {/* CTA pill putih */}
-                <span className="absolute bottom-5 left-5 inline-flex items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-wider text-stone-950 shadow-md transition-all duration-300 group-hover:bg-stone-950 group-hover:text-white">
-                  {card.cta}
-                  <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                </span>
-              </div>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -11,6 +11,12 @@ type Zone = {
   href: string;
 };
 
+const toSrc = (path: string) =>
+  path
+    .split("/")
+    .map((seg) => encodeURIComponent(seg))
+    .join("/");
+
 const zones: Zone[] = [
   {
     img: "/Masterplan.jpg",
@@ -36,9 +42,45 @@ const zones: Zone[] = [
     cta: "Jelajahi Kawasan",
     href: "#fasilitas",
   },
+  ...[
+    "Copy of 1_1 - Photo.jpg",
+    "Copy of 1_2 - Photo.jpg",
+    "Copy of 1_3 - Photo.jpg",
+    "Copy of 1_4 - Photo.jpg",
+    "Copy of 1_5 - Photo.jpg",
+    "Copy of 1_6 - Photo.jpg",
+    "Copy of 1_7 - Photo.jpg",
+    "Copy of 1_8 - Photo.jpg",
+    "Copy of 1_9 - Photo.jpg",
+    "Copy of 1_10 - Photo.jpg",
+    "Copy of 2_1 - Photo.jpg",
+    "Copy of 2_2 - Photo.jpg",
+    "Copy of 2_3 - Photo.jpg",
+    "Copy of 2_4 - Photo.jpg",
+    "Copy of 2_5 - Photo.jpg",
+    "Copy of 2_6 - Photo.jpg",
+    "Copy of 2_7 - Photo.jpg",
+    "Copy of 2_8 - Photo.jpg",
+    "Copy of 2_9 - Photo.jpg",
+    "Copy of 2_10 - Photo.jpg",
+  ].map((file, i) => ({
+    img: toSrc(`/Masterplan/${file}`),
+    category: `Masterplan ${String(i + 4).padStart(2, "0")}`,
+    title: `Foto Kawasan ${i + 1}`,
+    desc: "Dokumentasi visual kawasan Lembur Udjo Parahyangan.",
+    cta: "Jelajahi Kawasan",
+    href: "#fasilitas",
+  })),
 ];
 
 const AUTOPLAY_MS = 8000;
+const DOT_COUNT = 3;
+
+const dotIndexFor = (index: number) =>
+  Math.min(DOT_COUNT - 1, Math.floor((index * DOT_COUNT) / zones.length));
+
+const slideForDot = (dot: number) =>
+  Math.min(zones.length - 1, Math.floor((dot * zones.length) / DOT_COUNT));
 
 export default function MasterplanSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -101,7 +143,7 @@ export default function MasterplanSection() {
     >
       {/* Header */}
       <div className="w-full mx-auto px-4 mb-8 sm:mb-12 text-center">
-        <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-amber-600 block">
+        <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-forest block">
           Masterplan Kawasan
         </span>
         <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mt-2 text-stone-950 tracking-tight">
@@ -111,12 +153,12 @@ export default function MasterplanSection() {
 
       {/* Wrapper Carousel Full-Width dengan Overflow Terbuka & Touch Handler */}
       <div
-        className="relative w-full overflow-hidden touch-pan-y"
+        className="relative w-full overflow-hidden touch-pan-y select-none"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
         <div
-          className="flex transition-transform duration-700 ease-out items-center [--card-width:88%] [--step:90%] [--offset:45%] md:[--card-width:72%] md:[--step:74%] md:[--offset:37%]"
+          className="flex transition-transform duration-700 ease-out items-center [--card-width:88%] [--step:88%] [--offset:44%] md:[--card-width:72%] md:[--step:72%] md:[--offset:36%]"
           style={{
             transform: `translateX(calc(50% - (${currentIndex} * var(--step)) - var(--offset)))`,
           }}
@@ -130,11 +172,12 @@ export default function MasterplanSection() {
                   active ? "scale-100 z-20" : "scale-95 z-10 opacity-70 sm:opacity-90"
                 }`}
               >
-                <div className="relative h-[240px] xs:h-[300px] sm:h-[420px] md:h-[560px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] bg-stone-950">
+                <div className="relative h-[240px] sm:h-[420px] md:h-[560px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] bg-stone-950">
                   <img
                     src={zone.img}
                     alt={zone.title}
                     loading="lazy"
+                    draggable={false}
                     className="absolute inset-0 w-full h-full object-contain sm:object-cover"
                   />
                 </div>
@@ -158,17 +201,20 @@ export default function MasterplanSection() {
         </button>
 
         <div className="flex items-center gap-2">
-          {zones.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => goTo(i)}
-              aria-label={`Slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                currentIndex === i ? "w-8 bg-stone-950" : "w-2 bg-stone-300 hover:bg-stone-400"
-              }`}
-            />
-          ))}
+          {Array.from({ length: DOT_COUNT }, (_, i) => {
+            const isActive = dotIndexFor(currentIndex) === i;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(slideForDot(i))}
+                aria-label={`Kelompok slide ${i + 1}`}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  isActive ? "w-8 bg-stone-950" : "w-2 bg-stone-300 hover:bg-stone-400"
+                }`}
+              />
+            );
+          })}
         </div>
 
         <button

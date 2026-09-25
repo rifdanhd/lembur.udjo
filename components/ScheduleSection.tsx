@@ -14,7 +14,7 @@ interface ScheduleItem {
 }
 
 const schedules: ScheduleItem[] = [
-  { id: "angklung", badge: "Utama", badgeColor: "bg-amber-500 text-white", title: "Pertunjukan Angklung & Seni Jawa Barat", desc: "Sajian pertunjukan seni angklung dan seni tradisi Jawa Barat yang autentik.", time: "15:30 – 17:30 WIB", days: "Setiap Hari", includes: ["Akses Bale Karesmen", "Pertunjukan Interaktif", "Sesi Bermain Angklung"] },
+  { id: "angklung", badge: "Utama", badgeColor: "bg-forest text-white", title: "Pertunjukan Angklung & Seni Jawa Barat", desc: "Sajian pertunjukan seni angklung dan seni tradisi Jawa Barat yang autentik.", time: "15:30 – 17:30 WIB", days: "Setiap Hari", includes: ["Akses Bale Karesmen", "Pertunjukan Interaktif", "Sesi Bermain Angklung"] },
   { id: "helaran", badge: "Tradisi", badgeColor: "bg-emerald-600 text-white", title: "Helaran Tradisi", desc: "Tradisi arak-arakan dalam perayaan anak yang akan dikhitan.", time: "10:00 – 12:00 WIB", days: "Setiap Hari (Reservasi)", includes: ["Pertunjukan Helaran", "Iringan Angklung", "Tarian Tradisional"] },
   { id: "agrowalk", badge: "Edukasi", badgeColor: "bg-stone-700 text-white", title: "Agrowalk – Edukasi Keberlanjutan", desc: "Perjalanan berpandu ke 5 titik edukasi: Peternakan, Sampah Organik, Bibit Pepaya, Arboretum Bambu, Sentra Perajin.", time: "08:00 – 14:00 WIB", days: "Selasa – Minggu", includes: ["5 Titik Kunjungan", "Pemandu Lokal", "Kesadaran Keberlanjutan"] },
 ];
@@ -27,7 +27,7 @@ export default function ScheduleSection() {
     <section id="jadwal" className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold tracking-widest text-amber-700 uppercase bg-amber-100/60 px-3 py-1 rounded-full inline-block mb-2.5">Jadwal & Agenda</span>
+          <span className="text-xs font-bold tracking-widest text-forest uppercase bg-forest/10 px-3 py-1 rounded-full inline-block mb-2.5">Jadwal & Agenda</span>
           <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-forest tracking-tight">Pilih Pengalaman Anda</h2>
           <p className="text-stone-600 text-sm mt-2.5 leading-relaxed">Ikuti jadwal pertunjukan angklung interaktif, tradisi helaran, dan workshop budaya Sunda setiap hari.</p>
         </div>
@@ -43,13 +43,13 @@ export default function ScheduleSection() {
               </div>
 
               <div className="p-5 space-y-3">
-                <span className="text-[10px] font-bold tracking-widest text-amber-300 uppercase">Pengalaman Terpilih</span>
+                <span className="text-[10px] font-bold tracking-widest text-green-400 uppercase">Pengalaman Terpilih</span>
                 <h3 className="font-cinzel text-xl font-bold text-white mt-0.5 leading-snug">{currentSchedule.title}</h3>
 
                 <div className="space-y-2 text-xs text-emerald-100 bg-white/5 p-3.5 rounded-xl border border-white/10">
                   <div className="flex justify-between"><span className="text-white/60">Waktu:</span><span className="font-bold text-white">{currentSchedule.time}</span></div>
                   <div className="flex justify-between"><span className="text-white/60">Hari:</span><span className="font-semibold text-white/90">{currentSchedule.days}</span></div>
-                  <div className="flex justify-between"><span className="text-white/60">Lokasi:</span><span className="font-semibold text-amber-300">Bale Karesmen</span></div>
+                  <div className="flex justify-between"><span className="text-white/60">Lokasi:</span><span className="font-semibold text-green-400">Bale Karesmen</span></div>
                 </div>
 
               </div>

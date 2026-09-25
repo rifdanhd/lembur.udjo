@@ -11,7 +11,7 @@ export default function ShowsSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div className="max-w-2xl">
-            <span className="text-[11px] font-extrabold tracking-[0.25em] text-amber-600 uppercase">Destinasi & Pengalaman</span>
+            <span className="text-[11px] font-extrabold tracking-[0.25em] text-forest uppercase">Destinasi & Pengalaman</span>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.05] mt-2">Jelajahi Pengalaman Budaya</h2>
             <p className="text-stone-600 text-sm sm:text-base mt-3 leading-relaxed">Empat sajian utama yang memadukan keindahan seni musik, tradisi, dan arsitektur Sunda dalam satu kesatuan perjalanan berkesan.</p>
           </div>
@@ -34,8 +34,8 @@ export default function ShowsSection() {
               </div>
 
               <div className="relative z-10 pt-20 space-y-2.5">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-amber-400">{show.subtitle}</p>
-                <h3 className="text-xl font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors leading-tight">{show.title}</h3>
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-green-400">{show.subtitle}</p>
+                <h3 className="text-xl font-extrabold tracking-tight text-white group-hover:text-green-400 transition-colors leading-tight">{show.title}</h3>
                 <p className="text-xs text-white/75 leading-relaxed line-clamp-2">{show.desc}</p>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {show.highlights.map((tag) => (

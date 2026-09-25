@@ -166,11 +166,11 @@ export default function GallerySection() {
   };
 
   return (
-    <section id="galeri" className="py-12 sm:py-16 md:py-20 bg-[#f6f7f9]">
+    <section id="galeri" className="py-12 sm:py-16 md:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4">
           <div className="max-w-2xl">
-            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-amber-600 uppercase block">
+            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-forest uppercase block">
               Galeri Visual
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.12] sm:leading-[1.05] mt-2">
@@ -266,7 +266,7 @@ export default function GallerySection() {
                 </div>
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-sm font-extrabold uppercase tracking-wide text-stone-950 group-hover:text-amber-600 transition-colors leading-snug">
+                    <h3 className="text-sm font-extrabold uppercase tracking-wide text-stone-950 group-hover:text-forest transition-colors leading-snug">
                       {item.title}
                     </h3>
                     <p className="text-xs text-stone-600 mt-1.5 leading-relaxed line-clamp-2">{item.desc}</p>
