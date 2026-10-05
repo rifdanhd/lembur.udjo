@@ -10,16 +10,22 @@ export default function WhatsAppPopup() {
   const [visible, setVisible] = useState(false);
   const shownRef = useRef(false);
 
-  // Muncul hanya setelah pengunjung menggulir melewati ±80% layar pertama (≈ lewat hero),
-  // dan kembali tersembunyi bila digulir ke puncak halaman.
+  // TIDAK dirender sama sekali sebelum pengunjung menggulir melewati hero.
   useEffect(() => {
     const isMobile = window.matchMedia("(max-width: 639px)").matches;
     let openTimer: ReturnType<typeof setTimeout> | undefined;
+    let threshold = 0;
 
-    const getThreshold = () => Math.max(320, Math.round(window.innerHeight * 0.8));
+    const computeThreshold = () => {
+      const hero = document.getElementById("beranda");
+      const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : 0;
+      // harus melewati hero; minimal satu layar penuh agar jelas "sudah scroll"
+      threshold = Math.max(heroBottom, window.innerHeight) - 96;
+      if (threshold < 160) threshold = 160;
+    };
 
     const onScroll = () => {
-      const past = window.scrollY > getThreshold();
+      const past = window.scrollY >= threshold;
       if (past === shownRef.current) return;
       shownRef.current = past;
       setVisible(past);
@@ -32,22 +38,27 @@ export default function WhatsAppPopup() {
       }
     };
 
+    const onResize = () => {
+      computeThreshold();
+      onScroll();
+    };
+
+    computeThreshold();
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
       clearTimeout(openTimer);
     };
   }, []);
 
+  if (!visible) return null;
+
   return (
     <div
-      className={`fixed right-4 bottom-4 sm:right-8 sm:bottom-8 z-30 flex flex-col items-end gap-3 sm:gap-4 transition-all duration-500 pb-[env(safe-area-inset-bottom)] ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
-      }`}
-      aria-hidden={!visible}
+      className={`fixed right-4 bottom-4 sm:right-8 sm:bottom-8 z-30 flex flex-col items-end gap-3 sm:gap-4 pb-[env(safe-area-inset-bottom)] animate-[fadeInUp_0.35s_ease-out]`}
     >
       {open && (
         <div className="w-[min(24rem,calc(100vw-2rem))] sm:w-80 md:w-[23rem] rounded-3xl bg-white shadow-2xl border border-stone-200 overflow-hidden animate-[fadeInUp_0.3s_ease-out]">
