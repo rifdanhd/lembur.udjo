@@ -21,7 +21,7 @@ Lembur Udjo Parahyangan adalah **cabang baru dari Saung Angklung Udjo** (berdiri
 
 Website berfungsi sebagai **etalase digital utama** sebelum dan sesudah peluncuran: memperkenalkan warisan Saung Angklung Udjo, menjelaskan pengalaman yang ditawarkan, dan mengonversi pengunjung menjadi **reservasi tiket via WhatsApp** pada fase awal.
 
-Saat ini tersedia **satu landing page teaser** (`public/landing-pages/lembur-udjo.html`) yang menjadi basis Fase 1.
+Landing page teaser HTML statik (`public/landing-pages/lembur-udjo.html`) sudah **dihapus**; peran teaser diambil alih sepenuhnya oleh situs Next.js di repo ini (Fase 1 live dari repo ini, bukan dari file terpisah).
 
 ## 2. Latar Belakang
 
@@ -198,7 +198,7 @@ pembawa `id` yang sama persis.
 ## 11. Teknologi
 
 - **Repo ini:** Next.js (App Router) + Payload CMS — dipakai untuk Fase 2+; koleksi: `Pengalaman`, `Jadwal`, `Artikel`, `Galeri`, `FAQ`, `Pengaturan Global`.
-- **Teaser:** HTML statik di `public/landing-pages/lembur-udjo.html` (tanpa build step) — tetap dipelihara sampai Fase 2 live.
+- **Teaser:** sudah tidak berupa HTML statik — halaman teaser lama dihapus, digantikan situs Next.js ini (satu build, satu sumber kebenaran).
 - **Hosting:** Vercel (sudah ada folder `.vercel`).
 - **Domain:** disarankan domain sendiri, mis. `lemburudjo-parahyangan.id` atau subdomain `balepare.saungangklungudjo.com` (menunggu keputusan — lihat Open Questions).
 
