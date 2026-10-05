@@ -232,6 +232,16 @@ export default function Navbar() {
   useEffect(() => () => clearCloseTimer(), []);
 
   return (
+    <>
+      {/* Mobile Backdrop Overlay — di LUAR <header> agar bar navbar tidak ikut ter-blur/dim */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/40 lg:hidden transition-opacity duration-300 ${
+          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden="true"
+      />
+
     <header
       className={`fixed top-0 left-0 w-full z-50 bg-cream border-b border-stone-200 transition-all duration-300 ${
         scrolled ? "shadow-sm shadow-black/5" : "shadow-none"
@@ -239,7 +249,7 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className={`relative flex items-center justify-between transition-all duration-300 animate-[navEnter_0.55s_ease-out_both] ${
+          className={`relative z-40 flex items-center justify-between transition-all duration-300 animate-[navEnter_0.55s_ease-out_both] ${
             scrolled ? "h-14 sm:h-16" : "h-16 sm:h-20"
           }`}
         >
@@ -382,19 +392,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Backdrop Overlay — fade in/out */}
-      <div
-        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${
-          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setMenuOpen(false)}
-        aria-hidden="true"
-      />
-
       {/* Mobile Drawer — panel penuh di bawah navbar */}
       <div
         id="nav-mobile-panel"
-        className={`lg:hidden absolute left-0 top-full w-full h-[calc(100dvh_-_100%)] bg-cream border-b border-stone-200 flex flex-col transition-all duration-300 ease-out motion-reduce:transition-none ${
+        className={`lg:hidden absolute left-0 top-full z-40 w-full h-[calc(100dvh_-_100%)] bg-cream border-b border-stone-200 flex flex-col transition-all duration-300 ease-out motion-reduce:transition-none ${
           menuOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0 pointer-events-none"
@@ -474,5 +475,6 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+    </>
   );
 }
