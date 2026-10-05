@@ -24,10 +24,10 @@ export default function Home() {
       <QuotesSection />
       <AboutSection />
       <HeritageBadges />
+      <MasterplanSection />
       <KaulinanSection />
       <FacilitiesSection />
       <ScheduleSection />
-      <MasterplanSection />
       <SiteplanSection />
       <GallerySection />
       <FaqSection />

@@ -31,14 +31,6 @@ const cards: Card[] = [
     hideOverlay: true,
   },
   {
-    img: "/placeholders/helaran.jpg",
-    category: "Pertunjukan",
-    title: "Helaran Angklung Minggu Pagi",
-    cta: "Lihat Jadwal",
-    href: "#jadwal",
-    hidden: true,
-  },
-  {
     img: "/placeholders/workshop.jpg",
     category: "Edukasi",
     title: "Workshop Angklung & Arumba",
