@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import MaskText from "./anim/MaskText";
 
 interface GalleryItem {
   id: number;
@@ -18,10 +19,7 @@ const galleryItems: GalleryItem[] = [
   { id: 5, title: "Keceriaan Belajar Anak", category: "Edukasi", image: "/placeholders/education.jpg", desc: "Pendidikan karakter berbasis gotong royong bagi tunas generasi penerus." },
 ];
 
-const categories = ["Semua", "Pertunjukan", "Edukasi", "Pentas Boneka", "Sejarah"];
-
 export default function GallerySection() {
-  const [activeCategory, setActiveCategory] = useState("Semua");
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -33,8 +31,6 @@ export default function GallerySection() {
   const snapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const draggingRef = useRef(false);
   const dragStart = useRef({ x: 0, scrollLeft: 0 });
-
-  const filteredItems = activeCategory === "Semua" ? galleryItems : galleryItems.filter((item) => item.category === activeCategory);
 
   const markMoving = useCallback(() => {
     setIsMoving(true);
@@ -96,13 +92,11 @@ export default function GallerySection() {
     snapTimer.current = setTimeout(() => snapToNearest(), 140);
   }, [markMoving, updateState, snapToNearest]);
 
-  // Reset ke awal saat kategori berubah
   useEffect(() => {
     const el = trackRef.current;
     if (el) el.scrollTo({ left: 0 });
-    setActiveIndex(0);
     updateState();
-  }, [activeCategory, updateState]);
+  }, [updateState]);
 
   useEffect(() => {
     return () => {
@@ -166,42 +160,17 @@ export default function GallerySection() {
   };
 
   return (
-    <section id="galeri" className="py-12 sm:py-16 md:py-20 bg-white">
+    <section id="galeri" className="py-12 sm:py-16 md:py-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4">
+        <div className="mb-6 sm:mb-8">
           <div className="max-w-2xl">
-            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-forest uppercase block">
-              Galeri Visual
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.12] sm:leading-[1.05] mt-2">
-              Dokumentasi Budaya
+            <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05]">
+              <MaskText text="Kesenian Tradisional" scrub />
             </h2>
             <p className="text-stone-600 text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
               Geser untuk menjelajahi momen autentik dan kehangatan tradisi Sunda yang hidup melalui rekaman visual pengunjung dan seniman kami.
             </p>
           </div>
-          <button
-            onClick={() => setActiveCategory("Semua")}
-            className="self-start sm:self-auto shrink-0 inline-flex items-center gap-1.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-stone-950 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-forest transition-colors shadow-sm"
-          >
-            Semua Galeri &rarr;
-          </button>
-        </div>
-
-        <div className="flex gap-2 mb-5 sm:mb-6 overflow-x-auto pb-2 no-scrollbar touch-pan-x -mx-4 px-4 sm:mx-0 sm:px-0">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`shrink-0 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider transition-all cursor-pointer border whitespace-nowrap ${
-                activeCategory === cat
-                  ? "bg-stone-950 text-white border-stone-950 shadow-sm"
-                  : "bg-white text-stone-600 border-stone-300 hover:border-stone-950 hover:text-stone-950"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
         </div>
 
         <div className="relative">
@@ -240,11 +209,11 @@ export default function GallerySection() {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerLeave={endDrag}
-            className={`no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto pb-2 pt-1 touch-pan-x -mx-4 px-4 sm:mx-0 sm:px-0 ${
+            className={`no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 ${
               isDragging ? "cursor-grabbing select-none" : "cursor-grab"
             }`}
           >
-            {filteredItems.map((item) => (
+            {galleryItems.map((item) => (
               <article
                 key={item.id}
                 data-card
@@ -266,7 +235,7 @@ export default function GallerySection() {
                 </div>
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-sm font-extrabold uppercase tracking-wide text-stone-950 group-hover:text-forest transition-colors leading-snug">
+                    <h3 className="text-sm font-extrabold uppercase tracking-wide text-forest group-hover:text-forest transition-colors leading-snug">
                       {item.title}
                     </h3>
                     <p className="text-xs text-stone-600 mt-1.5 leading-relaxed line-clamp-2">{item.desc}</p>
@@ -281,7 +250,7 @@ export default function GallerySection() {
 
           {/* Indikator slide */}
           <div className="flex justify-center gap-1.5 mt-5">
-            {filteredItems.map((item, i) => (
+            {galleryItems.map((item, i) => (
               <button
                 key={item.id}
                 type="button"

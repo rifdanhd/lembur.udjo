@@ -1,3 +1,4 @@
+import MaskText from "./anim/MaskText";
 const shows = [
   { id: "angklung-interaktif", title: "Pertunjukan Angklung", subtitle: "Sajian autentik seni tradisional Jawa Barat", desc: "Pengunjung diajak langsung bermain angklung bersama secara interaktif.", image: "/placeholders/angklung.jpg", badge: "Utama", duration: "45 Menit", highlights: ["Interaktif", "Seni Jawa Barat", "Panduan Ahli"] },
   { id: "helaran", title: "Helaran Tradisi", subtitle: "Tradisi Arak-Arakan Penuh Makna", desc: "Tradisi arak-arakan dalam perayaan anak yang akan dikhitan.", image: "/placeholders/helaran.jpg", badge: "Tradisi", duration: "30 Menit", highlights: ["Makna Syukur", "Kebersamaan", "Tarian Tradisional"] },
@@ -7,12 +8,14 @@ const shows = [
 
 export default function ShowsSection() {
   return (
-    <section id="pertunjukan" className="py-16 md:py-20 bg-white">
+    <section id="pertunjukan" className="py-16 md:py-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div className="max-w-2xl">
             <span className="text-[11px] font-extrabold tracking-[0.25em] text-forest uppercase">Destinasi & Pengalaman</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.05] mt-2">Jelajahi Pengalaman Budaya</h2>
+            <h2 className="font-tan text-3xl md:text-5xl tracking-tight text-forest leading-[1.05] mt-2">
+              <MaskText text="Jelajahi Pengalaman Budaya" scrub />
+            </h2>
             <p className="text-stone-600 text-sm sm:text-base mt-3 leading-relaxed">Empat sajian utama yang memadukan keindahan seni musik, tradisi, dan arsitektur Sunda dalam satu kesatuan perjalanan berkesan.</p>
           </div>
           <a href="#jadwal" className="shrink-0 inline-flex items-center justify-center px-6 py-3 rounded-full bg-stone-950 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-forest transition-colors">
@@ -35,7 +38,7 @@ export default function ShowsSection() {
 
               <div className="relative z-10 pt-20 space-y-2.5">
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-green-400">{show.subtitle}</p>
-                <h3 className="text-xl font-extrabold tracking-tight text-white group-hover:text-green-400 transition-colors leading-tight">{show.title}</h3>
+                <h3 className="font-tan text-xl tracking-tight text-white group-hover:text-green-400 transition-colors leading-tight">{show.title}</h3>
                 <p className="text-xs text-white/75 leading-relaxed line-clamp-2">{show.desc}</p>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {show.highlights.map((tag) => (

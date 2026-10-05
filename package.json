@@ -9,7 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@designcodeio/threeui": "^1.2.0",
+    "@payloadcms/db-postgres": "^3.90.2",
+    "@payloadcms/next": "^3.90.2",
+    "@payloadcms/richtext-lexical": "^3.90.2",
+    "graphql": "^16.14.2",
+    "gsap": "^3.15.0",
     "next": "16.3.5",
+    "payload": "^3.90.2",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -22,5 +29,6 @@
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "type": "module"
 }

@@ -67,7 +67,7 @@ export default function InnovationSection() {
             <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-emerald-400 uppercase block">
               Inovasi Digital
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.12] sm:leading-[1.05]">
+            <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight leading-[1.12] sm:leading-[1.05]">
               Pindai QR. <span className="text-emerald-400">Dengarkan Warisan Suara.</span>
             </h2>
             <p className="text-stone-300 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg">
@@ -100,7 +100,7 @@ export default function InnovationSection() {
                   <span className="inline-block text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-400 mb-2">
                     Placeholder — QR menyusul
                   </span>
-                  <h3 className="text-base sm:text-lg font-extrabold text-white mb-1">
+                  <h3 className="font-tan text-base sm:text-lg text-white mb-1">
                     Suara Asli Abah Udjo
                   </h3>
                   <p className="text-xs text-stone-400 leading-relaxed">

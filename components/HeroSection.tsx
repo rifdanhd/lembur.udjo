@@ -1,6 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 type Slide = {
   img: string;
@@ -11,10 +18,16 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    img: "/Pertunjukan_luar.png",
+    img: "/Hero.ecoland.jpg",
+    title: "Ecoland, Ruang Hijau Pertemuan Budaya",
+    desc: "Lanskap alam yang membuka ruang bagi seni, tradisi, dan kehidupan masyarakat.",
+    alt: "Suasana kawasan Ecoland",
+  },
+  {
+    img: "/arsip%20Abah%20Udjo/diantara%20orang%20bule.jpg",
     title: "Menanam Budaya, Memanen Masa Depan",
     desc: "Pusat seni, tradisi, dan kebudayaan Sunda terintegrasi di Kawasan Bale Pare, Kota Baru Parahyangan.",
-    alt: "Pertunjukan seni di Lembur Udjo Parahyangan",
+    alt: "Arsip Abah Udjo bersama tamu dari mancanegara",
   },
   {
     img: "/LUP.png",
@@ -33,6 +46,8 @@ export default function HeroSection() {
   const [paused, setPaused] = useState(false);
   const elapsedRef = useRef(0);
   const touchStartRef = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   const goTo = useCallback((i: number) => {
     setCurrent(i);
@@ -87,9 +102,40 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, [paused]);
 
+  // Teks hero memudar & naik mengikuti scroll (scrub), hilang saat hero hampir selesai terlihat
+  useEffect(() => {
+    const section = sectionRef.current;
+    const text = textRef.current;
+    if (!section || !text) return;
+
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.to(text, {
+        y: -48,
+        autoAlpha: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom 35%",
+          scrub: true,
+        },
+      });
+    });
+
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
+
+    return () => {
+      window.removeEventListener("load", refresh);
+      mm.revert();
+    };
+  }, []);
+
   return (
     <section
       id="beranda"
+      ref={sectionRef}
       className="relative w-full overflow-hidden bg-stone-950 flex flex-col justify-end touch-pan-y hero-section"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -120,16 +166,36 @@ export default function HeroSection() {
 
       {/* Konten Hero */}
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6 sm:pb-12 md:pb-16 flex flex-col justify-end">
-        <div key={current} className="max-w-2xl animate-[fadeInUp_0.6s_ease-out_both]">
-          {/* Heading Title */}
-          <h1 className="text-white text-2xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.14] sm:leading-[1.05] drop-shadow-md">
-            {slides[current].title}
-          </h1>
+        <div ref={textRef} className="max-w-2xl">
+          <div key={current} className="animate-[fadeInUp_0.6s_ease-out_both]">
+            {/* Heading Title */}
+            <h1 className="text-white font-tan text-3xl sm:text-5xl md:text-6xl tracking-tight leading-[1.14] sm:leading-[1.05] drop-shadow-md">
+              {slides[current].title}
+            </h1>
 
-          {/* Deskripsi */}
-          <p className="text-white/85 text-xs sm:text-sm md:text-base mt-2 sm:mt-3 leading-relaxed drop-shadow-sm max-w-xl">
-            {slides[current].desc}
-          </p>
+            {/* Deskripsi */}
+            <p className="text-white/85 text-xs sm:text-sm md:text-base mt-2 sm:mt-3 leading-relaxed drop-shadow-sm max-w-xl">
+              {slides[current].desc}
+            </p>
+          </div>
+        </div>
+
+        {/* CTA Utama */}
+        <div className="mt-5 sm:mt-7 flex flex-wrap gap-3">
+          <a
+            href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20pesan%20tiket"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-stone-950 hover:bg-emerald-400 transition-colors"
+          >
+            Pesan via WhatsApp
+          </a>
+          <Link
+            href="/#jadwal"
+            className="inline-flex items-center justify-center rounded-full border border-white/40 px-5 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-white hover:bg-white/10 transition-colors"
+          >
+            Lihat Jadwal &rarr;
+          </Link>
         </div>
 
         {/* Navigasi Slide: Dots Bar & Panah Navigasi */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import MaskText from "./anim/MaskText";
 
 type Zone = {
   img: string;
@@ -137,7 +138,7 @@ export default function MasterplanSection() {
   return (
     <section
       id="masterplan"
-      className="relative w-full bg-white text-gray-900 py-12 sm:py-16 md:py-20 overflow-hidden"
+      className="relative w-full bg-cream text-gray-900 py-12 sm:py-16 md:py-20 overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -146,8 +147,8 @@ export default function MasterplanSection() {
         <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-forest block">
           Masterplan Kawasan
         </span>
-        <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mt-2 text-stone-950 tracking-tight">
-          Eksplorasi Kawasan
+        <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl mt-2 text-forest tracking-tight">
+          <MaskText text="Eksplorasi Kawasan" scrub />
         </h2>
       </div>
 
@@ -172,13 +173,13 @@ export default function MasterplanSection() {
                   active ? "scale-100 z-20" : "scale-95 z-10 opacity-70 sm:opacity-90"
                 }`}
               >
-                <div className="relative h-[240px] sm:h-[420px] md:h-[560px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] bg-stone-950">
+                <div className="relative aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] bg-stone-950">
                   <img
                     src={zone.img}
                     alt={zone.title}
                     loading="lazy"
                     draggable={false}
-                    className="absolute inset-0 w-full h-full object-contain sm:object-cover"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
               </div>

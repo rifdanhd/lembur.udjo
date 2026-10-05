@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import MaskText from "./anim/MaskText";
 
 const facilities = [
   { title: "Bale Karesmen", desc: "Ruang utama tempat musik, tari, angklung, arumba, dan kreativitas bertemu.", tag: "Ruang Utama", img: "/placeholders/bale-karesmen.jpg" },
   { title: "Workshop Angklung", desc: "Belajar langsung proses pembuatan angklung dari para pengrajin.", tag: "Edukasi", img: "/placeholders/workshop.jpg" },
-  { title: "Agrowalk", desc: "Perjalanan berpandu ke berbagai spot edukasi budaya dan sustainability.", tag: "Unggulan", img: "/placeholders/agrowalk.jpg" },
+  { title: "Agrowalk", desc: "Peternakan, sampah organik, bibit pepaya, arboretum bambu, dan sentra perajin dalam satu perjalanan berpemandu ke 5 titik edukasi.", tag: "Unggulan", img: "/placeholders/agrowalk.jpg" },
   { title: "Konservasi Bambu", desc: "Program pelestarian bambu sebagai sumber utama seni angklung.", tag: "Lingkungan", img: "/placeholders/konservasi-bambu.svg" },
   { title: "Peternakan Edukasi", desc: "Sarana edukasi bagi pengunjung untuk mengenal kehidupan agraris.", tag: "Edukasi", img: "/placeholders/peternakan-edukasi.svg" },
   { title: "Area Hijau", desc: "Ruang hijau dan keberlanjutan. Sawah, kebun bambu, kolam.", tag: "Alam", img: "/placeholders/area-hijau.svg" },
@@ -38,15 +39,15 @@ export default function FacilitiesSection() {
   };
 
   return (
-    <section id="fasilitas" className="py-12 sm:py-16 md:py-20 bg-white">
+    <section id="fasilitas" className="py-12 sm:py-16 md:py-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           <div className="lg:col-span-4">
             <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-forest uppercase block">
               Fasilitas &amp; Ekosistem
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-stone-950 leading-[1.12] sm:leading-[1.05] mt-2">
-              Program &amp; Pengalaman Kami
+            <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05] mt-2">
+              <MaskText text="Program & Pengalaman Kami" scrub />
             </h2>
             <p className="text-stone-600 text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
               Lembur Udjo Parahyangan menghadirkan beragam fasilitas edukasi, agrowalk, konservasi rumpun bambu, dan ruang seni pertunjukan dalam satu kesatuan perjalanan yang berkelanjutan.
@@ -90,7 +91,7 @@ export default function FacilitiesSection() {
             <div
               ref={trackRef}
               onScroll={updateArrows}
-              className="flex gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar touch-pan-x -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
+              className="flex gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
             >
               {facilities.map((fac) => (
                 <div
@@ -107,7 +108,7 @@ export default function FacilitiesSection() {
                   </div>
                   <div className="p-5 sm:p-6">
                     <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-stone-500 mb-1.5 inline-block">{fac.tag}</span>
-                    <h3 className="text-sm sm:text-base font-extrabold tracking-tight text-stone-950 mb-1">{fac.title}</h3>
+                    <h3 className="font-tan text-sm sm:text-base tracking-tight text-forest mb-1">{fac.title}</h3>
                     <p className="text-xs text-stone-600 leading-relaxed">{fac.desc}</p>
                   </div>
                 </div>

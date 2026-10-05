@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Reveal from "./anim/Reveal";
+import MaskText from "./anim/MaskText";
 
 type Slide = {
   photo: string;
@@ -167,7 +169,7 @@ export default function QuotesSection() {
   return (
     <section
       id="kata"
-      className="pt-16 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 bg-white touch-pan-y"
+      className="pt-16 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 bg-cream touch-pan-y"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={onTouchStart}
@@ -175,17 +177,19 @@ export default function QuotesSection() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mb-8 sm:mb-12">
-          <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-green-900 uppercase block">
-            Kata Abah Udjo
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.12] sm:leading-[1.05] mt-2">
-            Kutipan yang Terus Menginspirasi
+          <h2 className="font-tan text-[15px] sm:text-2xl md:text-3xl tracking-tight text-forest leading-[1.2] whitespace-nowrap">
+            <MaskText text="Kutipan yang Terus Menginspirasi" scrub />
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 lg:gap-14 items-center">
           {/* Foto Slide — arsip Abah Udjo ikut di quotes */}
-          <div className="relative aspect-[4/5] sm:aspect-[16/10] md:aspect-[4/3] rounded-2xl overflow-hidden border border-stone-200 bg-white shadow-sm">
+          <Reveal
+            className="relative aspect-[4/5] sm:aspect-[16/10] md:aspect-[4/3] rounded-2xl overflow-hidden border border-stone-200 bg-white shadow-sm"
+            y={40}
+            wipe
+            parallax={3}
+          >
             {slides.map((item, i) => (
               <img
                 key={item.photo}
@@ -201,67 +205,71 @@ export default function QuotesSection() {
             <span className="absolute left-3 bottom-3 px-2.5 py-1 rounded-full bg-black/55 text-white text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-sm">
               {active.caption}
             </span>
-          </div>
+          </Reveal>
 
           {/* Teks Quote */}
-          <div key={current} className="animate-[fadeInUp_0.6s_ease-out_both]">
-            <span
-              className="block text-6xl sm:text-7xl font-extrabold text-green-900 leading-none select-none"
-              aria-hidden="true"
-            >
-              &ldquo;
-            </span>
-            <blockquote className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-stone-950 leading-snug -mt-2">
-              {active.quote ?? active.caption}
-            </blockquote>
-            <p className="mt-4 sm:mt-5 text-[11px] font-extrabold uppercase tracking-[0.25em] text-green-900">
-              Udjo Ngalagena &middot; Abah Udjo
-            </p>
+          <div>
+            <Reveal key={current} stagger={0.12} delay={0.05} blur={10}>
+              <span
+                className="block text-6xl sm:text-7xl font-playfair text-green-900 leading-none select-none"
+                aria-hidden="true"
+              >
+                &ldquo;
+              </span>
+              <blockquote className="font-playfair italic font-medium text-lg sm:text-xl md:text-2xl lg:text-3xl text-stone-950 leading-[1.4] -mt-2">
+                {active.quote ?? active.caption}
+              </blockquote>
+              <p className="mt-4 sm:mt-5 text-[11px] font-extrabold uppercase tracking-[0.25em] text-green-900">
+                Udjo Ngalagena &middot; Abah Udjo
+              </p>
+            </Reveal>
 
             {/* Kontrol: Dots + Panah */}
-            <div className="flex items-center justify-between mt-6 sm:mt-8 pt-2">
-              <div className="flex items-center gap-2">
-                {slides.map((_, i) => {
-                  const isActive = current === i;
-                  return (
-                    <button
-                      key={i}
-                      type="button"
-                      aria-label={`Slide ${i + 1}`}
-                      onClick={() => goTo(i)}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        isActive
-                          ? "w-8 bg-green-900"
-                          : "w-3 bg-stone-300 hover:bg-stone-400"
-                      }`}
-                    />
-                  );
-                })}
-              </div>
+            <Reveal delay={0.3} y={20} duration={0.7}>
+              <div className="flex items-center justify-between mt-6 sm:mt-8 pt-2">
+                <div className="flex items-center gap-2">
+                  {slides.map((_, i) => {
+                    const isActive = current === i;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        aria-label={`Slide ${i + 1}`}
+                        onClick={() => goTo(i)}
+                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                          isActive
+                            ? "w-8 bg-green-900"
+                            : "w-3 bg-stone-300 hover:bg-stone-400"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={prev}
-                  aria-label="Slide sebelumnya"
-                  className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M15 18 9 12l6-6" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={next}
-                  aria-label="Slide berikutnya"
-                  className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={prev}
+                    aria-label="Slide sebelumnya"
+                    className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M15 18 9 12l6-6" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={next}
+                    aria-label="Slide berikutnya"
+                    className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </div>

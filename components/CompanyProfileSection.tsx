@@ -1,21 +1,26 @@
+import Reveal from "./anim/Reveal";
+import MaskText from "./anim/MaskText";
+
 export default function CompanyProfileSection() {
   return (
-    <section id="profile" className="py-16 md:py-20 bg-white">
+    <section id="profile" className="py-16 md:py-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <Reveal className="text-center max-w-3xl mx-auto mb-12" stagger={0.09} exclude="h2">
           <span className="text-[11px] font-extrabold tracking-[0.25em] text-forest uppercase">Tentang Kami</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-[1.05] mt-2">Profil Perusahaan</h2>
+          <h2 className="font-tan text-3xl md:text-5xl tracking-tight text-forest leading-[1.05] mt-2">
+            <MaskText text="Profil Perusahaan" scrub />
+          </h2>
           <p className="text-stone-600 text-sm sm:text-base mt-3 leading-relaxed">Lembur Udjo Parahyangan adalah destinasi wisata budaya Sunda terkemuka yang menjaga dan mengembangkan warisan budaya leluhur sejak 1966.</p>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
-          <div className="flex justify-center">
+          <Reveal className="flex justify-center" y={40} parallax={4} wipe>
             <img src="/Kang_Opick.png" alt="Kang Opick - Pendiri Lembur Udjo" className="w-full max-w-xs sm:max-w-sm h-auto object-contain" loading="lazy" />
-          </div>
+          </Reveal>
 
-          <div className="space-y-7">
+          <Reveal className="space-y-7" stagger={0.12} blur={8}>
             <div>
-              <h3 className="text-xl md:text-2xl font-extrabold tracking-tight text-stone-950 mb-2">Visi & Misi</h3>
+              <h3 className="font-tan text-xl md:text-2xl tracking-tight text-forest mb-2">Visi & Misi</h3>
               <p className="text-sm sm:text-base text-stone-600 leading-relaxed">
                 Lembur Udjo Parahyangan lahir dari perjalanan panjang keluarga Udjo dalam menjaga, memperkenalkan, dan mengembangkan angklung serta kebudayaan Sunda kepada dunia.
               </p>
@@ -36,12 +41,12 @@ export default function CompanyProfileSection() {
                 Dirancang seperti sebuah lembur Sunda yang hidup. Hamparan sawah, rumpun bambu, seni pertunjukan, musik tradisi, permainan rakyat, hingga kelestarian alam menjadi bagian terintegrasi dalam satu perjalanan.
               </p>
             </div>
-          </div>
+          </Reveal>
         </div>
 
-        <div className="rounded-lg bg-white border border-stone-200 p-6 sm:p-8">
-          <h3 className="text-xl md:text-2xl font-extrabold tracking-tight text-stone-950 mb-5 text-center">Nilai-Nilai Kami</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Reveal className="rounded-lg bg-white border border-stone-200 p-6 sm:p-8" y={40}>
+          <h3 className="font-tan text-xl md:text-2xl tracking-tight text-forest mb-5 text-center">Nilai-Nilai Kami</h3>
+          <Reveal className="grid grid-cols-1 sm:grid-cols-2 gap-4" stagger={0.09} blur={8}>
             {[
               {
                 icon: (
@@ -95,8 +100,8 @@ export default function CompanyProfileSection() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
+          </Reveal>
+        </Reveal>
       </div>
     </section>
   );

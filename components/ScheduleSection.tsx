@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import MaskText from "./anim/MaskText";
 
 interface ScheduleItem {
   id: string;
@@ -24,11 +25,13 @@ export default function ScheduleSection() {
   const currentSchedule = schedules.find((s) => s.id === selectedId) || schedules[0];
 
   return (
-    <section id="jadwal" className="py-16 bg-white">
+    <section id="jadwal" className="py-16 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-bold tracking-widest text-forest uppercase bg-forest/10 px-3 py-1 rounded-full inline-block mb-2.5">Jadwal & Agenda</span>
-          <h2 className="font-cinzel text-2xl md:text-3xl font-bold text-forest tracking-tight">Pilih Pengalaman Anda</h2>
+          <h2 className="font-tan text-2xl md:text-3xl text-forest tracking-tight">
+            <MaskText text="Pilih Pengalaman Anda" scrub />
+          </h2>
           <p className="text-stone-600 text-sm mt-2.5 leading-relaxed">Ikuti jadwal pertunjukan angklung interaktif, tradisi helaran, dan workshop budaya Sunda setiap hari.</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -44,7 +47,7 @@ export default function ScheduleSection() {
 
               <div className="p-5 space-y-3">
                 <span className="text-[10px] font-bold tracking-widest text-green-400 uppercase">Pengalaman Terpilih</span>
-                <h3 className="font-cinzel text-xl font-bold text-white mt-0.5 leading-snug">{currentSchedule.title}</h3>
+                <h3 className="font-tan text-xl text-white mt-0.5 leading-snug">{currentSchedule.title}</h3>
 
                 <div className="space-y-2 text-xs text-emerald-100 bg-white/5 p-3.5 rounded-xl border border-white/10">
                   <div className="flex justify-between"><span className="text-white/60">Waktu:</span><span className="font-bold text-white">{currentSchedule.time}</span></div>
@@ -68,7 +71,7 @@ export default function ScheduleSection() {
                     </div>
                     {isSelected && <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">✓ Terpilih</span>}
                   </div>
-                  <h3 className="font-cinzel text-base font-bold text-forest mb-1">{item.title}</h3>
+                  <h3 className="font-tan text-base text-forest mb-1">{item.title}</h3>
                   <p className="text-xs text-stone-600 leading-relaxed">{item.desc}</p>
                   <div className="flex items-center justify-between pt-2 mt-2 border-t border-stone-100">
                     <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full">{item.time}</span>

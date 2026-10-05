@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import MaskText from "./anim/MaskText";
 
 type Card = {
   img: string;
@@ -9,6 +10,7 @@ type Card = {
   cta: string;
   href: string;
   hideOverlay?: boolean;
+  hidden?: boolean;
 };
 
 const cards: Card[] = [
@@ -33,7 +35,8 @@ const cards: Card[] = [
     category: "Pertunjukan",
     title: "Helaran Angklung Minggu Pagi",
     cta: "Lihat Jadwal",
-    href: "#pertunjukan",
+    href: "#jadwal",
+    hidden: true,
   },
   {
     img: "/placeholders/workshop.jpg",
@@ -41,6 +44,7 @@ const cards: Card[] = [
     title: "Workshop Angklung & Arumba",
     cta: "Ikut Workshop",
     href: "#fasilitas",
+    hidden: true,
   },
   {
     img: "/placeholders/agrowalk.jpg",
@@ -48,13 +52,15 @@ const cards: Card[] = [
     title: "Agrowalk & Konservasi Bambu",
     cta: "Jelajah Sekarang",
     href: "#fasilitas",
+    hidden: true,
   },
   {
     img: "/placeholders/wayang.jpg",
     category: "Warisan",
     title: "Wayang Golek & Seni Tradisi",
     cta: "Selengkapnya",
-    href: "#warisan",
+    href: "#about",
+    hidden: true,
   },
   {
     img: "/placeholders/bale-karesmen.jpg",
@@ -62,8 +68,11 @@ const cards: Card[] = [
     title: "Bale Karesmen Ruang Utama",
     cta: "Lihat Fasilitas",
     href: "#fasilitas",
+    hidden: true,
   },
 ];
+
+const visibleCards = cards.filter((card) => !card.hidden);
 
 const SCROLL_AMOUNT = 0.9; // 90% lebar viewport slider
 
@@ -92,16 +101,13 @@ export default function TrendingCarousel() {
   };
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white">
+    <section className="pt-16 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-end justify-between mb-5 sm:mb-6">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-forest uppercase block mb-1">
-              Aktivitas Pilihan
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-stone-950 leading-tight">
-              Trending
+            <h2 className="font-tan text-3xl sm:text-4xl md:text-5xl tracking-tight text-forest leading-tight">
+              <MaskText text="Trending" scrub />
             </h2>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
@@ -134,9 +140,9 @@ export default function TrendingCarousel() {
         <div
           ref={trackRef}
           onScroll={updateArrows}
-          className="flex gap-3.5 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar touch-pan-x -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
+          className="flex gap-3.5 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
         >
-          {cards.map((card) => {
+          {visibleCards.map((card) => {
             const isExternal = card.href.startsWith("http");
             return (
               <a
@@ -160,7 +166,7 @@ export default function TrendingCarousel() {
                   {!card.hideOverlay && (
                     <div className="absolute left-5 top-5 right-5 text-left">
                       <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/80">{card.category}</span>
-                      <h3 className="mt-1 text-lg sm:text-xl font-extrabold tracking-tight text-white leading-snug drop-shadow-sm">{card.title}</h3>
+                      <h3 className="font-tan mt-1 text-lg sm:text-xl tracking-tight text-white leading-snug drop-shadow-sm">{card.title}</h3>
                     </div>
                   )}
 

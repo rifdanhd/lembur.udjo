@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function InovasiPage() {
   return (
-    <main className="min-h-screen bg-white overflow-x-hidden">
+    <main className="min-h-screen bg-cream overflow-x-hidden">
       <Navbar />
       <div className="pt-16 sm:pt-20">
         <InnovationSection />

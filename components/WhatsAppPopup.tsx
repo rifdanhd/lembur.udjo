@@ -18,7 +18,7 @@ export default function WhatsAppPopup() {
 
   return (
     <div
-      className={`fixed right-3 bottom-3 sm:right-6 sm:bottom-6 z-50 flex flex-col items-end gap-2 sm:gap-3 transition-all duration-500 pb-[env(safe-area-inset-bottom)] ${
+      className={`fixed right-3 bottom-3 sm:right-6 sm:bottom-6 z-30 flex flex-col items-end gap-2 sm:gap-3 transition-all duration-500 pb-[env(safe-area-inset-bottom)] ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
