@@ -23,7 +23,6 @@ export default function Home() {
       <TrendingCarousel />
       <QuotesSection />
       <AboutSection />
-      <GallerySection />
       <HeritageBadges />
 
       <MasterplanSection />
@@ -31,7 +30,7 @@ export default function Home() {
       <FacilitiesSection />
       <ScheduleSection />
       <SiteplanSection />
-
+      <GallerySection />
       <FaqSection />
       <MapSection />
       <Footer />
