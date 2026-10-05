@@ -29,7 +29,6 @@ export default function Footer() {
                 className="w-12 h-12 object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
-            <p className="font-tan text-xl sm:text-2xl text-forest leading-tight">Angklung Journey</p>
             <p className="text-stone-600 text-xs sm:text-sm leading-relaxed max-w-sm">
               Pusat seni, tradisi, dan kebudayaan Sunda terintegrasi di Kawasan Bale Pare, Kota Baru Parahyangan.
             </p>

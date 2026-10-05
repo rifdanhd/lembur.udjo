@@ -253,7 +253,7 @@ export default function Navbar() {
             scrolled ? "h-14 sm:h-16" : "h-16 sm:h-20"
           }`}
         >
-          {/* Logo Brand */}
+          {/* Logo Brand + Tagline */}
           <Link href="/#beranda" className="flex items-center shrink-0 group" aria-label="Lembur Udjo Parahyangan">
             <img
               src="/LOGO_Lembur.udjo.png"
@@ -262,6 +262,11 @@ export default function Navbar() {
               height={44}
               className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
             />
+            <span className="block ml-2 sm:ml-2.5 leading-none">
+              <span className="block text-[9px] sm:text-[11px] font-extrabold uppercase tracking-[0.2em] sm:tracking-[0.28em] text-bamboo whitespace-nowrap">
+                Angklung Journey
+              </span>
+            </span>
           </Link>
 
           {/* Desktop Navigation — center */}
