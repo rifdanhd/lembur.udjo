@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -178,24 +177,6 @@ export default function HeroSection() {
               {slides[current].desc}
             </p>
           </div>
-        </div>
-
-        {/* CTA Utama */}
-        <div className="mt-5 sm:mt-7 flex flex-wrap gap-3">
-          <a
-            href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20pesan%20tiket"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-stone-950 hover:bg-emerald-400 transition-colors"
-          >
-            Pesan via WhatsApp
-          </a>
-          <Link
-            href="/#jadwal"
-            className="inline-flex items-center justify-center rounded-full border border-white/40 px-5 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-white hover:bg-white/10 transition-colors"
-          >
-            Lihat Jadwal &rarr;
-          </Link>
         </div>
 
         {/* Navigasi Slide: Dots Bar & Panah Navigasi */}
