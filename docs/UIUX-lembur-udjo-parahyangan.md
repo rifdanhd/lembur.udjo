@@ -226,15 +226,29 @@ Tidak ada autoplay → patuh terhadap WCAG 2.2.2.
 
 ### 4.8 Popup WhatsApp
 
-`components/WhatsAppPopup.tsx` — *muncul, bukan mengganggu*:
+`components/WhatsAppPopup.tsx` — *muncul di saat yang tepat, bukan mengganggu*:
 
-| Fase | Waktu | Perilaku |
+| Fase | Pemicu | Perilaku |
 | --- | --- | --- |
-| Tombol FAB | `+1500 ms` | fade-in + translate-y (500 ms), `z-30`, inset `env(safe-area-inset-bottom)` |
-| Panel pesan | desktop `+4000 ms` · mobile `+6000 ms` | `animate-[fadeInUp_0.3s]`, dapat ditutup, tidak muncul ulang |
-| Tutup panel | kapan saja | tombol `aria-label="Tutup"` 28×28 px (≥ 44 px target disarankan) |
+| Tombol FAB | **digulir melewati ±80% layar pertama** (≈ lewat hero); `min 320 px` | fade-in + translate-y (500 ms); **kembali tersembunyi** bila digulir ke puncak halaman; `z-30`, inset `env(safe-area-inset-bottom)` |
+| Panel pesan | **+1500 ms** setelah FAB muncul (mobile **+2500 ms**) | `animate-[fadeInUp_0.3s]`, dapat ditutup, terbuka lagi saat FAB muncul ulang |
+| Tutup panel | kapan saja | tombol `aria-label="Tutup"` tap-area **40 × 40 px** |
 
-Ukuran FAB: `48 px` (≤639) / `56 px` (≥640) → `hover:scale-110 active:scale-95`.
+**Ukuran (disesuaikan 5 Okt 2026):**
+
+| Elemen | Nilai |
+| --- | --- |
+| FAB | **standar** — 48 px (≤639) / 56 px (≥640), ikon 24/28 px, `hover:scale-110 active:scale-95` |
+| Panel | **diperbesar** — 384 px (`min(24rem, …)`) · 320 px (`sm`) · 368 px (`md`), radius `rounded-3xl` |
+| Judul panel | `text-sm sm:text-base` |
+| Body panel | `text-sm` |
+| Tombol chat | `text-xs sm:text-[13px]` · `px-6 py-3.5` · `min-h-[48px]` |
+| Jarak dari tepi | `16 px` / `32 px` |
+
+> Aturan: **icon FAB = standar (48/56 px)**; yang diperbesar hanya **panel pesan**.
+
+Posisi memakai listener `scroll` `passive: true` + `resize`; threshold dihitung ulang setiap event sehingga tetap benar setelah rotate/resize. SSR aman (state awal `false`, tanpa akses `window` di render).
+
 
 ---
 
@@ -321,7 +335,7 @@ Lihat **§12 — Utang UI/UX**.
 - **Judul:** pendek (2–4 kata) — karena TAN MERINGUE `UPPERCASE` + ukuran besar, judul panjang akan pecah jelek.
 - **Deskripsi:** maksimal 2 baris pada desktop, 3 baris pada mobile.
 - **Angka & waktu** ditulis konsisten: `15.30` (titik), `Sel–Min` (singkat), tahun `1966`.
-- **Tombol:** kerja kata kerja + objek — `Pesan via WhatsApp`, `Lihat Jadwal`, `Pelajari Warisan Budaya`. Hindari `Klik Di Sini`, `Selengkapnya`.
+- **Tombol:** kerja kata kerja + objek — `Pesan Tiket`, `Pelajari Warisan Budaya`, `Informasi Kunjungan`, `Pilih Jadwal`. Hindari `Klik Di Sini`, `Selengkapnya`.
 - **Kutipan Abah Udjo** muncul **satu kali saja** di beranda (seksi Kutipan). Jangan diulang di blok Visi.
 - **Nama produk:** `Lembur Udjo Parahyangan` pada konteks resmi; `Lembur Udjo` setelahnya.
 
@@ -330,15 +344,16 @@ Lihat **§12 — Utang UI/UX**.
 ## 9. Funnel konversi (Fase 1)
 
 ```
-Layar 1   Hero              ──► [Pesan via WhatsApp]  ─┐
-          Hero              ──► [Lihat Jadwal] ────────┤ scroll ke #jadwal
-          Sticky nav         ──► WhatsApp
-          FAB + panel WA     ──► WhatsApp   (muncul +1.5 s)
-          Fasilitas          ──► #kontak
-          FAQ                ──► WhatsApp
-          Footer             ──► WhatsApp
+Layar 1   Sticky nav         ──► "Pesan Tiket" ─────────┐
+          FAB + panel WA     ──► WhatsApp   (muncul setelah scroll >80% layar)
+          Drawer (mobile)    ──► "Pesan Tiket" ─────────┤
+          Fasilitas          ──► #kontak ───────────────┤
+          FAQ                ──► WhatsApp ──────────────┤
+          Footer             ──► WhatsApp ──────────────┤
                                                    ▼
                                            wa.me/6281219279765
+
+   Hero tidak punya CTA (dihapus 5 Okt 2026).
 ```
 
 **Pesan WhatsApp selalu di-prefill** (bukan pesan kosong):
@@ -418,7 +433,7 @@ Diurutkan berdasarkan keparahan.
 | S1 | Gambar placeholder (13 berkas `public/placeholders/`) masih dipakai di beranda & halaman cerita angklung | `FacilitiesSection.tsx`, `GallerySection.tsx`, `ScheduleSection.tsx`, `TrendingCarousel.tsx`, `ShowsSection.tsx` (tak dirender), `app/(site)/the-story-of-angklung/page.tsx` | Ganti foto asli sebelum launch — PRD §10 |
 | S2 | Breakpoint PRD (480/640/860/940/1100/1200) ≠ kode (640/768/1024/1280/1536) | `globals.css:4` | Pilih satu; disarankan ikut kode |
 | S3 | `font-cinzel` dideklarasikan tapi terpakai 1× | `globals.css:14` | Audit lalu hapus bila tidak dipakai |
-| S4 | Tombol tutup popup WA 28×28 px (di bawah 44 px) | `WhatsAppPopup.tsx:38` | Perbesar tap area |
+| ~~S4~~ | ~~Tombol tutup popup WA 28×28 px~~ — **selesai 5 Okt 2026**, kini 40 × 40 px | `WhatsAppPopup.tsx` | ✅ |
 | S5 | `fetchPriority` belum dipasang pada gambar LCP | `HeroSection.tsx:148` | Tambah `fetchPriority="high"`; pastikan `width`/`height` eksplisit untuk CLS (11 gambar sudah `loading="lazy"`) |
 | S6 | Drawer sudah `role="dialog"` + `aria-expanded` + `Escape` + focus-return + scroll-lock ✓, tetapi **tanpa focus trap** (Tab bisa keluar ke konten belakang) dan fokus tidak dipindahkan ke item pertama saat dibuka | `Navbar.tsx:402` | Fokuskan item pertama saat `menuOpen` berubah; batasi Tab ke dalam dialog |
 
@@ -442,6 +457,7 @@ Diurutkan berdasarkan keparahan.
 | 5 Okt 2026 | `ScheduleSection` **diaktifkan** | Seluruh menu navigasi menunjuk ke `#jadwal` sebelumnya — anchor mati |
 | 5 Okt 2026 | `MaskText` `line-height` dikunci **1.36** | Satu-satunya nilai yang memuat seluruh glyph TAN MERINGUE (lihat §3) |
 | 5 Okt 2026 | Anchor `#warisan` & `#pertunjukan` **dihapus dari navigasi** | Tidak ada elemen targetnya |
+| 5 Okt 2026 | **Hero tanpa CTA** — tombol "Pesan via WhatsApp" & "Lihat Jadwal" dihapus | Permintaan pemilik; konversi cukup lewat navbar, drawer, dan popup WA |
 
 ---
 

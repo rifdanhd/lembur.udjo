@@ -113,7 +113,7 @@ Layanan pendukung (bukan halaman publik):
 
 | Halaman | Tujuan | Bagian utama | CTA utama |
 | --- | --- | --- | --- |
-| Beranda | Convince + orientasi cepat | Hero, highlight pengalaman, jadwal ringkas, visi, testimoni, peta | Pesan via WhatsApp / Lihat Jadwal |
+| Beranda | Convince + orientasi cepat | Hero, highlight pengalaman, jadwal ringkas, visi, testimoni, peta | Tanpa CTA di hero (dihapus 5 Okt 2026); WhatsApp via navbar & popup |
 | Tentang | Membangun trust warisan | Linimasa 1966→kini, Abah Udjo, relasi SAU, tim kurasi | Jelajahi Pengalaman |
 | Pengalaman (indeks) | Eksplorasi | Kartu pengalaman, durasi, target usia | Detail per pengalaman |
 | Detail pengalaman | Mengubah minat jadi rencana | Deskripsi, foto/video, durasi, jadwal terkait, FAQ mini | Pesan via WhatsApp |
@@ -130,7 +130,7 @@ pembawa `id` yang sama persis.
 
 | # | Blok | Anchor | Isi | CTA |
 | --- | --- | --- | --- | --- |
-| 1 | Hero | `#beranda` | 3 slide background (Ecoland / arsip / lanskap), H1 + deck | **Pesan via WhatsApp**, **Lihat Jadwal** |
+| 1 | Hero | `#beranda` | 3 slide background (Ecoland / arsip / lanskap), H1 + deck | **tanpa CTA** — jalur konversi via navbar, drawer "Pesan Tiket", dan popup WA |
 | 2 | Trending | *(tanpa id)* | 2 kartu tautan Instagram (kabar & tradisi) | Lihat di Instagram |
 | 3 | Kutipan | `#kata` | Slider 3 kutipan + foto arsip Abah Udjo | — |
 | 4 | Tentang & Visi | `#about`, `#visi` | Cerita 1966, 3 paragraf nilai; banner "Angklung to the World" | Pelajari Warisan Budaya → `/the-story-of-angklung` |
@@ -163,7 +163,7 @@ pembawa `id` yang sama persis.
 
 ## 8. Kebutuhan Fungsional
 
-- **F-1 CTA WhatsApp melayang:** tombol besar & responsive, muncul setelah pengunjung scroll melewati hero (sudah diimplementasikan di teaser). Pesan terisi otomatis: "Halo Lembur Udjo, saya ingin pesan tiket".
+- **F-1 CTA WhatsApp melayang:** tombol besar & responsive, **muncul hanya setelah pengunjung menggulir melewati ±80% layar pertama** (≈ lewat hero) dan kembali tersembunyi di puncak halaman; panel pesan terbuka otomatis 1,5 s (mobile 2,5 s) setelah tombol muncul. Ukuran FAB **standar 48 px (mobile) / 56 px (desktop)** — panel pesan yang diperbesar, bukan ikonnya. **Status:** sudah diimplementasikan (diperbarui 5 Okt 2026, sebelumnya memakai timer tetap). Pesan terisi otomatis.
 - **F-2 Reservasi:** Fase 2 menyediakan formulir reservasi (nama, tanggal, jumlah orang, jenis individu/rombongan) yang meneruskan ke WhatsApp/email corsec; **tanpa pembayaran online**.
 - **F-3 Jadwal:** jadwal mingguan (pertunjukan 15.30, helaran 10.00, agrowalk 08.00–14.00 Sel–Min) dikelola dari CMS agar mudah diperbarui. **Status Fase 1:** tampil di beranda (`#jadwal`), masih hardcoded di `components/ScheduleSection.tsx` — pemindahan ke CMS menunggu Fase 2.
 - **F-4 Peta:** embed Google Maps kawasan Bale Pare + tombol "Buka Peta".
