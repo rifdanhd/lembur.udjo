@@ -1,50 +1,81 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const WA_URL =
+  "https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20tanya%20informasi";
 
 export default function WhatsAppPopup() {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  const shownRef = useRef(false);
 
+  // Muncul hanya setelah pengunjung menggulir melewati ±80% layar pertama (≈ lewat hero),
+  // dan kembali tersembunyi bila digulir ke puncak halaman.
   useEffect(() => {
-    const t1 = setTimeout(() => setVisible(true), 1500);
     const isMobile = window.matchMedia("(max-width: 639px)").matches;
-    const t2 = setTimeout(() => setOpen(true), isMobile ? 6000 : 4000);
+    let openTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const getThreshold = () => Math.max(320, Math.round(window.innerHeight * 0.8));
+
+    const onScroll = () => {
+      const past = window.scrollY > getThreshold();
+      if (past === shownRef.current) return;
+      shownRef.current = past;
+      setVisible(past);
+
+      if (past) {
+        openTimer = setTimeout(() => setOpen(true), isMobile ? 2500 : 1500);
+      } else {
+        clearTimeout(openTimer);
+        setOpen(false);
+      }
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      clearTimeout(openTimer);
     };
   }, []);
 
   return (
     <div
-      className={`fixed right-3 bottom-3 sm:right-6 sm:bottom-6 z-30 flex flex-col items-end gap-2 sm:gap-3 transition-all duration-500 pb-[env(safe-area-inset-bottom)] ${
+      className={`fixed right-4 bottom-4 sm:right-8 sm:bottom-8 z-30 flex flex-col items-end gap-3 sm:gap-4 transition-all duration-500 pb-[env(safe-area-inset-bottom)] ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
+      aria-hidden={!visible}
     >
       {open && (
-        <div className="w-[min(18rem,calc(100vw-1.75rem))] sm:w-72 rounded-2xl bg-white shadow-2xl border border-stone-200 overflow-hidden animate-[fadeInUp_0.3s_ease-out]">
-          <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 sm:px-4 sm:py-3 bg-[#25D366]">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-white leading-tight">
+        <div className="w-[min(24rem,calc(100vw-2rem))] sm:w-80 md:w-[23rem] rounded-3xl bg-white shadow-2xl border border-stone-200 overflow-hidden animate-[fadeInUp_0.3s_ease-out]">
+          <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5 sm:py-4 bg-[#25D366]">
+            <span className="text-xs sm:text-[13px] font-extrabold uppercase tracking-widest text-white leading-tight">
               Layanan Informasi &amp; Reservasi
             </span>
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Tutup"
-              className="shrink-0 text-white/80 hover:text-white p-1.5 -m-1 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors"
+              className="shrink-0 text-white/80 hover:text-white p-2.5 -m-1 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full hover:bg-white/15 transition-colors"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
-          <div className="p-3.5 sm:p-4">
-            <p className="text-xs font-extrabold text-stone-950">Butuh bantuan? Kami siap membantu.</p>
-            <p className="text-xs text-stone-600 mt-1 leading-relaxed">Konsultasikan jadwal kunjungan bersama tim kami.</p>
+          <div className="p-4 sm:p-5">
+            <p className="text-sm sm:text-base font-extrabold text-stone-950 leading-snug">
+              Butuh bantuan? Kami siap membantu.
+            </p>
+            <p className="text-sm text-stone-600 mt-1.5 leading-relaxed">
+              Konsultasikan jadwal kunjungan bersama tim kami.
+            </p>
             <a
-              href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20tanya%20informasi"
+              href={WA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2.5 sm:mt-3 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#25D366] text-white text-[11px] font-extrabold uppercase tracking-wider hover:bg-[#1eb857] transition-colors"
+              className="mt-4 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#25D366] text-white text-xs sm:text-[13px] font-extrabold uppercase tracking-wider hover:bg-[#1eb857] transition-colors min-h-[48px]"
             >
               Chat via WhatsApp &rarr;
             </a>
@@ -53,7 +84,7 @@ export default function WhatsAppPopup() {
       )}
 
       <a
-        href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20tanya%20informasi"
+        href={WA_URL}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat via WhatsApp"
