@@ -23,13 +23,15 @@ export default function Home() {
       <TrendingCarousel />
       <QuotesSection />
       <AboutSection />
+      <GallerySection />
       <HeritageBadges />
+
       <MasterplanSection />
       <KaulinanSection />
       <FacilitiesSection />
       <ScheduleSection />
       <SiteplanSection />
-      <GallerySection />
+
       <FaqSection />
       <MapSection />
       <Footer />
