@@ -8,11 +8,24 @@ export const metadata: Metadata = {
   title: "The Story of Angklung — Lembur Udjo Parahyangan",
   description:
     "Kisah angklung: asal-usul instrumen bambu Sunda, sejarah dari tatar Sunda hingga ditetapkan UNESCO pada 2010, cara memainkannya, hingga peran Saung Angklung Udjo sejak 1966.",
+  alternates: {
+    canonical: "/the-story-of-angklung",
+  },
   openGraph: {
     title: "The Story of Angklung — Lembur Udjo Parahyangan",
     description: "Kisah angklung, warisan budaya takbenda dunia dari tanah Sunda.",
+    url: "/the-story-of-angklung",
+    siteName: "Lembur Udjo Parahyangan",
     locale: "id_ID",
     type: "article",
+    images: [
+      {
+        url: "/LUP.png",
+        width: 1019,
+        height: 677,
+        alt: "Masterplan kawasan Lembur Udjo Parahyangan",
+      },
+    ],
   },
 };
 

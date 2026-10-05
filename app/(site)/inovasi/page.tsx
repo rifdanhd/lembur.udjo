@@ -7,6 +7,26 @@ export const metadata: Metadata = {
   title: "Inovasi Digital — Lembur Udjo Parahyangan",
   description:
     "Pindai QR untuk mendengar suara asli Abah Udjo, arsip musik tradisi, dan cerita di balik rekaman yang dilestarikan Lembur Udjo Parahyangan.",
+  alternates: {
+    canonical: "/inovasi",
+  },
+  openGraph: {
+    title: "Inovasi Digital — Lembur Udjo Parahyangan",
+    description:
+      "Pindai QR untuk mendengar suara asli Abah Udjo, arsip musik tradisi, dan cerita di balik rekaman yang dilestarikan Lembur Udjo Parahyangan.",
+    url: "/inovasi",
+    siteName: "Lembur Udjo Parahyangan",
+    locale: "id_ID",
+    type: "website",
+    images: [
+      {
+        url: "/LUP.png",
+        width: 1019,
+        height: 677,
+        alt: "Masterplan kawasan Lembur Udjo Parahyangan",
+      },
+    ],
+  },
 };
 
 export default function InovasiPage() {

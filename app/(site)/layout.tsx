@@ -34,17 +34,43 @@ const tanMeringue = localFont({
   variable: "--font-tan-meringue",
   display: "swap",
 });
+const SITE_URL = "https://lemburudjoparahyangan.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Lembur Udjo Parahyangan — Angklung Journey | Wisata Budaya Sunda Bandung",
   description:
     "Angklung Journey bersama Lembur Udjo Parahyangan, destinasi wisata budaya Sunda terkemuka di Bandung. Nikmati pertunjukan angklung, wayang golek, tari tradisional, dan pengalaman budaya Sunda yang autentik.",
   keywords: ["Angklung Journey", "Lembur Udjo", "Saung Angklung Udjo", "wisata budaya Bandung", "angklung", "wayang golek", "budaya Sunda", "Parahyangan"],
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     title: "Lembur Udjo Parahyangan — Angklung Journey | Wisata Budaya Sunda Bandung",
     description:
       "Angklung Journey bersama Lembur Udjo Parahyangan: destinasi wisata budaya Sunda, warisan UNESCO di Bandung.",
+    url: "/",
+    siteName: "Lembur Udjo Parahyangan",
     locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "/LUP.png",
+        width: 1019,
+        height: 677,
+        alt: "Masterplan kawasan Lembur Udjo Parahyangan",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lembur Udjo Parahyangan — Angklung Journey | Wisata Budaya Sunda Bandung",
+    description:
+      "Angklung Journey bersama Lembur Udjo Parahyangan: destinasi wisata budaya Sunda, warisan UNESCO di Bandung.",
+    images: ["/LUP.png"],
   },
   verification: {
     google: "H733vGfxAC4yCL9qjZdnUJypTtJQbVvT_Ws9oEgu-wk",
