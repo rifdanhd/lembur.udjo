@@ -25,8 +25,8 @@ export default function Home() {
       <HeritageBadges />
 
       <MasterplanSection />
-      <FacilitiesSection />
       <SiteplanSection />
+      <FacilitiesSection />
       <GallerySection />
       <KaulinanSection />
       <FaqSection />
