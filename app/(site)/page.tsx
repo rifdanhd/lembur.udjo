@@ -6,7 +6,6 @@ import AboutSection from "@/components/AboutSection";
 import HeritageBadges from "@/components/HeritageBadges";
 import KaulinanSection from "@/components/KaulinanSection";
 import FacilitiesSection from "@/components/FacilitiesSection";
-import ScheduleSection from "@/components/ScheduleSection";
 import MasterplanSection from "@/components/MasterplanSection";
 import SiteplanSection from "@/components/SiteplanSection";
 import GallerySection from "@/components/GallerySection";
@@ -28,7 +27,6 @@ export default function Home() {
       <MasterplanSection />
       <KaulinanSection />
       <FacilitiesSection />
-      <ScheduleSection />
       <SiteplanSection />
       <GallerySection />
       <FaqSection />
