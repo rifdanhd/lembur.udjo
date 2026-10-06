@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display, Lobster, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
+import ComingSoon from "@/components/ComingSoon";
 import "./globals.css";
 
 const inter = Inter({
@@ -86,6 +87,7 @@ export default function RootLayout({
     <html lang="id" className={`${inter.variable} ${playfair.variable} ${lobster.variable} ${jakarta.variable} ${tanMeringue.variable}`}>
     <body className="font-sans text-stone-900 bg-cream">
       {children}
+      <ComingSoon />
     </body>
     </html>
   );
