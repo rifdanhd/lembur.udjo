@@ -9,6 +9,7 @@ import { Users } from "./collections/Users";
 import { Leads } from "./collections/Leads";
 import { Notes } from "./collections/Notes";
 import { FollowUps } from "./collections/FollowUps";
+import { VisualKawasan } from "./collections/VisualKawasan";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -20,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Leads, Notes, FollowUps],
+  collections: [Users, Leads, Notes, FollowUps, VisualKawasan],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "lembur-udjo-payload-dev-secret-2026",
   typescript: {

@@ -71,6 +71,7 @@ export interface Config {
     leads: Lead;
     notes: Note;
     followups: Followup;
+    'visual-kawasan': VisualKawasan;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -87,6 +88,7 @@ export interface Config {
     leads: LeadsSelect<false> | LeadsSelect<true>;
     notes: NotesSelect<false> | NotesSelect<true>;
     followups: FollowupsSelect<false> | FollowupsSelect<true>;
+    'visual-kawasan': VisualKawasanSelect<false> | VisualKawasanSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -204,6 +206,53 @@ export interface Followup {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visual-kawasan".
+ */
+export interface VisualKawasan {
+  id: number;
+  alt: string;
+  area: 'area-depan' | 'panggung' | 'kolam' | 'fasilitas' | 'lainnya';
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -241,6 +290,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'followups';
         value: number | Followup;
+      } | null)
+    | ({
+        relationTo: 'visual-kawasan';
+        value: number | VisualKawasan;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -345,6 +398,60 @@ export interface FollowupsSelect<T extends boolean = true> {
   done?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visual-kawasan_select".
+ */
+export interface VisualKawasanSelect<T extends boolean = true> {
+  alt?: T;
+  area?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        hero?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
