@@ -144,11 +144,8 @@ export default function MasterplanSection() {
     >
       {/* Header */}
       <div className="w-full mx-auto px-4 mb-8 sm:mb-12 text-center">
-        <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-forest block">
-          Masterplan Kawasan
-        </span>
         <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl mt-2 text-forest tracking-tight">
-          <MaskText text="Eksplorasi Kawasan" scrub />
+          <MaskText text="Masterplan Kawasan" scrub />
         </h2>
       </div>
 
