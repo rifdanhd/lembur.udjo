@@ -6,7 +6,7 @@ export default function Footer() {
     { href: "/#about", label: "Tentang Kami" },
     { href: "/inovasi", label: "Inovasi" },
     { href: "/#fasilitas", label: "Fasilitas" },
-    { href: "/#masterplan", label: "Masterplan" },
+    { href: "/#masterplan", label: "Visualisasi Kawasan" },
     { href: "/#siteplan", label: "Siteplan" },
     { href: "/#galeri", label: "Galeri" },
     { href: "/#faq", label: "FAQ" },

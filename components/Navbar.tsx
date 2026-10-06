@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
     label: "Kawasan",
     children: [
       { label: "Fasilitas", href: "/#fasilitas" },
-      { label: "Masterplan", href: "/#masterplan" },
+      { label: "Visualisasi Kawasan", href: "/#masterplan" },
       { label: "Siteplan", href: "/#siteplan" },
     ],
   },

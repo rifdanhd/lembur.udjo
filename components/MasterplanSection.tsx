@@ -21,15 +21,15 @@ const toSrc = (path: string) =>
 const zones: Zone[] = [
   {
     img: "/Masterplan.jpg",
-    category: "Masterplan 01",
-    title: "Masterplan Kawasan",
+    category: "Visualisasi Kawasan 01",
+    title: "Visualisasi Kawasan",
     desc: "Denah lengkap kawasan Lembur Udjo Parahyangan — panggung, kriya bambu, dan kampung budaya dalam satu perjalanan.",
     cta: "Jelajahi Kawasan",
     href: "#fasilitas",
   },
   {
     img: "/Masterplan2.jpg",
-    category: "Masterplan 02",
+    category: "Visualisasi Kawasan 02",
     title: "Zona & Fasilitas",
     desc: "Peta zona dan fasilitas kawasan: area pertunjukan, workshop, agrowalk, hingga galeri budaya.",
     cta: "Jelajahi Kawasan",
@@ -37,7 +37,7 @@ const zones: Zone[] = [
   },
   {
     img: "/Masterplan3.jpg",
-    category: "Masterplan 03",
+    category: "Visualisasi Kawasan 03",
     title: "Denah Area Kawasan",
     desc: "Denah detail area kawasan beserta akses jalur penunjuk arah untuk memudahkan perjalanan berkunjung.",
     cta: "Jelajahi Kawasan",
@@ -66,7 +66,7 @@ const zones: Zone[] = [
     "Copy of 2_10 - Photo.jpg",
   ].map((file, i) => ({
     img: toSrc(`/Masterplan/${file}`),
-    category: `Masterplan ${String(i + 4).padStart(2, "0")}`,
+    category: `Visualisasi Kawasan ${String(i + 4).padStart(2, "0")}`,
     title: `Foto Kawasan ${i + 1}`,
     desc: "Dokumentasi visual kawasan Lembur Udjo Parahyangan.",
     cta: "Jelajahi Kawasan",
@@ -145,7 +145,7 @@ export default function MasterplanSection() {
       {/* Header */}
       <div className="w-full mx-auto px-4 mb-8 sm:mb-12 text-center">
         <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl mt-2 text-forest tracking-tight">
-          <MaskText text="Masterplan Kawasan" scrub />
+          <MaskText text="Visualisasi Kawasan" scrub />
         </h2>
       </div>
 
