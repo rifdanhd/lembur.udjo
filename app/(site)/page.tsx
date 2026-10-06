@@ -25,10 +25,10 @@ export default function Home() {
       <HeritageBadges />
 
       <MasterplanSection />
-      <KaulinanSection />
       <FacilitiesSection />
       <SiteplanSection />
       <GallerySection />
+      <KaulinanSection />
       <FaqSection />
       <MapSection />
       <Footer />
