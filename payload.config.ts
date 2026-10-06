@@ -17,6 +17,20 @@ const dirname = path.dirname(filename);
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      graphics: {
+        Logo: {
+          path: "./components/admin/PayloadLogo.tsx",
+          exportName: "default",
+        },
+      },
+      beforeDashboard: [
+        {
+          path: "./components/admin/CMSWelcome.tsx",
+          exportName: "default",
+        },
+      ],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
