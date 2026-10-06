@@ -16,6 +16,9 @@ export default function ComingSoon() {
 
   if (!SHOW_COMING_SOON) return null;
 
+  // The public information page must remain available while the homepage is gated.
+  if (pathname !== "/") return null;
+
   if (pathname && OPEN_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`))) {
     return null;
   }
