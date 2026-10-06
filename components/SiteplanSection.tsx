@@ -15,11 +15,11 @@ const zones: Zone[] = [
   { num: "01", name: "Ticketing & Souvenir", en: "Ticketing & Souvenir", desc: "Loket tiket masuk sekaligus area pembelian cinderamata." },
   { num: "02", name: "Bale Ageung", en: "Restoran", desc: "Restoran dengan sajian kuliner Sunda untuk pengunjung kawasan." },
   { num: "03", name: "Masigit", en: "Mushola", desc: "Ruang ibadah yang tenang dan nyaman di tengah kawasan." },
-  { num: "04", name: "Karesmen Udjo", en: "Performance Hall", desc: "Ruang utama untuk pertunjukan seni dan budaya Lembur Udjo." },
-  { num: "05", name: "Mini Amphi", en: "Mini Amphitheater", desc: "Panggung pertunjukan terbuka untuk kegiatan seni dan komunitas." },
-  { num: "06", name: "Bale Rancage", en: "Pendopo", desc: "Pendopo untuk berkumpul, beristirahat, dan menikmati suasana kawasan." },
-  { num: "07", name: "Jaga Lembur", en: "Security Post", desc: "Pos penjagaan dan titik layanan keamanan kawasan." },
-  { num: "08", name: "Bale Sawala", en: "Office", desc: "Ruang kantor dan pengelolaan operasional Lembur Udjo Parahyangan." },
+  { num: "04", name: "Bale Sawala", en: "Office", desc: "Ruang kantor dan pengelolaan operasional Lembur Udjo Parahyangan." },
+  { num: "05", name: "Karesmen Udjo", en: "Performance Hall", desc: "Ruang utama untuk pertunjukan seni dan budaya Lembur Udjo." },
+  { num: "06", name: "Mini Amphi", en: "Mini Amphitheater", desc: "Panggung pertunjukan terbuka untuk kegiatan seni dan komunitas." },
+  { num: "07", name: "Bale Rancage", en: "Pendopo", desc: "Pendopo untuk berkumpul, beristirahat, dan menikmati suasana kawasan." },
+  { num: "08", name: "Jaga Lembur", en: "Security Post", desc: "Pos penjagaan dan titik layanan keamanan kawasan." },
   { num: "09", name: "Souvenir Shop", en: "Souvenir Shop", desc: "Toko cinderamata dengan pilihan produk khas Lembur Udjo." },
   { num: "10", name: "Gerbang Utama", en: "Main Gate", desc: "Pintu masuk utama menuju pengalaman budaya di Lembur Udjo Parahyangan." },
 ];
@@ -65,6 +65,14 @@ export default function SiteplanSection() {
           </p>
         </div>
 
+        <div className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm sm:mb-8">
+          <img
+            src="/SITEPLAN.png"
+            alt="Siteplan kawasan Lembur Udjo Parahyangan dengan penanda lokasi 1 sampai 10"
+            className="block h-auto w-full object-cover"
+          />
+        </div>
+
         <div
           ref={trackRef}
           onScroll={updateArrows}
@@ -75,26 +83,6 @@ export default function SiteplanSection() {
               key={zone.num}
               className="group snap-start shrink-0 w-[80%] sm:w-[47%] lg:w-[calc((100%-2rem)/3)] p-4 sm:p-5 bg-white rounded-xl border border-stone-200 hover:border-stone-950 hover:shadow-lg transition-all duration-300"
             >
-              <div className="mb-4 overflow-hidden rounded-lg bg-stone-100 aspect-[4/3] flex items-center justify-center">
-                {zone.img ? (
-                  <img
-                    src={zone.img}
-                    alt={zone.name}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center gap-2 text-stone-400 group-hover:text-stone-500 transition-colors">
-                    <svg className="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <rect x="3" y="3" width="18" height="18" rx="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <path d="m21 15-5-5L5 21" />
-                    </svg>
-                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em]">Foto Zona {zone.num}</span>
-                  </div>
-                )}
-              </div>
-
               <div className="flex items-start gap-3.5">
                 <span className="flex-shrink-0 w-9 h-9 rounded-lg bg-stone-100 group-hover:bg-forest group-hover:text-white text-stone-500 flex items-center justify-center text-xs font-extrabold transition-colors">
                   {zone.num}
