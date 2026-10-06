@@ -12,18 +12,16 @@ type Zone = {
 };
 
 const zones: Zone[] = [
-  { num: "01", name: "Lawang Kori", en: "Gate", desc: "Gerbang masuk kawasan dengan nuansa gerbang Sunda tradisional." },
-  { num: "02", name: "Balandongan", en: "Reception", desc: "Pusat sambutan dan penerimaan pengunjung." },
-  { num: "03", name: "Balé", en: "Management Office", desc: "Kantor pengelolaan kawasan Lembur Udjo Parahyangan." },
-  { num: "04", name: "Balé Nyungcung", en: "Mushola", desc: "Ruang ibadah yang tenang di tengah kawasan." },
-  { num: "05", name: "Alun-Alun", en: "Plaza", desc: "Alun-alun sebagai titik kumpul dan ruang bermain interaktif." },
-  { num: "06", name: "Warung", en: "Merch. Kiosk", desc: "Kios merchandise dan cinderamata khas Lembur Udjo." },
-  { num: "07", name: "Balé Ageung", en: "Restaurant", desc: "Restoran dengan sajian kuliner Sunda." },
-  { num: "08", name: "Balé Pinton", en: "Amphitheater", desc: "Panggung pertunjukan terbuka berbentuk amfiteater." },
-  { num: "09", name: "Kebon", en: "Mini Garden", desc: "Kebun mini koleksi tanaman dan edukasi hijau." },
-  { num: "10", name: "Maripi", en: "Open Performance", desc: "Area pertunjukan terbuka untuk pagelaran seni." },
-  { num: "11", name: "Balong", en: "Natural Ponds", desc: "Kolam-kolam alami sebagai elemen lanskap air." },
-  { num: "12", name: "Glamping", en: "Glamping", desc: "Area glamping untuk menginap merasakan alam Parahyangan." },
+  { num: "01", name: "Ticketing & Souvenir", en: "Ticketing & Souvenir", desc: "Loket tiket masuk sekaligus area pembelian cinderamata." },
+  { num: "02", name: "Bale Ageung", en: "Restoran", desc: "Restoran dengan sajian kuliner Sunda untuk pengunjung kawasan." },
+  { num: "03", name: "Masigit", en: "Mushola", desc: "Ruang ibadah yang tenang dan nyaman di tengah kawasan." },
+  { num: "04", name: "Karesmen Udjo", en: "Performance Hall", desc: "Ruang utama untuk pertunjukan seni dan budaya Lembur Udjo." },
+  { num: "05", name: "Mini Amphi", en: "Mini Amphitheater", desc: "Panggung pertunjukan terbuka untuk kegiatan seni dan komunitas." },
+  { num: "06", name: "Bale Rancage", en: "Pendopo", desc: "Pendopo untuk berkumpul, beristirahat, dan menikmati suasana kawasan." },
+  { num: "07", name: "Jaga Lembur", en: "Security Post", desc: "Pos penjagaan dan titik layanan keamanan kawasan." },
+  { num: "08", name: "Bale Sawala", en: "Office", desc: "Ruang kantor dan pengelolaan operasional Lembur Udjo Parahyangan." },
+  { num: "09", name: "Souvenir Shop", en: "Souvenir Shop", desc: "Toko cinderamata dengan pilihan produk khas Lembur Udjo." },
+  { num: "10", name: "Gerbang Utama", en: "Main Gate", desc: "Pintu masuk utama menuju pengalaman budaya di Lembur Udjo Parahyangan." },
 ];
 
 const SCROLL_AMOUNT = 0.85;
@@ -63,7 +61,7 @@ export default function SiteplanSection() {
             <MaskText text="Zona & Titik Kawasan" scrub />
           </h2>
           <p className="text-stone-600 text-xs sm:text-sm mt-3 leading-relaxed">
-            Sebaran 12 zona utama dalam siteplan Lembur Udjo Parahyangan — dari gerbang, ruang publik, pertunjukan, hingga area menginap.
+            Sebaran 10 titik utama dalam siteplan Lembur Udjo Parahyangan — dari gerbang, ruang publik, pertunjukan, hingga fasilitas pengunjung.
           </p>
         </div>
 
