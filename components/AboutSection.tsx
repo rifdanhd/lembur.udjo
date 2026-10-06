@@ -42,8 +42,8 @@ export default function AboutSection() {
         </div>
 
         {/* Visi Abah Udjo */}
-        <div id="visi" className="relative mt-10 sm:mt-14 overflow-hidden rounded-xl sm:rounded-2xl bg-forest text-white">
-          <div className="relative">
+        <div id="visi" className="relative mt-10 min-h-[360px] overflow-hidden rounded-2xl bg-forest text-white sm:mt-14 sm:min-h-[390px] md:min-h-[420px]">
+          <div className="relative flex min-h-[360px] items-center sm:min-h-[390px] md:min-h-[420px]">
             <img
               src="/Pertunjukanluar.webp"
               alt="Pertunjukan angklung Lembur Udjo di berbagai negara"
@@ -56,7 +56,7 @@ export default function AboutSection() {
               aria-hidden="true"
             />
 
-            <div className="relative max-w-3xl mx-auto text-center p-6 sm:p-10 md:p-12">
+            <div className="relative mx-auto max-w-3xl px-6 py-10 text-center sm:px-10 sm:py-12 md:px-12 md:py-14">
               <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.18em] sm:tracking-[0.25em] text-emerald-400 uppercase block">
                 Visi Abah Udjo &middot; Sejak 1966
               </span>
