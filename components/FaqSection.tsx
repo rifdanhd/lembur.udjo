@@ -44,7 +44,7 @@ export default function FaqSection() {
             <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05] mt-2">
               <MaskText text="FAQ Kunjungan Anda" scrub />
             </h2>
-            <p className="text-stone-600 text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
+            <p className="text-stone-600 text-sm md:text-base mt-2.5 sm:mt-3 leading-relaxed">
               Informasi lokasi, jadwal pertunjukan, dan cara reservasi sebelum berkunjung ke Lembur Udjo Parahyangan.
             </p>
             <div className="pt-4 sm:pt-5">
@@ -91,7 +91,7 @@ export default function FaqSection() {
                       hidden={!isOpen}
                       className="px-4 sm:px-6 pb-4 sm:pb-5 -mt-1"
                     >
-                      <p className="text-xs sm:text-sm text-stone-600 leading-relaxed max-w-2xl">{faq.a}</p>
+                      <p className="text-sm text-stone-600 leading-relaxed max-w-2xl">{faq.a}</p>
                     </div>
                   </div>
                 );

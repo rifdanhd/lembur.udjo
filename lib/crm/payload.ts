@@ -7,6 +7,31 @@ export async function getPayloadClient() {
   return getPayload({ config });
 }
 
+// Dashboard totals and task histories must include every page and every join.
+// Read in batches so a single query does not grow with the entire contact list.
+export async function getCrmLeads(): Promise<Lead[]> {
+  const payload = await getPayloadClient();
+  const leads: Lead[] = [];
+  let page = 1;
+
+  while (true) {
+    const result = await payload.find({
+      collection: "leads",
+      depth: 1,
+      limit: 100,
+      page,
+      sort: ["-createdAt", "-id"],
+      joins: {
+        notes: { limit: 0 },
+        followups: { limit: 0 },
+      },
+    });
+    leads.push(...result.docs.map((doc) => toLead(doc as unknown as LeadDoc)));
+    if (!result.hasNextPage) return leads;
+    page += 1;
+  }
+}
+
 interface Join<T> {
   docs?: T[];
 }
@@ -48,7 +73,10 @@ function toNotes(doc: LeadDoc): Note[] {
       body: String(n.body ?? ""),
       created_at: n.createdAt ?? "",
     }))
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
 }
 
 function toFollowups(doc: LeadDoc): FollowUp[] {

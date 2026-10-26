@@ -13,12 +13,22 @@ import FaqSection from "@/components/FaqSection";
 import MapSection from "@/components/MapSection";
 import WhatsAppPopup from "@/components/WhatsAppPopup";
 import Footer from "@/components/Footer";
+import { connection } from "next/server";
+import { DEFAULT_WEBSITE_IMAGES, sectionImages } from "@/lib/website/content";
+import { getWebsiteImages } from "@/lib/website/images";
 
-export default function Home() {
+export default async function Home() {
+  await connection();
+  let images = DEFAULT_WEBSITE_IMAGES;
+  try {
+    images = await getWebsiteImages();
+  } catch (error) {
+    console.error("Gambar beranda belum berhasil dimuat; menggunakan konten bawaan", error);
+  }
   return (
     <main className="min-h-screen bg-cream overflow-x-hidden">
       <Navbar />
-      <HeroSection />
+      <HeroSection items={sectionImages(images, "banner")} />
       <TrendingCarousel />
       <QuotesSection />
       <AboutSection />
@@ -26,8 +36,8 @@ export default function Home() {
 
       <MasterplanSection />
       <SiteplanSection />
-      <FacilitiesSection />
-      <GallerySection />
+      <FacilitiesSection items={sectionImages(images, "fasilitas")} />
+      <GallerySection items={sectionImages(images, "galeri")} />
       <KaulinanSection />
       <FaqSection />
       <MapSection />

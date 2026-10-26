@@ -1,20 +1,17 @@
 import { isAuthed, unauthorized } from "@/lib/crm/auth";
-import { getPayloadClient, toLead, type LeadDoc } from "@/lib/crm/payload";
+import { getCrmLeads, getPayloadClient } from "@/lib/crm/payload";
 import { SOURCES, type LeadSource, type LeadStatus } from "@/lib/crm/types";
 
 export async function GET() {
   if (!(await isAuthed())) return unauthorized();
   try {
-    const payload = await getPayloadClient();
-    const res = await payload.find({
-      collection: "leads",
-      depth: 1,
-      limit: 1000,
-      sort: "-createdAt",
-    });
-    return Response.json({ leads: res.docs.map((d) => toLead(d as unknown as LeadDoc)) });
+    return Response.json({ leads: await getCrmLeads() });
   } catch (err) {
-    return Response.json({ error: (err as Error).message }, { status: 500 });
+    console.error("Gagal memuat kontak CRM", err);
+    return Response.json(
+      { error: "Data kontak belum berhasil dimuat. Silakan coba lagi." },
+      { status: 500 },
+    );
   }
 }
 
@@ -29,7 +26,8 @@ export async function POST(request: Request) {
   }
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  if (!name) return Response.json({ error: "Nama wajib diisi" }, { status: 400 });
+  if (!name)
+    return Response.json({ error: "Nama wajib diisi" }, { status: 400 });
 
   try {
     const payload = await getPayloadClient();
@@ -44,7 +42,8 @@ export async function POST(request: Request) {
           ? (body.source as LeadSource)
           : "Lainnya",
         status: (body.status === "hilang" ? "hilang" : "baru") as LeadStatus,
-        value: typeof body.value === "number" && body.value > 0 ? body.value : null,
+        value:
+          typeof body.value === "number" && body.value > 0 ? body.value : null,
       },
     });
     return Response.json({ id: doc.id }, { status: 201 });

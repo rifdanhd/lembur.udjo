@@ -1,24 +1,26 @@
+import Image from "next/image";
 import MaskText from "./anim/MaskText";
+
 export default function AboutSection() {
   return (
     <section id="about" className="py-12 sm:py-16 md:py-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div className="space-y-4 sm:space-y-5">
+          <div className="max-w-3xl mx-auto space-y-4 sm:space-y-5">
             <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-[#14532d] uppercase block">
               Warisan Budaya &amp; Nilai Tradisi
             </span>
             <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05]">
               <MaskText text="Preserving the Roots. Creating the Future." scrub />
             </h2>
-            <p className="text-stone-600 text-xs sm:text-sm md:text-base leading-relaxed">
-              Lembur Udjo Parahyangan lahir dari perjalanan panjang keluarga Udjo dalam menjaga, memperkenalkan, dan mengembangkan angklung serta kebudayaan Sunda kepada dunia sejak tahun 1966.
+            <p className="text-stone-600 text-sm md:text-base leading-relaxed">
+              Berangkat dari visi Udjo Ngalagena sejak 1966, Lembur Udjo Parahyangan menghadirkan angklung sebagai ruang belajar, ruang bertemu, dan jembatan budaya Sunda menuju dunia.
             </p>
-            <p className="text-stone-600 text-xs sm:text-sm md:text-base leading-relaxed">
-              Dirancang seperti sebuah lembur Sunda yang hidup. Hamparan sawah, rumpun bambu, seni pertunjukan, musik tradisi, permainan rakyat, hingga kelestarian alam menjadi bagian terintegrasi dalam satu perjalanan.
+            <p className="text-stone-600 text-sm md:text-base leading-relaxed">
+              Dirancang seperti lembur Sunda yang hidup di tengah kawasan modern, tempat hamparan sawah, rumpun bambu, seni pertunjukan, permainan rakyat, dan kelestarian alam hadir dalam satu perjalanan yang saling terhubung.
             </p>
-            <p className="text-stone-600 text-xs sm:text-sm md:text-base leading-relaxed">
-              Angklung dan musik bambu berpadu dengan musik modern dan teknologi — tanpa meninggalkan akar budaya Sunda.
+            <p className="text-stone-600 text-sm md:text-base leading-relaxed">
+              Di sini, tradisi tidak berhenti sebagai tontonan. Angklung dan musik bambu dipelajari, dimainkan, dan dikembangkan bersama—berdialog dengan musik modern dan teknologi tanpa kehilangan akar budaya Sunda.
             </p>
             <div className="pt-1">
               <a
@@ -30,46 +32,15 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="relative">
-            <img
-              src="/arsip%20Abah%20Udjo/main%20di%20dpan%20rumah%20abah.jpg"
-              alt="Warisan Budaya & Nilai Tradisi Lembur Udjo"
-              width={800}
-              height={600}
-              className="w-full h-auto rounded-xl object-cover"
+          <div className="relative overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
+            <Image
+              src="/arsip%20Abah%20Udjo/abah-udjo-legend.webp"
+              alt="Foto arsip Abah Udjo dan Uum Sumiati"
+              width={1880}
+              height={1734}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="h-auto w-full object-cover"
             />
-          </div>
-        </div>
-
-        {/* Visi Abah Udjo */}
-        <div id="visi" className="relative mt-10 min-h-[360px] overflow-hidden rounded-2xl bg-forest text-white sm:mt-14 sm:min-h-[390px] md:min-h-[420px]">
-          <div className="relative flex min-h-[360px] items-center sm:min-h-[390px] md:min-h-[420px]">
-            <img
-              src="/Pertunjukanluar.webp"
-              alt="Pertunjukan angklung Lembur Udjo di berbagai negara"
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-forest/45" aria-hidden="true" />
-            <div
-              className="absolute inset-0 bg-gradient-to-b from-forest/90 via-forest/30 to-forest/95 sm:via-forest/15"
-              aria-hidden="true"
-            />
-
-            <div className="relative mx-auto max-w-3xl px-6 py-10 text-center sm:px-10 sm:py-12 md:px-12 md:py-14">
-              <span className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.18em] sm:tracking-[0.25em] text-emerald-400 uppercase block">
-                Visi Abah Udjo &middot; Sejak 1966
-              </span>
-
-              <h3 className="font-tan text-[1.75rem] leading-[1.1] sm:text-4xl md:text-5xl mt-2.5 sm:mt-4 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
-                <MaskText text="Angklung to the World" scrub />
-              </h3>
-
-              <p className="text-stone-100 text-sm sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto mt-3 sm:mt-4 drop-shadow-sm">
-                Dari Bale Pare, Kota Baru Parahyangan, angklung terus diperkenalkan kepada dunia lewat pertunjukan
-                interaktif, workshop, dan pertemuan budaya yang diwariskan dari generasi ke generasi.
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -210,6 +210,13 @@ export interface Followup {
  */
 export interface VisualKawasan {
   id: number;
+  placement?: string | null;
+  section?: ('banner' | 'fasilitas' | 'galeri') | null;
+  title?: string | null;
+  category?: string | null;
+  position?: number | null;
+  visible?: boolean | null;
+  heroVideo?: (number | null) | VisualKawasan;
   alt: string;
   area: 'area-depan' | 'panggung' | 'kolam' | 'fasilitas' | 'lainnya';
   description?: string | null;
@@ -404,6 +411,13 @@ export interface FollowupsSelect<T extends boolean = true> {
  * via the `definition` "visual-kawasan_select".
  */
 export interface VisualKawasanSelect<T extends boolean = true> {
+  placement?: T;
+  section?: T;
+  title?: T;
+  category?: T;
+  position?: T;
+  visible?: T;
+  heroVideo?: T;
   alt?: T;
   area?: T;
   description?: T;

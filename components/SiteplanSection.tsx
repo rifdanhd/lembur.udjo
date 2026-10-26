@@ -60,7 +60,7 @@ export default function SiteplanSection() {
           <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl mt-2 text-forest tracking-tight">
             <MaskText text="Zona & Titik Kawasan" scrub />
           </h2>
-          <p className="text-stone-600 text-xs sm:text-sm mt-3 leading-relaxed">
+          <p className="text-stone-600 text-sm mt-3 leading-relaxed">
             Sebaran 10 titik utama dalam siteplan Lembur Udjo Parahyangan — dari gerbang, ruang publik, pertunjukan, hingga fasilitas pengunjung.
           </p>
         </div>
@@ -76,7 +76,7 @@ export default function SiteplanSection() {
         <div
           ref={trackRef}
           onScroll={updateArrows}
-          className="flex gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
+          className="flex gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scroll-px-4 sm:scroll-px-0 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-1"
         >
           {zones.map((zone) => (
             <div
@@ -87,14 +87,14 @@ export default function SiteplanSection() {
                 <span className="flex-shrink-0 w-9 h-9 rounded-lg bg-stone-100 group-hover:bg-forest group-hover:text-white text-stone-500 flex items-center justify-center text-xs font-extrabold transition-colors">
                   {zone.num}
                 </span>
-                <div>
+                <div className="min-w-0 break-words">
                   <h3 className="text-sm font-extrabold uppercase tracking-wide text-forest">
                     {zone.name}
                   </h3>
                   <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-forest mb-1.5">
                     {zone.en}
                   </span>
-                  <p className="text-xs text-stone-600 leading-relaxed">{zone.desc}</p>
+                  <p className="text-sm text-stone-600 leading-relaxed">{zone.desc}</p>
                 </div>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function SiteplanSection() {
             onClick={() => scrollByAmount(-1)}
             disabled={atStart}
             aria-label="Geser ke kiri"
-            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-100 text-stone-950 hover:bg-stone-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-100 text-stone-950 hover:bg-stone-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M15 18 9 12l6-6" />
@@ -118,7 +118,7 @@ export default function SiteplanSection() {
             onClick={() => scrollByAmount(1)}
             disabled={atEnd}
             aria-label="Geser ke kanan"
-            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-100 text-stone-950 hover:bg-stone-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-100 text-stone-950 hover:bg-stone-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="m9 18 6-6-6-6" />

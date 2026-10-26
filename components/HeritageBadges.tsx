@@ -13,19 +13,6 @@ const badges = [
     ),
   },
   {
-    label: "Founded",
-    value: "Since 1966",
-    sub: "Saung Angklung Udjo",
-    icon: (
-      <img
-        src="/UdjoFullColor.png"
-        alt=""
-        aria-hidden="true"
-        className="h-6 sm:h-7 w-auto object-contain"
-      />
-    ),
-  },
-  {
     label: "Ecoland",
     value: "Udjo Ecoland",
     sub: "Nurturing Future",
@@ -67,34 +54,29 @@ const badges = [
 ];
 
 export default function HeritageBadges() {
-  const items = [...badges, ...badges];
-
   return (
     <section id="penghargaan" className="py-12 sm:py-14 md:py-16 bg-cream border-t border-stone-100 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="marquee overflow-hidden">
-          <div className="marquee-track flex w-max items-start">
-            {items.map((item, i) => (
-              <div
-                key={`${item.label}-${i}`}
-                aria-hidden={i >= badges.length}
-                className="flex w-60 sm:w-auto shrink-0 flex-col items-center text-center gap-3 sm:gap-3.5 pr-8 sm:pr-20 lg:pr-28"
-              >
-                <span className="flex-shrink-0 text-[#14532d] badge-icon-filter">{item.icon}</span>
-                <span className="leading-tight">
-                  <span className="block text-[11px] sm:text-[10px] font-bold uppercase tracking-[0.28em] text-stone-400">
-                    {item.label}
-                  </span>
-                  <span className="block font-playfair text-lg sm:text-xl font-semibold text-stone-950 mt-1.5">
-                    {item.value}
-                  </span>
-                  <span className="block text-[11px] sm:text-xs font-medium text-stone-500 mt-1">
-                    {item.sub}
-                  </span>
+        <div className="grid grid-cols-2 items-start gap-x-4 gap-y-8 sm:gap-x-8 md:grid-cols-4 md:gap-x-6 lg:gap-x-10">
+          {badges.map((item) => (
+            <div
+              key={item.label}
+              className="flex w-full flex-col items-center text-center gap-3 sm:gap-3.5"
+            >
+              <span className="flex-shrink-0 text-[#14532d] badge-icon-filter">{item.icon}</span>
+              <span className="leading-tight">
+                <span className="block text-[11px] sm:text-[10px] font-bold uppercase tracking-[0.28em] text-stone-400">
+                  {item.label}
                 </span>
-              </div>
-            ))}
-          </div>
+                <span className="block font-playfair text-lg sm:text-xl font-semibold text-stone-950 mt-1.5">
+                  {item.value}
+                </span>
+                <span className="block text-[11px] sm:text-xs font-medium text-stone-500 mt-1">
+                  {item.sub}
+                </span>
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

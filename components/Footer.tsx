@@ -4,7 +4,7 @@ export default function Footer() {
   const quickLinks = [
     { href: "/the-story-of-angklung", label: "The Story of Angklung" },
     { href: "/#about", label: "Tentang Kami" },
-    { href: "/inovasi", label: "Inovasi" },
+    { href: "https://angklung-bareng.vercel.app/", label: "Inovasi" },
     { href: "/#fasilitas", label: "Fasilitas" },
     { href: "/#masterplan", label: "Visualisasi Kawasan" },
     { href: "/#siteplan", label: "Siteplan" },
@@ -28,7 +28,7 @@ export default function Footer() {
                 className="w-12 h-12 object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
-            <p className="text-stone-600 text-xs sm:text-sm leading-relaxed max-w-sm">
+            <p className="text-stone-600 text-sm leading-relaxed max-w-sm">
               Pusat seni, tradisi, dan kebudayaan Sunda terintegrasi di Kawasan Bale Pare, Kota Baru Parahyangan.
             </p>
           </div>
@@ -38,12 +38,14 @@ export default function Footer() {
             <h4 className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-stone-400 mb-3.5 sm:mb-4">
               Navigasi
             </h4>
-            <ul className="space-y-2">
+            <ul className="grid grid-cols-2 gap-x-4 sm:grid-cols-1">
               {quickLinks.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="inline-block text-xs font-bold uppercase tracking-wider text-stone-600 hover:text-stone-950 hover:translate-x-1 transition-all"
+                    target={item.href.startsWith("https://") ? "_blank" : undefined}
+                    rel={item.href.startsWith("https://") ? "noopener noreferrer" : undefined}
+                    className="inline-flex min-h-11 items-center py-2 text-xs font-bold uppercase tracking-wider text-stone-600 hover:text-stone-950 hover:translate-x-1 transition-all"
                   >
                     {item.label}
                   </Link>
@@ -57,19 +59,19 @@ export default function Footer() {
             <h4 className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-stone-400 mb-3.5 sm:mb-4">
               Kontak &amp; Lokasi
             </h4>
-            <div className="space-y-2.5 text-xs text-stone-600">
+            <div className="space-y-2.5 text-sm text-stone-600">
               <p className="leading-relaxed">
                 Kawasan Bale Pare, Kota Baru Parahyangan, Padalarang, Kab. Bandung Barat
               </p>
               <p>
-                <a href="tel:0227279765" className="font-bold text-stone-950 hover:text-forest transition-colors">
+                <a href="tel:0227279765" className="inline-flex min-h-11 items-center font-bold text-stone-950 hover:text-forest transition-colors">
                   (022) 7279765
                 </a>
               </p>
               <p>
                 <a
                   href="mailto:corsec.lemburudjo@gmail.com"
-                  className="font-bold text-stone-950 hover:text-forest transition-colors break-all"
+                  className="inline-flex min-h-11 items-center font-bold text-stone-950 hover:text-forest transition-colors break-all"
                 >
                   corsec.lemburudjo@gmail.com
                 </a>
@@ -83,7 +85,7 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} Lembur Udjo Parahyangan. Dilindungi Hak Cipta.</p>
           <Link
             href="/#beranda"
-            className="font-bold uppercase tracking-wider text-stone-500 hover:text-stone-950 transition-colors"
+            className="inline-flex min-h-11 items-center font-bold uppercase tracking-wider text-stone-500 hover:text-stone-950 transition-colors"
           >
             Kembali ke Atas &uarr;
           </Link>

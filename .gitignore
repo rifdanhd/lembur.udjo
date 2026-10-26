@@ -42,3 +42,6 @@ next-env.d.ts
 
 # archives
 *.zip
+
+# Local Payload uploads (use MEDIA_UPLOAD_DIR outside the release directory on VPS)
+/visual-kawasan/

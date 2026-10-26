@@ -177,7 +177,7 @@ export default function QuotesSection() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mb-8 sm:mb-12">
-          <h2 className="font-tan text-[15px] sm:text-2xl md:text-3xl tracking-tight text-forest leading-[1.2] whitespace-nowrap">
+          <h2 className="font-tan text-2xl md:text-3xl tracking-tight text-forest leading-[1.2]">
             <MaskText text="Kutipan yang Terus Menginspirasi" scrub />
           </h2>
         </div>
@@ -226,8 +226,8 @@ export default function QuotesSection() {
 
             {/* Kontrol: Dots + Panah */}
             <Reveal delay={0.3} y={20} duration={0.7}>
-              <div className="flex items-center justify-between mt-6 sm:mt-8 pt-2">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 mt-4 sm:mt-8 pt-2">
+                <div className="flex items-center">
                   {slides.map((_, i) => {
                     const isActive = current === i;
                     return (
@@ -235,13 +235,12 @@ export default function QuotesSection() {
                         key={i}
                         type="button"
                         aria-label={`Slide ${i + 1}`}
+                        aria-current={isActive ? "true" : undefined}
                         onClick={() => goTo(i)}
-                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                          isActive
-                            ? "w-8 bg-green-900"
-                            : "w-3 bg-stone-300 hover:bg-stone-400"
-                        }`}
-                      />
+                        className="flex h-11 w-11 items-center justify-center rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest"
+                      >
+                        <span className={`block h-1.5 rounded-full transition-all duration-300 ${isActive ? "w-8 bg-green-900" : "w-3 bg-stone-300"}`} />
+                      </button>
                     );
                   })}
                 </div>
@@ -251,7 +250,7 @@ export default function QuotesSection() {
                     type="button"
                     onClick={prev}
                     aria-label="Slide sebelumnya"
-                    className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M15 18 9 12l6-6" />
@@ -261,7 +260,7 @@ export default function QuotesSection() {
                     type="button"
                     onClick={next}
                     aria-label="Slide berikutnya"
-                    className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-200/80 text-stone-950 hover:bg-stone-300 transition-colors cursor-pointer"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="m9 18 6-6-6-6" />

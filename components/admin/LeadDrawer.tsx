@@ -37,7 +37,7 @@ export default function LeadDrawer({
   const [error, setError] = useState("");
 
   const input =
-    "w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-forest focus:ring-2 focus:ring-forest/15";
+    "min-h-11 min-w-0 w-full rounded-lg border border-stone-300 px-3 py-2 text-base sm:text-sm outline-none focus:border-forest focus:ring-2 focus:ring-forest/15";
 
   async function api(path: string, method: string, body?: unknown) {
     setBusy(true);
@@ -73,7 +73,7 @@ export default function LeadDrawer({
   return (
     <div className="fixed inset-0 z-40 flex justify-end" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <aside className="relative w-full sm:w-[440px] h-full bg-white border-l border-stone-200 shadow-2xl flex flex-col">
+      <aside className="relative w-full sm:w-[440px] h-dvh bg-white border-l border-stone-200 shadow-2xl flex flex-col">
         <header className="flex items-start gap-3 px-4 sm:px-5 py-4 border-b border-stone-200">
           <div className="min-w-0 flex-1">
             <span
@@ -91,13 +91,13 @@ export default function LeadDrawer({
           <button
             onClick={onClose}
             aria-label="Tutup"
-            className="h-9 w-9 shrink-0 rounded-lg text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+            className="h-11 w-11 shrink-0 rounded-lg text-stone-400 hover:bg-stone-100 hover:text-stone-700"
           >
             ✕
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 sm:px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] space-y-6">
           {error && (
             <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
               {error}
@@ -150,7 +150,7 @@ export default function LeadDrawer({
                   className={`mt-1 ${input}`}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
                     WhatsApp
@@ -182,7 +182,7 @@ export default function LeadDrawer({
                   className={`mt-1 ${input}`}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
                     Sumber
@@ -256,7 +256,7 @@ export default function LeadDrawer({
             <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-stone-400">
               Catatan
             </h3>
-            <div className="mt-2.5 flex gap-2">
+            <div className="mt-2.5 flex flex-col min-[400px]:flex-row gap-2">
               <input
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
@@ -275,7 +275,7 @@ export default function LeadDrawer({
                   const ok = await api(`/api/leads/${lead.id}/notes`, "POST", { body: note });
                   if (ok) setNote("");
                 }}
-                className="shrink-0 rounded-lg border border-stone-300 px-3 text-[11px] font-bold uppercase tracking-wider text-stone-600 hover:bg-stone-50 disabled:opacity-50"
+                className="min-h-11 shrink-0 rounded-lg border border-stone-300 px-3 text-[11px] font-bold uppercase tracking-wider text-stone-600 hover:bg-stone-50 disabled:opacity-50"
               >
                 Tambah
               </button>
@@ -311,18 +311,18 @@ export default function LeadDrawer({
             <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-stone-400">
               Follow-up &amp; Tugas
             </h3>
-            <div className="mt-2.5 flex gap-2">
+            <div className="mt-2.5 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
               <input
                 value={task}
                 onChange={(e) => setTask(e.target.value)}
                 placeholder="Mis. Hubungi lagi H-2"
-                className={input}
+                className={`col-span-2 ${input}`}
               />
               <input
                 type="date"
                 value={taskDate}
                 onChange={(e) => setTaskDate(e.target.value)}
-                className="rounded-lg border border-stone-300 px-2 py-2 text-xs outline-none focus:border-forest"
+                className="min-h-11 min-w-0 w-full rounded-lg border border-stone-300 px-2 py-2 text-base sm:text-sm outline-none focus:border-forest"
               />
               <button
                 disabled={busy || !task.trim()}
@@ -336,7 +336,7 @@ export default function LeadDrawer({
                     setTaskDate("");
                   }
                 }}
-                className="shrink-0 rounded-lg border border-stone-300 px-3 text-[11px] font-bold uppercase tracking-wider text-stone-600 hover:bg-stone-50 disabled:opacity-50"
+                className="min-h-11 shrink-0 rounded-lg border border-stone-300 px-3 text-[11px] font-bold uppercase tracking-wider text-stone-600 hover:bg-stone-50 disabled:opacity-50"
               >
                 Tambah
               </button>

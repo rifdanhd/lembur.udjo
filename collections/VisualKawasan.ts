@@ -1,7 +1,14 @@
 import type { CollectionConfig } from "payload";
+import path from "node:path";
 
 export const VisualKawasan: CollectionConfig = {
   slug: "visual-kawasan",
+  access: {
+    read: () => true,
+    create: ({ req }) => Boolean(req.user),
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
+  },
 
   admin: {
     useAsTitle: "alt",
@@ -10,11 +17,16 @@ export const VisualKawasan: CollectionConfig = {
   },
 
   upload: {
+    // Runtime uploads live on the VPS; they are not build artifacts to trace.
+    staticDir: path.resolve(/* turbopackIgnore: true */ process.env.MEDIA_UPLOAD_DIR || "visual-kawasan"),
+    filesRequiredOnCreate: false,
     mimeTypes: [
       "image/png",
       "image/jpeg",
       "image/jpg",
       "image/webp",
+      "video/mp4",
+      "video/webm",
     ],
     adminThumbnail: "thumbnail",
     imageSizes: [
@@ -40,6 +52,36 @@ export const VisualKawasan: CollectionConfig = {
   },
 
   fields: [
+    {
+      name: "placement",
+      type: "text",
+      unique: true,
+      label: "Identitas posisi gambar",
+      admin: { readOnly: true },
+    },
+    {
+      name: "section",
+      type: "select",
+      label: "Bagian beranda",
+      options: [
+        { label: "Banner beranda", value: "banner" },
+        { label: "Fasilitas", value: "fasilitas" },
+        { label: "Galeri", value: "galeri" },
+      ],
+    },
+    { name: "title", type: "text", label: "Judul", maxLength: 160 },
+    { name: "category", type: "text", label: "Kategori", maxLength: 60 },
+    { name: "position", type: "number", label: "Urutan", defaultValue: 0, min: 0, max: 9999 },
+    { name: "visible", type: "checkbox", label: "Tampilkan di beranda", defaultValue: true },
+    {
+      name: "heroVideo",
+      type: "upload",
+      relationTo: "visual-kawasan",
+      label: "Video hero",
+      maxDepth: 1,
+      filterOptions: { mimeType: { in: ["video/mp4", "video/webm"] } },
+      admin: { condition: (_, siblingData) => siblingData.section === "banner" },
+    },
     {
       name: "alt",
       type: "text",

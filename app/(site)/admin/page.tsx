@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { isAuthed } from "@/lib/crm/auth";
-import { getPayloadClient, toLead, type LeadDoc } from "@/lib/crm/payload";
+import { getCrmLeads } from "@/lib/crm/payload";
+import { jakartaDate } from "@/lib/crm/dashboard";
 import type { Lead } from "@/lib/crm/types";
 import CrmApp from "@/components/admin/CrmApp";
 
@@ -16,17 +17,17 @@ export default async function AdminPage() {
   let leads: Lead[] = [];
   let error = "";
   try {
-    const payload = await getPayloadClient();
-    const res = await payload.find({
-      collection: "leads",
-      depth: 1,
-      limit: 1000,
-      sort: "-createdAt",
-    });
-    leads = res.docs.map((d) => toLead(d as unknown as LeadDoc));
+    leads = await getCrmLeads();
   } catch (err) {
-    error = (err as Error).message;
+    console.error("Gagal memuat CRM", err);
+    error = "Data belum berhasil dimuat. Silakan coba perbarui data.";
   }
 
-  return <CrmApp initialLeads={leads} initialError={error} />;
+  return (
+    <CrmApp
+      initialLeads={leads}
+      initialError={error}
+      initialToday={jakartaDate()}
+    />
+  );
 }

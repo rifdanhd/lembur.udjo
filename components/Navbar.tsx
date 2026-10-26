@@ -14,7 +14,6 @@ const navItems: NavItem[] = [
     children: [
       { label: "Sejarah Abah Udjo", href: "/the-story-of-angklung" },
       { label: "Warisan Budaya", href: "/#about" },
-      { label: "Visi dan Misi", href: "/#visi" },
       { label: "Penghargaan", href: "/#penghargaan" },
     ],
   },
@@ -114,6 +113,7 @@ export default function Navbar() {
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [lastPathname, setLastPathname] = useState(pathname);
+  const transparent = pathname === "/" && !scrolled && !menuOpen;
 
   // Tutup drawer saat berpindah halaman (disesuaikan saat render, bukan di effect)
   if (lastPathname !== pathname) {
@@ -192,9 +192,17 @@ export default function Navbar() {
 
   // Kunci scroll halaman saat drawer mobile terbuka
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
     return () => {
-      document.body.style.overflow = "";
+      desktop.removeEventListener("change", closeOnDesktop);
+      document.body.style.overflow = previousOverflow;
     };
   }, [menuOpen]);
 
@@ -235,7 +243,7 @@ export default function Navbar() {
     <>
       {/* Mobile Backdrop Overlay — di LUAR <header> agar bar navbar tidak ikut ter-blur/dim */}
       <div
-        className={`fixed inset-0 z-40 bg-black/40 lg:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/40 xl:hidden transition-opacity duration-300 ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMenuOpen(false)}
@@ -243,8 +251,10 @@ export default function Navbar() {
       />
 
     <header
-      className={`fixed top-0 left-0 w-full z-50 bg-cream border-b border-stone-200 transition-all duration-300 ${
-        scrolled ? "shadow-sm shadow-black/5" : "shadow-none"
+      className={`fixed top-0 left-0 w-full z-50 border-b transition-all duration-300 motion-reduce:transition-none ${
+        transparent
+          ? "border-transparent bg-transparent text-white shadow-none"
+          : "border-stone-200 bg-cream text-stone-950 shadow-sm shadow-black/5"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -260,10 +270,10 @@ export default function Navbar() {
               alt="Logo Lembur Udjo Parahyangan"
               width={44}
               height={44}
-              className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
+              className={`w-10 h-10 object-contain transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 ${transparent ? "brightness-0 invert" : ""}`}
             />
             <span className="block ml-2 sm:ml-2.5 leading-none">
-              <span className="block text-[9px] sm:text-[11px] font-extrabold uppercase tracking-[0.2em] sm:tracking-[0.28em] text-bamboo whitespace-nowrap">
+              <span className={`block text-[8px] sm:text-[10px] font-extrabold uppercase tracking-[0.18em] sm:tracking-[0.24em] whitespace-nowrap ${transparent ? "text-white" : "text-bamboo"}`}>
                 Angklung Journey
               </span>
             </span>
@@ -273,7 +283,7 @@ export default function Navbar() {
           <nav
             ref={navWrapRef}
             aria-label="Navigasi utama"
-            className="hidden lg:flex w-max items-center gap-1 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="hidden xl:flex w-max items-center gap-1 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           >
             <ul className="flex items-center gap-1">
               {navItems.map((item, i) => {
@@ -313,10 +323,14 @@ export default function Navbar() {
                       aria-expanded={isOpen}
                       aria-controls={`nav-panel-${i}`}
                       style={{ animationDelay: `${140 + i * 60}ms` }}
-                      className={`relative flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] transition-colors duration-300 animate-[fadeInUp_0.5s_ease-out_both] focus-visible:ring-2 focus-visible:ring-forest after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:origin-left after:rounded-full after:bg-forest after:transition-transform after:duration-300 ${
-                        isActive || isOpen
-                          ? "bg-stone-100 font-extrabold text-stone-950 after:scale-x-100"
-                          : "text-stone-600 hover:bg-stone-100 hover:text-stone-950 after:scale-x-0 hover:after:scale-x-100"
+                      className={`relative flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] transition-colors duration-300 animate-[fadeInUp_0.5s_ease-out_both] focus-visible:ring-2 after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:origin-left after:rounded-full after:bg-current after:transition-transform after:duration-300 ${transparent ? "focus-visible:ring-white" : "focus-visible:ring-forest"} ${
+                        transparent
+                          ? isActive || isOpen
+                            ? "bg-white/15 font-extrabold text-white after:scale-x-100"
+                            : "text-white/90 hover:bg-white/10 hover:text-white after:scale-x-0 hover:after:scale-x-100"
+                          : isActive || isOpen
+                            ? "bg-stone-100 font-extrabold text-stone-950 after:scale-x-100"
+                            : "text-stone-600 hover:bg-stone-100 hover:text-stone-950 after:scale-x-0 hover:after:scale-x-100"
                       }`}
                     >
                       {item.label}
@@ -339,7 +353,7 @@ export default function Navbar() {
                           moveInPanel(e.currentTarget, "prev");
                         }
                       }}
-                      className={`absolute left-0 top-full mt-1.5 min-w-[220px] w-max origin-top rounded-2xl border border-stone-200 bg-cream p-1.5 shadow-lg shadow-black/10 transition-all duration-200 ease-out motion-reduce:transition-none z-50 ${
+                      className={`absolute left-0 top-full mt-1.5 min-w-[220px] w-max origin-top rounded-2xl border border-stone-200 bg-cream text-stone-950 p-1.5 shadow-lg shadow-black/10 transition-all duration-200 ease-out motion-reduce:transition-none z-50 ${
                         isOpen
                           ? "visible translate-y-0 scale-100 opacity-100"
                           : "invisible pointer-events-none -translate-y-1 scale-95 opacity-0"
@@ -374,7 +388,7 @@ export default function Navbar() {
               href={ticketHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-full bg-white border border-stone-200 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-forest transition-all hover:bg-stone-100 focus-visible:ring-2 focus-visible:ring-forest"
+              className={`hidden xl:inline-flex items-center justify-center whitespace-nowrap rounded-full border px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.16em] transition-all focus-visible:ring-2 ${transparent ? "border-white/60 bg-white/10 text-white hover:bg-white/20 focus-visible:ring-white" : "border-stone-200 bg-white text-forest hover:bg-stone-100 focus-visible:ring-forest"}`}
             >
               Pesan Tiket
             </a>
@@ -382,7 +396,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-xl text-stone-900 hover:bg-stone-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer lg:hidden focus-visible:ring-2 focus-visible:ring-forest"
+              className={`p-2 rounded-xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer xl:hidden focus-visible:ring-2 ${transparent ? "text-white hover:bg-white/10 focus-visible:ring-white" : "text-stone-900 hover:bg-stone-100 focus-visible:ring-forest"}`}
               aria-label={menuOpen ? "Tutup menu" : "Buka menu navigasi"}
               aria-expanded={menuOpen}
               aria-controls="nav-mobile-panel"
@@ -400,7 +414,7 @@ export default function Navbar() {
       {/* Mobile Drawer — panel penuh di bawah navbar */}
       <div
         id="nav-mobile-panel"
-        className={`lg:hidden absolute left-0 top-full z-40 w-full h-[calc(100dvh_-_100%)] bg-cream border-b border-stone-200 flex flex-col transition-all duration-300 ease-out motion-reduce:transition-none ${
+        className={`xl:hidden absolute left-0 top-full z-40 w-full h-[calc(100dvh_-_100%)] bg-cream border-b border-stone-200 flex flex-col transition-all duration-300 ease-out motion-reduce:transition-none ${
           menuOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0 pointer-events-none"
@@ -409,7 +423,7 @@ export default function Navbar() {
         aria-modal="true"
         aria-label="Menu navigasi mobile"
       >
-        <div className="flex-1 overflow-y-auto overscroll-contain p-3.5">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3.5">
           <nav aria-label="Navigasi utama">
             <ul className="space-y-1">
             {navItems.map((item, i) => {
@@ -450,7 +464,7 @@ export default function Navbar() {
                               aria-current={isCurrent(child.href) ? "page" : undefined}
                               tabIndex={isExpanded ? 0 : -1}
                               onClick={() => setMenuOpen(false)}
-                              className="flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-950 focus-visible:ring-2 focus-visible:ring-forest"
+                              className="flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-950 focus-visible:ring-2 focus-visible:ring-forest"
                             >
                               {child.label}
                             </a>
@@ -467,7 +481,7 @@ export default function Navbar() {
         </div>
 
         {/* Tombol Pesan Tiket — bawah drawer, lebar penuh */}
-        <div className="p-4 border-t border-stone-200">
+        <div className="shrink-0 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-stone-200">
           <a
             href={ticketHref}
             target="_blank"

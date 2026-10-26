@@ -191,14 +191,14 @@ export default function MasterplanSection() {
           type="button"
           onClick={prevSlide}
           aria-label="Slide sebelumnya"
-          className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-sm"
+          className="w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-sm"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           {Array.from({ length: DOT_COUNT }, (_, i) => {
             const isActive = dotIndexFor(currentIndex) === i;
             return (
@@ -207,10 +207,11 @@ export default function MasterplanSection() {
                 type="button"
                 onClick={() => goTo(slideForDot(i))}
                 aria-label={`Kelompok slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  isActive ? "w-8 bg-stone-950" : "w-2 bg-stone-300 hover:bg-stone-400"
-                }`}
-              />
+                aria-current={isActive ? "true" : undefined}
+                className="flex h-11 w-11 items-center justify-center rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest"
+              >
+                <span className={`block h-1.5 rounded-full transition-all duration-300 ${isActive ? "w-8 bg-stone-950" : "w-2 bg-stone-300"}`} />
+              </button>
             );
           })}
         </div>
@@ -219,7 +220,7 @@ export default function MasterplanSection() {
           type="button"
           onClick={nextSlide}
           aria-label="Slide berikutnya"
-          className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-sm"
+          className="w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-sm"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

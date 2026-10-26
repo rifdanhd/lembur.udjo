@@ -1,25 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import MaskText from "./anim/MaskText";
+import {
+  DEFAULT_WEBSITE_IMAGES,
+  sectionImages,
+  type WebsiteImage,
+} from "@/lib/website/content";
 
-interface GalleryItem {
-  id: number;
-  title: string;
-  category: string;
-  image: string;
-  desc: string;
-}
-
-const galleryItems: GalleryItem[] = [
-  { id: 1, title: "Harmoni Angklung Kolosal", category: "Pertunjukan", image: "/placeholders/angklung.jpg", desc: "Momen ratusan penonton memainkan angklung serempak di panggung Bale Karesemen." },
-  { id: 2, title: "Workshop Merakit Bambu", category: "Edukasi", image: "/placeholders/workshop.jpg", desc: "Belajar tangga nada Sunda Da-Mi-Na-Ti-La langsung dari perajin bambu handal." },
-  { id: 3, title: "Wayang Golek Parahyangan", category: "Pentas Boneka", image: "/placeholders/wayang.jpg", desc: "Keelokan pahatan kayu dan ekspresi khas wayang golek klasik Sunda." },
-  { id: 4, title: "Sosok Inspiratif Mang Udjo", category: "Sejarah", image: "/placeholders/founder.jpg", desc: "Menelusuri jejak dedikasi pendiri Saung Angklung Udjo sejak 1966." },
-  { id: 5, title: "Keceriaan Belajar Anak", category: "Edukasi", image: "/placeholders/education.jpg", desc: "Pendidikan karakter berbasis gotong royong bagi tunas generasi penerus." },
-];
-
-export default function GallerySection() {
+export default function GallerySection({
+  items = sectionImages(DEFAULT_WEBSITE_IMAGES, "galeri"),
+}: {
+  items?: WebsiteImage[];
+}) {
+  const galleryItems = items;
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -41,7 +36,7 @@ export default function GallerySection() {
   const getCardPositions = useCallback(() => {
     const el = trackRef.current;
     if (!el) return [] as { el: HTMLElement; pos: number }[];
-    const viewportLeft = el.getBoundingClientRect().left;
+    const viewportLeft = el.getBoundingClientRect().left + parseFloat(getComputedStyle(el).paddingLeft);
     return Array.from(el.querySelectorAll<HTMLElement>("[data-card]")).map((card) => ({
       el: card,
       pos: card.getBoundingClientRect().left - viewportLeft + el.scrollLeft,
@@ -96,6 +91,8 @@ export default function GallerySection() {
     const el = trackRef.current;
     if (el) el.scrollTo({ left: 0 });
     updateState();
+    window.addEventListener("resize", updateState);
+    return () => window.removeEventListener("resize", updateState);
   }, [updateState]);
 
   useEffect(() => {
@@ -159,6 +156,8 @@ export default function GallerySection() {
     snapTimer.current = setTimeout(() => snapToNearest(), 60);
   };
 
+  if (!galleryItems.length) return null;
+
   return (
     <section id="galeri" className="py-12 sm:py-16 md:py-20 bg-cream">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -167,7 +166,7 @@ export default function GallerySection() {
             <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05]">
               <MaskText text="Kesenian Tradisional" scrub />
             </h2>
-            <p className="text-stone-600 text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
+            <p className="text-stone-600 text-sm md:text-base mt-2.5 sm:mt-3 leading-relaxed">
               Geser untuk menjelajahi momen autentik dan kehangatan tradisi Sunda yang hidup melalui rekaman visual pengunjung dan seniman kami.
             </p>
           </div>
@@ -215,17 +214,18 @@ export default function GallerySection() {
           >
             {galleryItems.map((item) => (
               <article
-                key={item.id}
+                key={item.key}
                 data-card
                 className="group shrink-0 w-[82%] sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13.34px)] rounded-xl overflow-hidden bg-white border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
               >
                 <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden">
-                  <img
+                  <Image
                     src={item.image}
-                    alt={item.title}
+                    alt={item.alt}
+                    fill
+                    sizes="(max-width: 640px) 82vw, (max-width: 1024px) 50vw, 33vw"
                     draggable={false}
                     className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
                   />
                   <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
                     <span className="px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-white/95 text-stone-950 shadow-sm">
@@ -238,7 +238,7 @@ export default function GallerySection() {
                     <h3 className="text-sm font-extrabold uppercase tracking-wide text-forest group-hover:text-forest transition-colors leading-snug">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-stone-600 mt-1.5 leading-relaxed line-clamp-2">{item.desc}</p>
+                    <p className="text-xs text-stone-600 mt-1.5 leading-relaxed line-clamp-2">{item.description}</p>
                   </div>
                   <div className="pt-3 mt-3 border-t border-stone-100 text-[11px] font-extrabold uppercase tracking-wider text-stone-950 underline-offset-4 group-hover:underline">
                     Lihat Foto &rarr;
@@ -249,17 +249,18 @@ export default function GallerySection() {
           </div>
 
           {/* Indikator slide */}
-          <div className="flex justify-center gap-1.5 mt-5">
+          <div className="flex flex-wrap justify-center mt-3">
             {galleryItems.map((item, i) => (
               <button
-                key={item.id}
+                key={item.key}
                 type="button"
                 aria-label={`Ke slide ${i + 1}`}
+                aria-current={i === activeIndex ? "true" : undefined}
                 onClick={() => scrollToIndex(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  i === activeIndex ? "w-8 bg-stone-950" : "w-2.5 bg-stone-300 hover:bg-stone-500"
-                }`}
-              />
+                className="flex h-11 w-11 items-center justify-center rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest"
+              >
+                <span className={`block h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? "w-8 bg-stone-950" : "w-2.5 bg-stone-300"}`} />
+              </button>
             ))}
           </div>
         </div>

@@ -133,7 +133,7 @@ pembawa `id` yang sama persis.
 | 1 | Hero | `#beranda` | 3 slide background (Ecoland / arsip / lanskap), H1 + deck | **tanpa CTA** — jalur konversi via navbar, drawer "Pesan Tiket", dan popup WA |
 | 2 | Trending | *(tanpa id)* | 2 kartu tautan Instagram (kabar & tradisi) | Lihat di Instagram |
 | 3 | Kutipan | `#kata` | Slider 3 kutipan + foto arsip Abah Udjo | — |
-| 4 | Tentang & Visi | `#about`, `#visi` | Cerita 1966, 3 paragraf nilai; banner "Angklung to the World" | Pelajari Warisan Budaya → `/the-story-of-angklung` |
+| 4 | Tentang Warisan | `#about` | Copywriting tentang perjalanan 1966 dan tiga nilai utama budaya; tanpa profil tokoh atau banner visi | Pelajari Warisan Budaya → `/the-story-of-angklung` |
 | 5 | Penghargaan | `#penghargaan` | Marquee 5 badge: Culture, Since 1966, Ecoland, UNESCO 2010, Hadir 2027 | — |
 | 6 | Kaulinan | `#kaulinan` | 6 permainan tradisional (Congklak, Egrang, Gobak Sodor, …) | The Story of Angklung → |
 | 7 | Fasilitas | `#fasilitas` | Carousel 6 kartu: Bale Karesmen, Workshop, Agrowalk, Konservasi Bambu, Peternakan, Area Hijau | Informasi Kunjungan → `#kontak` |

@@ -31,7 +31,7 @@ export default function MaskText({ text, delay = 0, stagger = 0.05, scrub = fals
 
     const mm = gsap.matchMedia();
 
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
+    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
       const words = Array.from(el.querySelectorAll<HTMLElement>("[data-word]"));
       if (words.length > 0) {
         gsap.fromTo(

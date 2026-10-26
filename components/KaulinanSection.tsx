@@ -22,7 +22,7 @@ export default function KaulinanSection() {
             <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05] mt-2">
               <MaskText text="Permainan Anak Halaman" scrub />
             </h2>
-            <p className="text-stone-600 text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
+            <p className="text-stone-600 text-sm md:text-base mt-2.5 sm:mt-3 leading-relaxed">
               Sebelum gawai dan layar, anak-anak lembur mengisi sore dengan permainan yang mengajarkan strategi,
               kerja sama, dan keberanian — dimainkan di halaman, sawah, dan lapangan kampung.
             </p>
