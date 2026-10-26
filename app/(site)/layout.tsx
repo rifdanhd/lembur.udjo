@@ -39,6 +39,14 @@ const SITE_URL = "https://lemburudjoparahyangan.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
   title: "Lembur Udjo Parahyangan — Angklung Journey | Wisata Budaya Sunda Bandung",
   description:
     "Angklung Journey bersama Lembur Udjo Parahyangan, destinasi wisata budaya Sunda terkemuka di Bandung. Nikmati pertunjukan angklung, wayang golek, tari tradisional, dan pengalaman budaya Sunda yang autentik.",
