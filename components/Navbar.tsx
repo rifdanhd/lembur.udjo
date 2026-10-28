@@ -15,6 +15,7 @@ const navItems: NavItem[] = [
       { label: "Sejarah Abah Udjo", href: "/the-story-of-angklung" },
       { label: "Warisan Budaya", href: "/#about" },
       { label: "Penghargaan", href: "/#penghargaan" },
+        { label: "Karier", href: "/karier" },
     ],
   },
   {

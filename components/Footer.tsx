@@ -11,6 +11,7 @@ export default function Footer() {
     { href: "/#galeri", label: "Galeri" },
     { href: "/#faq", label: "FAQ" },
     { href: "/#lokasi", label: "Lokasi" },
+    { href: "/karier", label: "Karier" },
   ];
 
   return (
