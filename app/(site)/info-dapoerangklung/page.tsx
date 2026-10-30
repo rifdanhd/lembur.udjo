@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 const links = [
   {
     label: "Lihat Menu (PDF)",
-    description: "Buka koleksi menu di Google Drive",
+    description: "Buka menu Dapoer Angklung",
     icon: FileText,
-    href: "https://drive.google.com/drive/folders/1Zqx9QAxbSBqrd_Nyf3gK-U9iGjxiGIL2?usp=sharing&utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAacqfyC52yActmRTBBmi1wveSR7VCuMA2gTgnn7617TI9vzoaMQANnRnkKWyfg_aem_5Fa6432BQD_cnH7WRFqjxg",
+    href: "/MENU%20DAPA%20NEW.pdf",
     featured: true,
   },
   {
