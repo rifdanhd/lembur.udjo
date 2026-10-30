@@ -1,6 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useSyncExternalStore } from "react";
+import { siteForHost } from "@/lib/site-domains";
+
+const subscribe = () => () => {};
+const isPublicWebsite = () => !["app", "ticket"].includes(siteForHost(window.location.host));
 
 // Dikontrol per-environment: hanya nyala bila di-set di .env server build
 // (mis. di VPS). Lokal dibiarkan kosong supaya tidak ikut tampil.
@@ -13,8 +18,9 @@ const OPEN_ROUTES = ["/admin", "/api"];
 
 export default function ComingSoon() {
   const pathname = usePathname();
+  const publicWebsite = useSyncExternalStore(subscribe, isPublicWebsite, () => false);
 
-  if (!SHOW_COMING_SOON) return null;
+  if (!SHOW_COMING_SOON || !publicWebsite) return null;
 
   // The public information page must remain available while the homepage is gated.
   if (pathname !== "/") return null;

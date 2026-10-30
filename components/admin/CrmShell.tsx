@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { WEBSITE_URL } from "@/lib/site-domains";
 import {
   ArrowUpRight,
   CalendarCheck2,
@@ -137,7 +138,7 @@ export default function CrmShell({
           </ul>
           <div className="mx-3 mt-7 border-t border-white/10 pt-5">
             <Link
-              href="/"
+              href={WEBSITE_URL}
               className="flex min-h-11 items-center justify-between gap-2 rounded-lg text-sm text-white/70 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
             >
               Lihat situs Lembur Udjo

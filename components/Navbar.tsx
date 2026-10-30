@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { TICKET_URL } from "@/lib/site-domains";
 
 type NavChild = { href: string; label: string };
 type NavItem = { label: string; children: NavChild[] };
@@ -57,9 +58,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-// TODO: halaman belum ada — untuk sekarang diarahkan ke WhatsApp (pola CTA yang sudah dipakai di project).
-const ticketHref =
-  "https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20pesan%20tiket";
+const ticketHref = TICKET_URL;
 
 const CLOSE_DELAY_MS = 150;
 

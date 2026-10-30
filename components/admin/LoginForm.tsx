@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { WEBSITE_URL } from "@/lib/site-domains";
 import {
   AlertCircle,
   ArrowLeft,
@@ -132,7 +133,7 @@ export default function LoginForm() {
           className="flex min-w-0 flex-col px-1 py-2 sm:px-6 lg:px-3 lg:py-4 xl:pr-10"
         >
           <Link
-            href="/"
+            href={WEBSITE_URL}
             className={`inline-flex min-h-11 w-fit items-center gap-2 rounded-lg px-2 text-sm font-medium text-stone-600 transition-colors hover:text-forest ${focus}`}
           >
             <ArrowLeft size={17} aria-hidden="true" />
