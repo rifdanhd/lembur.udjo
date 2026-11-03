@@ -16,6 +16,10 @@ const SHOW_COMING_SOON =
 // Rute back-office tetap terbuka agar tim bisa masuk CRM.
 const OPEN_ROUTES = ["/admin", "/api"];
 
+// Sumber gambar masih 400x300, jadi di layar besar ia selalu di-upscale.
+// Ganti file ini dengan versi resolusi tinggi bila sudah tersedia.
+const BACKGROUND_IMAGE = "/5f86f6f7-3fd8-476f-9ebc-b0eee1bc5032-400x300.webp";
+
 export default function ComingSoon() {
   const pathname = usePathname();
   const publicWebsite = useSyncExternalStore(subscribe, isPublicWebsite, () => false);
@@ -35,8 +39,9 @@ export default function ComingSoon() {
       role="status"
     >
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/5f86f6f7-3fd8-476f-9ebc-b0eee1bc5032-400x300.webp)' }}
+        className="absolute inset-0 w-full h-full scale-110 bg-cover bg-center bg-no-repeat blur-[3px]"
+        style={{ backgroundImage: `url(${BACKGROUND_IMAGE})` }}
+        aria-hidden="true"
       />
       <div className="absolute inset-0 bg-black/60" />
       <p className="relative z-10 font-tan text-white text-center uppercase tracking-[0.18em] sm:tracking-[0.28em] leading-[1.36] text-[clamp(2rem,9vw,5.5rem)]">
