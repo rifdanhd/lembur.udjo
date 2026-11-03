@@ -16,9 +16,9 @@ const SHOW_COMING_SOON =
 // Rute back-office tetap terbuka agar tim bisa masuk CRM.
 const OPEN_ROUTES = ["/admin", "/api"];
 
-// Sumber gambar masih 400x300, jadi di layar besar ia selalu di-upscale.
-// Ganti file ini dengan versi resolusi tinggi bila sudah tersedia.
-const BACKGROUND_IMAGE = "/5f86f6f7-3fd8-476f-9ebc-b0eee1bc5032-400x300.webp";
+// Turunan 2560x1440 dari public/Gemini_Generated_Image_j7jqibj7jqibj7jq.jpeg
+// (sudah dipadatkan ke WebP agar tidak mengirim 3,5 MB di halaman Coming Soon).
+const BACKGROUND_IMAGE = "/coming-soon.webp";
 
 export default function ComingSoon() {
   const pathname = usePathname();
@@ -39,7 +39,7 @@ export default function ComingSoon() {
       role="status"
     >
       <div
-        className="absolute inset-0 w-full h-full scale-110 bg-cover bg-center bg-no-repeat blur-[3px]"
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${BACKGROUND_IMAGE})` }}
         aria-hidden="true"
       />
