@@ -22,12 +22,13 @@ const navItems: NavItem[] = [
   {
     label: "Pengalaman",
     children: [
-      { label: "Pertunjukan", href: "/#jadwal" },
+      { label: "Angklung Journey", href: "/#angklung-journey" },
+      { label: "Pertunjukan", href: "/#fasilitas" },
       { label: "Workshop Angklung", href: "/#fasilitas" },
       { label: "Kaulinan Budak Lembur", href: "/#kaulinan" },
-      { label: "Kunjungan Sekolah", href: "/#jadwal" },
-      { label: "Paket Rombongan", href: "/#jadwal" },
-      { label: "Acara dan Festival", href: "/#jadwal" },
+      { label: "Kunjungan Sekolah", href: "/#kontak" },
+      { label: "Paket Rombongan", href: "/#kontak" },
+      { label: "Acara dan Festival", href: "/#kontak" },
     ],
   },
   {
@@ -49,8 +50,7 @@ const navItems: NavItem[] = [
   {
     label: "Informasi",
     children: [
-      { label: "Jam Operasional", href: "/#jadwal" },
-      { label: "Harga Tiket", href: "/#jadwal" },
+      { label: "Informasi Kunjungan", href: "/#kontak" },
       { label: "Lokasi dan Peta", href: "/#lokasi" },
       { label: "FAQ", href: "/#faq" },
       { label: "Kontak", href: "/#kontak" },
