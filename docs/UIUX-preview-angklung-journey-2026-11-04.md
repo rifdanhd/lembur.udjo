@@ -3,45 +3,59 @@
 **Tanggal:** 4 November 2026  
 **Status:** Draft untuk review (bukan rilis publik)  
 **Branch:** `design/angklung-journey-preview-20261104`  
+**Pull request:** #1  
 **Target:** Website Lembur Udjo Parahyangan
 
-## Tujuan
-Memperkuat storytelling dari alam dan bambu menjadi angklung hingga pengalaman budaya hidup. Referensi kualitas pengalaman: website destinasi berbasis alam, termasuk EIGER Nature. Tidak menyalin identitas, konten, maupun susunan khas situs referensi.
+## Acuan editorial
 
-## Batas perubahan tahap pertama
-- Memakai sistem warna `forest` dan `cream`, tipografi editorial, dan aset yang sudah ada.
-- Membuat seksi `#angklung-journey`, disisipkan sesudah About dan sebelum Heritage Badges.
-- Empat bab: **Dari Alam**, **Menemukan Nada**, **Jejak Abah Udjo**, **Lembur yang Hidup**.
-- Menambah tautan Angklung Journey di navigasi Pengalaman.
-- Menghilangkan navigasi ke `#jadwal` yang tidak dirender di `app/(site)/page.tsx`; informasi kelompok diarahkan ke `#kontak` sampai data jadwal/tiket resmi tersedia.
+Section `#angklung-journey` mengikuti tepat empat bab dalam Master Storytelling Document:
+
+1. **Ritual & Tradisi** — akar hubungan manusia, alam, bambu, dan kebudayaan.
+2. **Daeng Soetigna** — pembaruan angklung diatonis pada 1938 serta perluasan ruang pendidikan dan musik.
+3. **Udjo Ngalagena** — pendirian Saung Angklung Udjo bersama Uum Sumiati pada 1966, dengan pendidikan, pertunjukan, dan edutainment.
+4. **Lembur Udjo Parahyangan** — kelanjutan kreatif dengan prinsip **Keep the Old, Create the New**.
+
+Copy diimplementasikan sebagai narasi kuratorial website, bukan kutipan langsung tokoh sejarah. Klaim sejarah tetap perlu pemeriksaan akhir oleh pemilik materi sebelum publikasi.
+
+## Implementasi
+
+- Section diletakkan sesudah About dan sebelum Heritage Badges.
+- Empat kartu menggunakan urutan angka 01–04 dan judul final di atas.
+- Setiap bab memiliki transisi naratif menuju bab berikutnya agar alurnya terbaca sebagai perjalanan, bukan katalog fasilitas.
+- Visual memakai aset repository yang tersedia:
+  - Bab I: konservasi bambu.
+  - Bab II: workshop merakit bambu.
+  - Bab III: arsip Abah Udjo.
+  - Bab IV: `LUP.png`, diberi alt text sebagai **visualisasi rencana kawasan**, bukan dokumentasi kondisi operasional.
+- Masterplan dan Siteplan tetap dirender sebagai section terpisah di homepage.
 - Tidak mengubah `ComingSoon.tsx`, konfigurasi environment, layanan booking, API, database, atau main branch.
+- Tidak menambahkan jadwal, janji tanggal pembukaan, atau penjualan tiket.
 
-## Pilihan desain
-- Hero utama existing dibiarkan tetap; konten naratif dibuat sebagai seksi tersendiri.
-- Struktur halaman Masterplan dan Siteplan tetap terpisah.
-- Grid foto bertingkat, dengan detail empat tahap; responsive dua kolom pada tablet/desktop, satu kolom pada layar kecil.
-- Foto yang sudah ada di repo adalah visual pendukung, **bukan klaim foto dokumentasi operasional LUP**. Foto dan hak pemakaiannya perlu diverifikasi sebelum rilis.
-- Komponen mengandalkan HTML semantik `section`, `ol`, `article`; heading dan alt text eksplisit; hover tidak menjadi satu-satunya cara memahami konten.
-- Animasi terbatas pada hover gambar dengan `motion-reduce`; tanpa autoplay atau video tambahan.
+## Arahan visual dan responsif
 
-## Keputusan editorial yang perlu divalidasi
-1. Kalimat “Sebelum menjadi musik, angklung adalah doa” adalah narasi kuratorial/tagline yang diusulkan, bukan kutipan historis yang diatribusikan kepada Abah Udjo.
-2. Finalisasi nama program dan fasilitas melalui pemilik produk; pertunjukan bernama **Karesmen Udjo**, gedung **Bale Pinton** (kapasitas 500 menurut brief), dan Agrowalk sesuai rute kawasan.
-3. Jadwal launching Juni/Juli 2027 adalah target internal yang dapat berubah, sehingga tidak dijadikan janji tanggal spesifik pada section.
-4. Tahap ini **belum mengaktifkan penjualan tiket** atau menjanjikan ketersediaan.
-5. Identitas visual diperluas tanpa mengganti logo dan sistem warna existing.
+- Mempertahankan sistem warna forest/cream dan tipografi editorial existing.
+- Desktop/tablet memakai grid dua kolom; layar kecil turun menjadi satu kolom.
+- Foto tetap menjadi pembawa suasana, sementara copy menjaga konteks historis tetap ringkas.
+- Hover bukan satu-satunya cara memahami konten; transisi gambar memiliki dukungan `motion-reduce`.
+- Heading, daftar berurutan, alt text, fokus keyboard, dan kontras perlu diperiksa kembali pada preview browser.
 
-## Checklist verifikasi sebelum merge
-- [ ] `npm ci`, `npx tsc --noEmit`, `npm run lint`, `npm run build`
-- [ ] Periksa pada 320, 375, 768, 1024, 1440 px.
-- [ ] Scroll dan keyboard navigation berjalan baik; menu Angklung Journey menuju `#angklung-journey`.
-- [ ] Semua foto tampil; foto arsip memiliki izin penggunaan.
-- [ ] Semua copywriting dikonfirmasi pengelola.
-- [ ] `prefers-reduced-motion` dan kontras warna diperiksa manual.
-- [ ] Pastikan Coming Soon tetap muncul di production selama flag lingkungan masih aktif.
-- [ ] Deploy *branch preview* ke URL terpisah untuk persetujuan UI, tanpa mengganti DNS domain utama.
-- [ ] Uji kontak WhatsApp dan alur yang belum mempunyai jadwal operasional resmi.
-- [ ] Merge setelah review dan approval pemilik produk.
+## Batas penggunaan aset
 
-## Catatan risiko existing
-Dokumentasi PRD/UIUX tertanggal 5 Oktober 2026 tidak sepenuhnya sama dengan kode `main` pada 4 November 2026; khususnya `ScheduleSection` disebut aktif dalam dokumen lama, tetapi tidak dirender oleh homepage yang diperiksa. Dokumentasi perlu diselaraskan setelah desain disetujui.
+Foto arsip dan foto kegiatan harus memiliki izin penggunaan yang sesuai. Aset visualisasi LUP tidak boleh dipresentasikan sebagai foto kawasan yang sudah beroperasi. Jika tersedia foto otentik yang telah disetujui, aset dapat diganti tanpa mengubah struktur empat bab.
+
+## Checklist sebelum merge
+
+- [ ] `npm ci`
+- [ ] `npx tsc --noEmit`
+- [ ] `npm run lint`
+- [ ] `npm run build`
+- [ ] Uji pada 320, 375, 768, 1024, dan 1440 px.
+- [ ] Uji scroll, anchor `/#angklung-journey`, dan navigasi keyboard.
+- [ ] Validasi foto, hak penggunaan, copy historis, dan kontras.
+- [ ] Pastikan Coming Soon tetap aktif pada production.
+- [ ] Deploy hanya ke preview terpisah bila diperlukan untuk persetujuan UI.
+- [ ] Merge hanya setelah review dan persetujuan pemilik produk.
+
+## Status verifikasi
+
+Perubahan kode sudah diperbarui pada branch draft. Build, lint, dan uji browser/responsif belum dianggap terbukti sampai dijalankan pada checkout branch yang sama. PR tetap draft dan belum merge/deploy publik.
