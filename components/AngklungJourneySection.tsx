@@ -1,51 +1,64 @@
 import Image from "next/image";
 import Link from "next/link";
 
-/**
- * Editorial story section: the journey from bamboo to a living cultural
- * experience. Assets are drawn from the current repository and should be
- * reviewed for provenance before the full public launch.
- */
-const chapters = [
+type Chapter = {
+  number: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+  note: string;
+  transition: string;
+};
+
+const chapters: readonly Chapter[] = [
   {
     number: "01",
-    eyebrow: "AKAR PERJALANAN",
-    title: "Dari Alam",
+    eyebrow: "SEBELUM NADA, ADA CERITA",
+    title: "Ritual & Tradisi",
     description:
-      "Perjalanan bermula di antara rumpun bambu. Di sinilah kita mengenal bahan, lingkungan, dan hubungan manusia dengan alam.",
+      "Jauh sebelum hadir di panggung dunia, bunyi bambu tumbuh di tengah kehidupan masyarakat. Ia mengiringi perjumpaan, syukur, dan tradisi yang diwariskan lintas generasi.",
     image: "/facilities/konservasi-bambu.png",
-    alt: "Visual pendukung tentang rumpun dan konservasi bambu",
-    note: "Bambu & alam",
+    alt: "Rumpun bambu sebagai sumber kehidupan dan kebudayaan",
+    note: "Alam & kebersamaan",
+    transition:
+      "Dari rumpun bambu, tangan manusia merawat suara. Bunyi yang sederhana bersiap menemukan bahasa baru.",
   },
   {
     number: "02",
-    eyebrow: "TANGAN DAN KETEKUNAN",
-    title: "Menemukan Nada",
+    eyebrow: "KETIKA BAMBU MENEMUKAN BAHASA BARU",
+    title: "Daeng Soetigna",
     description:
-      "Bambu dipilih, dibentuk, dan diselaraskan. Ketelitian para perajin mengubah sebatang bambu menjadi angklung yang bernada.",
+      "Pada 1938, Daeng Soetigna memperkenalkan angklung dengan tangga nada diatonis. Inovasi ini membuka ruang yang lebih luas bagi pembelajaran dan berbagai repertoar musik—tanpa memutus semangat kebersamaan.",
     image: "/gallery/workshop-merakit-bambu.png",
-    alt: "Visual pendukung kegiatan merakit angklung dari bambu",
-    note: "Proses & keterampilan",
+    alt: "Proses merakit angklung dari bambu",
+    note: "Inovasi & pendidikan",
+    transition:
+      "Ketika cakrawala bunyinya meluas, angklung semakin dekat dengan ruang belajar dan kehidupan banyak orang.",
   },
   {
     number: "03",
-    eyebrow: "WARISAN SEJAK 1966",
-    title: "Jejak Abah Udjo",
+    eyebrow: "DARI PADASUKA, UNTUK DUNIA",
+    title: "Udjo Ngalagena",
     description:
-      "Udjo Ngalagena menjadikan angklung ruang belajar, bermain, dan bertemu. Semangat itu terus hidup dalam setiap generasi.",
+      "Pada 1966, Udjo Ngalagena bersama Uum Sumiati mendirikan Saung Angklung Udjo di Padasuka, Bandung. Angklung tidak hanya dipertunjukkan, tetapi diajarkan, dicoba, dan dimainkan bersama.",
     image: "/arsip%20Abah%20Udjo/abah-udjo-legend.webp",
-    alt: "Dokumentasi arsip Abah Udjo",
-    note: "Warisan & pendidikan",
+    alt: "Arsip dokumentasi Udjo Ngalagena",
+    note: "Warisan & edutainment",
+    transition:
+      "Dari Padasuka, perjalanan itu tidak berhenti sebagai kenangan. Suara angklung terus mencari ruang untuk tumbuh.",
   },
   {
     number: "04",
-    eyebrow: "BABAK BARU",
-    title: "Lembur yang Hidup",
+    eyebrow: "WARISAN YANG TERUS BERTUMBUH",
+    title: "Lembur Udjo Parahyangan",
     description:
-      "Di Lembur Udjo Parahyangan, cerita berlanjut melalui pertunjukan interaktif, Agrowalk, workshop, dan kebersamaan.",
+      "Lembur Udjo Parahyangan melanjutkan perjalanan itu dengan menjaga akar sekaligus membuka pengalaman baru: sawah, leuweung awi, karya perajin, pertunjukan, workshop, dan kebersamaan.",
     image: "/LUP.png",
     alt: "Visualisasi rencana kawasan Lembur Udjo Parahyangan",
     note: "Visualisasi kawasan",
+    transition: "Keep the Old, Create the New.",
   },
 ] as const;
 
@@ -76,9 +89,9 @@ export default function AngklungJourneySection() {
               Sebelum menjadi musik, angklung adalah doa.
             </blockquote>
             <p className="mt-6 max-w-sm text-sm leading-7 text-white/75 sm:text-base">
-              Bukan sekadar menyaksikan pertunjukan. Ikuti perjalanan
-              angklung—dari tumbuhnya bambu, proses berkarya, warisan Abah
-              Udjo, hingga pengalaman budaya yang terus hidup.
+              Ikuti perjalanan angklung dari akar tradisi, pembaruan bunyi,
+              pendidikan dan pertunjukan, hingga babak baru di Lembur Udjo
+              Parahyangan.
             </p>
             <Link
               href="/the-story-of-angklung"
@@ -90,7 +103,7 @@ export default function AngklungJourneySection() {
           </div>
         </div>
 
-        <ol className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:col-span-8 lg:gap-x-5 lg:gap-y-8">
+        <ol className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-8 lg:gap-x-5 lg:gap-y-10">
           {chapters.map((chapter, index) => (
             <li
               key={chapter.number}
@@ -127,6 +140,9 @@ export default function AngklungJourneySection() {
                   </h3>
                   <p className="mt-2 text-sm leading-7 text-white/75">
                     {chapter.description}
+                  </p>
+                  <p className="mt-4 border-l border-[#b7a476]/70 pl-3 text-xs leading-6 text-[#f2e8d6]/80">
+                    {chapter.transition}
                   </p>
                 </div>
               </article>
