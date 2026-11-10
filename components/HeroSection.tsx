@@ -1,236 +1,214 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Pause, Play } from "lucide-react";
 import HeroVideo from "./HeroVideo";
-import {
-  DEFAULT_WEBSITE_IMAGES,
-  sectionImages,
-  type WebsiteImage,
-} from "@/lib/website/content";
+import CTA from "./CTA";
+import { DEFAULT_WEBSITE_IMAGES, sectionImages, type WebsiteImage } from "@/lib/website/content";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 const AUTOPLAY_MS = 7000;
-const PROGRESS_TICK_MS = 50;
 
 export default function HeroSection({
   items = sectionImages(DEFAULT_WEBSITE_IMAGES, "banner"),
 }: {
   items?: WebsiteImage[];
 }) {
-  const slides = items;
-  const [current, setCurrent] = useState(0);
-  const [progress, setProgress] = useState(0); // 0..1
-  const [paused, setPaused] = useState(false);
-  const [motionPaused, setMotionPaused] = useState(false);
-  const elapsedRef = useRef(0);
-  const touchStartRef = useRef<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const activeIndex = slides.length ? current % slides.length : 0;
-  const activeSlide = slides[activeIndex];
-
-  const goTo = useCallback((i: number) => {
-    setCurrent(i);
-    elapsedRef.current = 0;
-    setProgress(0);
-  }, []);
-
-  const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-    elapsedRef.current = 0;
-    setProgress(0);
-  }, [slides.length]);
-
-  const prev = useCallback(() => {
-    setCurrent((p) => (p - 1 + slides.length) % slides.length);
-    elapsedRef.current = 0;
-    setProgress(0);
-  }, [slides.length]);
-
-  // Touch swipe support for mobile
-  const onTouchStart = (e: React.TouchEvent) => {
-    setPaused(true);
-    touchStartRef.current = e.touches[0].clientX;
-  };
-
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartRef.current === null) return;
-    const diff = touchStartRef.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) {
-        next();
-      } else {
-        prev();
-      }
-    }
-    touchStartRef.current = null;
-    setPaused(false);
-  };
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const hero = items[activeIndex % Math.max(items.length, 1)];
 
   useEffect(() => {
-    // Video loops on its slide until the visitor selects another visual.
-    if (slides.length < 2 || activeSlide?.video) return;
-    const interval = setInterval(() => {
-      if (paused || motionPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      elapsedRef.current += PROGRESS_TICK_MS;
-      if (elapsedRef.current >= AUTOPLAY_MS) {
-        elapsedRef.current = 0;
-        setProgress(0);
-        setCurrent((prev) => (prev + 1) % slides.length);
-      } else {
-        setProgress(elapsedRef.current / AUTOPLAY_MS);
-      }
-    }, PROGRESS_TICK_MS);
-    return () => clearInterval(interval);
-  }, [paused, motionPaused, slides.length, activeSlide?.video]);
+    if (items.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setActiveIndex((index) => (index + 1) % items.length), AUTOPLAY_MS);
+    return () => window.clearInterval(timer);
+  }, [items.length]);
 
-  // Teks hero memudar & naik mengikuti scroll (scrub), hilang saat hero hampir selesai terlihat
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
-    const text = textRef.current;
-    if (!section || !text) return;
+    const media = mediaRef.current;
+    const copy = copyRef.current;
+    if (!section || !media || !copy) return;
 
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.to(text, {
-        y: -48,
-        autoAlpha: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "bottom 35%",
-          scrub: true,
-        },
+    const context = gsap.context(() => {
+      const motion = gsap.matchMedia();
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        const lines = gsap.utils.toArray<HTMLElement>("[data-hero-line]", copy);
+        const rest = gsap.utils.toArray<HTMLElement>("[data-hero-fade]", copy);
+        const scrollCue = section.querySelector<HTMLElement>("[data-hero-scroll]");
+
+        gsap.set(media, { scale: 1.1 });
+        gsap.set(lines, { yPercent: 118 });
+        gsap.set(rest, { autoAlpha: 0, y: 16 });
+        if (scrollCue) gsap.set(scrollCue, { autoAlpha: 0 });
+
+        const entrance = gsap.timeline({ defaults: { ease: "power3.out" } });
+        entrance
+          .to(media, { scale: 1, duration: 2.4, ease: "power2.out" })
+          .to(rest.slice(0, 1), { autoAlpha: 1, y: 0, duration: 0.7 }, "-=1.7")
+          .to(lines, { yPercent: 0, duration: 1, stagger: 0.1 }, "-=1.35")
+          .to(rest.slice(1), { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.12 }, "-=0.55")
+          .to(scrollCue, { autoAlpha: 1, duration: 0.6 }, "-=0.3");
+
+        gsap.to(media, {
+          yPercent: 7,
+          ease: "none",
+          scrollTrigger: { trigger: section, start: "top top", end: "bottom top", scrub: true },
+        });
+        gsap.to(copy, {
+          y: -60,
+          autoAlpha: 0,
+          ease: "none",
+          scrollTrigger: { trigger: section, start: "top top", end: "bottom 45%", scrub: true },
+        });
       });
-    });
+    }, section);
 
-    const refresh = () => ScrollTrigger.refresh();
-    window.addEventListener("load", refresh);
-
-    return () => {
-      window.removeEventListener("load", refresh);
-      mm.revert();
-    };
+    return () => context.revert();
   }, []);
 
-  if (!activeSlide) return null;
+  if (!hero) return null;
 
   return (
     <section
       id="beranda"
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-stone-950 flex flex-col justify-end touch-pan-y hero-section"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
+      className="hero-section relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden bg-forest text-white"
     >
-      {/* Background slides */}
-      <div className="absolute inset-0">
-        {slides.map((slide, i) => (
-          <img
+      {/* Latar sinematik */}
+      <div ref={mediaRef} className="absolute inset-0 -z-10 origin-center will-change-transform">
+        {items.map((slide, index) => (
+          <div
             key={slide.key}
-            src={slide.image}
-            alt={slide.alt}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1200ms] ease-out ${
-              i === activeIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
+            className={`absolute inset-0 transition-all duration-[1600ms] ease-[cubic-bezier(.22,1,.36,1)] ${
+              index === activeIndex ? "scale-100 opacity-100" : "pointer-events-none scale-[1.04] opacity-0"
             }`}
-            style={{ objectPosition: 'center center' }}
-          />
+            aria-hidden={index !== activeIndex}
+          >
+            {slide.video && index === activeIndex ? (
+              <HeroVideo src={slide.video} poster={slide.image} paused={false} />
+            ) : (
+              <Image
+                src={slide.image}
+                alt={slide.alt}
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className="object-cover"
+              />
+            )}
+          </div>
         ))}
-        {activeSlide.video && (
-          <HeroVideo key={`${activeSlide.key}-${activeSlide.video}`} src={activeSlide.video} poster={activeSlide.image} paused={motionPaused} />
-        )}
-
-        {/* Gradien atas kuat untuk navbar tanpa backdrop-blur */}
-        <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/75 via-black/35 to-transparent pointer-events-none" />
-
-        {/* Gradien bawah untuk keterbacaan teks */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
-        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-black/70 via-black/25 to-transparent pointer-events-none" />
+        {/* Overlay gelap agar tipografi tetap kontras (WCAG AA) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,35,23,.78)_0%,rgba(13,35,23,.46)_34%,rgba(13,35,23,.52)_66%,rgba(13,35,23,.92)_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,rgba(13,35,23,.12)_0%,rgba(13,35,23,.62)_100%)]"
+        />
       </div>
 
-      {/* Konten Hero */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-12 md:pb-16 flex flex-col justify-end">
-        <div ref={textRef} className="max-w-2xl">
-          <div key={activeSlide.key} className="animate-[fadeInUp_0.6s_ease-out_both]">
-            {/* Heading Title */}
-            <h1 className="text-white font-tan text-3xl sm:text-5xl md:text-6xl tracking-tight leading-[1.14] sm:leading-[1.05] drop-shadow-md">
-              {activeSlide.title}
-            </h1>
-
-            {/* Deskripsi */}
-            <p className="text-white/85 text-sm md:text-base mt-3 leading-relaxed drop-shadow-sm max-w-xl">
-              {activeSlide.description}
-            </p>
-          </div>
+      {/* Komposisi pusat */}
+      <div
+        ref={copyRef}
+        className="relative z-10 flex w-full flex-col items-center px-6 pb-32 pt-28 text-center sm:pb-36 sm:pt-32"
+      >
+        {/* Logo resmi LUP — warna asli dipertahankan, diletakkan di atas pelat terang */}
+        <div data-hero-fade className="rounded-2xl bg-[#F7F5F0] px-5 py-3.5 shadow-[0_18px_50px_rgba(0,0,0,.32)] sm:px-7 sm:py-4">
+          <Image
+            src="/LOGO_Lembur.udjo.png"
+            alt="Logo Lembur Udjo Parahyangan"
+            width={2716}
+            height={3000}
+            priority
+            className="h-12 w-auto sm:h-16"
+          />
         </div>
 
-        {/* Navigasi Slide: Dots Bar & Panah Navigasi */}
-        <div className="flex flex-wrap items-center justify-between gap-x-4 mt-4 sm:mt-8 pt-2">
-          {/* Progress Indicators */}
-          <div className="flex max-w-full min-w-0 items-center overflow-x-auto no-scrollbar">
-            {slides.map((_, i) => (
+        <p
+          data-hero-fade
+          className="mt-7 text-[10px] font-semibold uppercase tracking-[0.4em] text-white/75 sm:text-[11px] sm:tracking-[0.5em]"
+        >
+          The Living Journey of Angklung
+        </p>
+
+        <h1 className="mt-5 font-tan text-[clamp(2.05rem,7.4vw,5.5rem)] font-normal leading-[1.02] tracking-[-0.005em] text-white">
+          <span className="block overflow-hidden pb-[0.06em]">
+            <span data-hero-line className="block">
+              Lembur Udjo
+            </span>
+          </span>
+          <span className="block overflow-hidden pb-[0.06em]">
+            <span data-hero-line className="block">
+              Parahyangan
+            </span>
+          </span>
+        </h1>
+
+        <span data-hero-fade aria-hidden="true" className="lup-rule mt-6 h-[2px] w-20 sm:w-28" />
+
+        <p
+          data-hero-fade
+          className="mt-6 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/85 sm:text-xs sm:tracking-[0.34em]"
+        >
+          Keep the Old, Create the New
+        </p>
+
+        <div data-hero-fade className="mt-8 sm:mt-10">
+          <CTA href="#perjalanan" variant="outline-light" ariaLabel="Mulai perjalanan Angklung Journey">
+            Mulai Perjalanan
+            <span aria-hidden="true" className="text-sm leading-none">
+              ↓
+            </span>
+          </CTA>
+        </div>
+      </div>
+
+      {/* Penunjuk gulir */}
+      <div
+        data-hero-scroll
+        aria-hidden="true"
+        className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 sm:flex"
+      >
+        <span className="relative block h-12 w-px overflow-hidden bg-white/25">
+          <span className="absolute inset-x-0 top-0 block h-4 animate-[fadeInUp_1.6s_ease-in-out_infinite] bg-white/85" />
+        </span>
+        <span className="text-[9px] font-semibold uppercase tracking-[0.3em] text-white/55">Scroll</span>
+      </div>
+
+      {/* Pemilih slide */}
+      {items.length > 1 ? (
+        <div className="absolute bottom-7 right-5 z-10 flex flex-col items-end gap-3 sm:right-8">
+          <div className="flex items-center gap-2" aria-label="Pilih foto hero">
+            {items.map((slide, index) => (
               <button
-                key={i}
+                key={slide.key}
                 type="button"
-                aria-label={`Slide ${i + 1}`}
-                aria-current={i === activeIndex ? "true" : undefined}
-                onClick={() => goTo(i)}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg px-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:w-14"
+                aria-label={`Tampilkan foto ${index + 1}`}
+                aria-current={index === activeIndex ? "true" : undefined}
+                onClick={() => setActiveIndex(index)}
+                className="flex h-9 w-9 cursor-pointer items-center justify-center p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                <span className={`block h-1.5 overflow-hidden rounded-full bg-white/30 transition-all duration-300 ${i === activeIndex ? "w-full" : "w-4 sm:w-5"}`}>
-                  {i === activeIndex && (
-                    <span className="block h-full bg-white rounded-full" style={{ width: activeSlide.video || paused ? "100%" : `${progress * 100}%` }} />
-                  )}
-                </span>
+                <span
+                  className={`block h-[2px] rounded-full transition-all duration-500 ${
+                    index === activeIndex ? "w-7 bg-white" : "w-3 bg-white/40"
+                  }`}
+                />
               </button>
             ))}
           </div>
-
-          {/* Prev/Next Buttons */}
-          <div className="flex items-center gap-2">
-            {(activeSlide.video || slides.length > 1) && (
-              <button
-                type="button"
-                onClick={() => setMotionPaused((value) => !value)}
-                aria-label={motionPaused ? "Lanjutkan animasi hero" : "Jeda animasi hero"}
-                aria-pressed={motionPaused}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                {motionPaused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={prev}
-              aria-label="Slide sebelumnya"
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/25 text-white hover:bg-white hover:text-stone-950 transition-all duration-300 cursor-pointer"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M15 18 9 12l6-6" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={next}
-              aria-label="Slide berikutnya"
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/25 text-white hover:bg-white hover:text-stone-950 transition-all duration-300 cursor-pointer"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </button>
-          </div>
+          <span className="hidden text-[10px] font-medium uppercase tracking-[0.28em] text-white/55 sm:block">
+            {String(activeIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+          </span>
         </div>
-      </div>
+      ) : null}
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { APP_URL, siteForHost } from "./lib/site-domains";
+import { portalPaths } from "./lib/ticketing/paths";
 
 function privateResponse(response: NextResponse) {
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
@@ -25,13 +26,31 @@ export function proxy(request: NextRequest) {
   };
   const redirect = (path: string) => {
     const url = request.nextUrl.clone();
+    const publicOrigin = new URL(`${url.protocol}//${request.headers.get("host") || request.nextUrl.host}`);
+    url.host = publicOrigin.host;
+    url.port = publicOrigin.port;
     url.pathname = path;
     return privateResponse(NextResponse.redirect(url, 307));
   };
 
   if (site === "preview") return NextResponse.next();
 
+  // Retired portal logo: block both the source and the optimized image URL.
+  if (site === "ticket") {
+    const imageSource = request.nextUrl.searchParams.get("url");
+    let retiredImage = pathname === "/UdjoFullColor.png";
+    if (pathname === "/_next/image" && imageSource) {
+      try { retiredImage = new URL(imageSource, request.nextUrl).pathname === "/UdjoFullColor.png"; }
+      catch { /* Invalid image inputs remain the image handler's responsibility. */ }
+    }
+    if (retiredImage) return notFound();
+  }
+
+  // Ticketing handlers belong only to the visitor host, including webhooks.
+  if (under("/api/ticketing") && site !== "ticket") return notFound();
+
   if (site === "website") {
+    if (portalPaths.some(under) || under("/pemesanan-lama")) return notFound();
     if (under("/admin")) {
       const url = new URL(pathname === "/admin/login" ? "/login" : "/dashboard", APP_URL);
       url.search = request.nextUrl.search;
@@ -50,13 +69,21 @@ export function proxy(request: NextRequest) {
 
   if (site === "ticket") {
     // No CRM/Payload endpoints are exposed on the visitor hostname.
-    if (pathname === "/") return rewrite("/ticket");
+    if (pathname === "/") {
+      // Preserve links issued by the previous one-page reservation flow.
+      if (/^LU-[a-f0-9]{24}$/.test(request.nextUrl.searchParams.get("pesanan") || "")) return rewrite("/ticket");
+      return rewrite("/beranda-tiket");
+    }
+    if (pathname === "/pemesanan-lama") return rewrite("/ticket");
+    if (portalPaths.some(under)) return privateResponse(NextResponse.next());
+    if (under("/api/ticketing")) return privateResponse(NextResponse.next());
     return notFound();
   }
 
   if (pathname === "/") return redirect("/dashboard");
   if (pathname === "/admin") return redirect("/dashboard");
   if (pathname === "/admin/login") return redirect("/login");
+  if (under("/admin")) return privateResponse(NextResponse.next());
   if (pathname === "/dashboard") return rewrite("/admin");
   if (pathname === "/login") return rewrite("/admin/login");
   // Existing route handlers still enforce the CRM session themselves.

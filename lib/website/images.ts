@@ -6,6 +6,7 @@ import type { VisualKawasan } from "@/payload-types";
 import {
   DEFAULT_WEBSITE_IMAGES,
   WEBSITE_SECTIONS,
+  safeArticleLink,
   type WebsiteImage,
   type WebsiteSection,
 } from "./content";
@@ -23,12 +24,12 @@ export class ImageInputError extends Error {
 export function mergeWebsiteImages(docs: VisualKawasan[]): WebsiteImage[] {
   const images = new Map(DEFAULT_WEBSITE_IMAGES.map((image) => [image.key, { ...image }]));
   for (const doc of docs) {
-    if (!doc.placement || !doc.section || doc.mimeType?.startsWith("video/")) continue;
+    if (!doc.placement || !doc.section || !WEBSITE_SECTIONS.some((section) => section.id === doc.section) || doc.mimeType?.startsWith("video/")) continue;
     const fallback = images.get(doc.placement);
     const image = doc.filename
       ? `/api/visual-kawasan/file/${encodeURIComponent(doc.filename)}`
       : fallback?.image;
-    if (!image) continue;
+    if (!image && doc.section !== "zona-siteplan") continue;
     const video = doc.section === "banner" && typeof doc.heroVideo === "object" ? doc.heroVideo : null;
     images.set(doc.placement, {
       key: doc.placement,
@@ -37,7 +38,8 @@ export function mergeWebsiteImages(docs: VisualKawasan[]): WebsiteImage[] {
       description: doc.description ?? "",
       category: doc.category ?? "",
       alt: doc.alt,
-      image,
+      image: image || "",
+      linkUrl: safeArticleLink(doc.linkUrl ?? fallback?.linkUrl),
       video: video?.filename && VIDEO_MIME_TYPES.includes(video.mimeType || "")
         ? `/api/visual-kawasan/file/${encodeURIComponent(video.filename)}`
         : null,
@@ -89,11 +91,16 @@ export function parseImageFields(form: FormData) {
   const mediaType = textField(form, "mediaType", "Jenis media", 10) || "image";
   if (mediaType !== "image" && mediaType !== "video") throw new ImageInputError("Jenis media tidak valid.");
   if (mediaType === "video" && section !== "banner") throw new ImageInputError("Video hanya tersedia untuk banner beranda.");
+  const title = textField(form, "title", "Judul", 160, true);
+  const linkUrl = textField(form, "linkUrl", "Tautan artikel", 2048);
+  if (section === "trending" && !safeArticleLink(linkUrl)) throw new ImageInputError("Isi tautan artikel dengan URL HTTPS atau alamat halaman seperti /the-story-of-angklung.");
+  if (section === "zona-siteplan" && Number(rawPosition) < 1) throw new ImageInputError("Nomor zona dimulai dari 1 dan harus sesuai penanda pada denah.");
   return {
     mediaType,
     section: section as WebsiteSection,
-    title: textField(form, "title", "Judul", 160, true),
-    alt: textField(form, "alt", "Deskripsi gambar", 240, true),
+    title,
+    alt: section === "zona-siteplan" ? title : textField(form, "alt", "Deskripsi gambar", 240, true),
+    linkUrl: section === "trending" ? safeArticleLink(linkUrl) : null,
     description: textField(form, "description", "Keterangan", 1200),
     category: textField(form, "category", "Kategori", 60),
     position: Number(rawPosition),
@@ -141,6 +148,7 @@ export async function prepareVideo(form: FormData) {
 
 export async function saveWebsiteImage(form: FormData, existingKey?: string) {
   const { mediaType, ...fields } = parseImageFields(form);
+  if (fields.section === "siteplan" && existingKey !== "siteplan-utama") throw new ImageInputError("Gunakan Ubah gambar pada denah utama untuk mengganti siteplan.");
   const payload = await getPayloadClient();
   const fallback = DEFAULT_WEBSITE_IMAGES.find((image) => image.key === existingKey);
   const result = existingKey
@@ -151,7 +159,8 @@ export async function saveWebsiteImage(form: FormData, existingKey?: string) {
   if (fallback && fallback.section !== fields.section) throw new ImageInputError("Bagian gambar bawaan tidak dapat dipindahkan.");
   if (existing?.section && existing.section !== fields.section) throw new ImageInputError("Bagian konten tidak dapat dipindahkan.");
   const file = await prepareFile(form);
-  if (!file && !fallback && !existing?.filename) throw new ImageInputError("Pilih gambar untuk konten baru.");
+  if (fields.section === "zona-siteplan" && file) throw new ImageInputError("Zona siteplan hanya berisi teks. Ganti gambar melalui Denah Siteplan.");
+  if (fields.section !== "zona-siteplan" && !file && !fallback && !existing?.filename) throw new ImageInputError("Pilih gambar untuk konten baru.");
   const videoFile = await prepareVideo(form);
   if (videoFile && (fields.section !== "banner" || mediaType !== "video")) throw new ImageInputError("Video hanya dapat diunggah untuk banner dengan jenis media Video.");
   const previousVideo = typeof existing?.heroVideo === "number" ? existing.heroVideo : existing?.heroVideo?.id;
@@ -225,7 +234,7 @@ export function imageErrorResponse(error: unknown) {
   while (cause && typeof cause === "object" && !seen.has(cause)) {
     seen.add(cause);
     const detail = cause as { code?: string; message?: string; cause?: unknown };
-    if (detail.code === "42703" || (detail.code === "42P01" && detail.message?.includes("visual_kawasan"))) {
+    if (detail.code === "42703" || ((detail.code === "42P01" || detail.code === "22P02") && detail.message?.includes("visual_kawasan"))) {
       return Response.json({
         code: "MEDIA_SCHEMA_NOT_READY",
         error: "Media beranda belum siap karena pembaruan sistem belum selesai. Hubungi pengelola website.",

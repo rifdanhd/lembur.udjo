@@ -1,46 +1,36 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ArrowLeft, ArrowUpRight, MessageCircle, Ticket } from "lucide-react";
-import { RESERVATION_URL, TICKET_URL, WEBSITE_URL } from "@/lib/site-domains";
+import { ArrowUpRight, Clock3, MapPin, Ticket } from "lucide-react";
+import { RESERVATION_URL, TICKET_URL } from "@/lib/site-domains";
+import { PortalFrame } from "@/components/ticketing/PortalFrame";
+import BookingForm from "@/components/ticketing/BookingForm";
+import { catalog } from "@/lib/ticketing/orders";
+import { ticketingDb } from "@/lib/ticketing/db";
+import { sandboxConfig } from "@/lib/ticketing/config";
+import type { Catalog } from "@/lib/ticketing/types";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Tiket & Reservasi — Lembur Udjo Parahyangan",
-  description: "Informasi tiket dan reservasi kunjungan ke Lembur Udjo Parahyangan.",
-  alternates: { canonical: TICKET_URL },
-  robots: { index: false, follow: false },
+  description: "Rencanakan kunjungan budaya bersama Lembur Udjo Parahyangan. Pilih jadwal dan tiket kunjunganmu.",
+  alternates: { canonical: `${TICKET_URL}/pemesanan-lama` }, robots: { index: false, follow: false },
 };
 
-export default function TicketPage() {
-  return (
-    <main className="min-h-svh bg-cream px-5 py-6 text-forest sm:px-10 sm:py-8">
-      <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5">
-        <a href={WEBSITE_URL} aria-label="Website Lembur Udjo Parahyangan" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4">
-          <Image src="/UdjoFullColor.png" alt="Lembur Udjo Parahyangan" width={150} height={90} className="h-16 w-auto object-contain" />
-        </a>
-        <a href={WEBSITE_URL} className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-medium underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
-          <ArrowLeft size={16} aria-hidden="true" /> Kembali ke website
-        </a>
-      </header>
-      <section className="mx-auto grid max-w-6xl items-center gap-10 py-14 sm:py-20 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-forest/15 px-4 py-2 text-xs font-semibold tracking-wide">
-            <Ticket size={16} aria-hidden="true" /> TIKET & RESERVASI
-          </span>
-          <h1 className="mt-6 font-playfair text-4xl leading-tight sm:text-5xl">Rencanakan kunjungan,<br /><span className="italic">mulai cerita bersama.</span></h1>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-stone-600">Temukan pengalaman budaya Sunda bersama Lembur Udjo Parahyangan. Hubungi tim kami untuk informasi tiket, jadwal, dan reservasi rombongan.</p>
-          <div className="mt-8 rounded-2xl border border-forest/10 bg-white p-5 sm:p-6">
-            <h2 className="text-lg font-semibold">Reservasi melalui tim kami</h2>
-            <p className="mt-2 text-sm leading-relaxed text-stone-600">Pembelian tiket online belum tersedia. Untuk saat ini, pemesanan dan konfirmasi kunjungan dilayani melalui WhatsApp resmi.</p>
-            <a href={RESERVATION_URL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-forest px-5 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-forest-light focus-visible:outline-2 focus-visible:outline-offset-4 sm:w-auto">
-              <MessageCircle size={18} aria-hidden="true" /> Hubungi tim reservasi <ArrowUpRight size={16} aria-hidden="true" />
-            </a>
-          </div>
-        </div>
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] lg:max-h-[620px]">
-          <Image src="/Hero.ecoland.jpg" alt="Suasana kawasan Lembur Udjo Parahyangan" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
-        </div>
-      </section>
-      <footer className="mx-auto max-w-6xl border-t border-forest/10 py-6 text-sm text-stone-500">Lembur Udjo Parahyangan · Budaya, alam, dan kebersamaan.</footer>
-    </main>
-  );
+export default async function TicketPage() {
+  let data: Catalog;
+  try { data = await catalog(ticketingDb(), Boolean(sandboxConfig())); }
+  catch { data = { state: "unavailable", sandbox: true, checkoutEnabled: false, products: [], schedules: [] }; }
+  return <PortalFrame>
+    <div className="grid items-start gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <aside className="lg:sticky lg:top-8">
+        <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-forest/65"><Ticket size={15} aria-hidden="true" /> Tiket & Reservasi</p>
+        <h1 className="mt-5 max-w-md font-playfair text-4xl leading-[1.15] sm:text-5xl">Satu kunjungan,<br /><span className="italic">banyak cerita.</span></h1>
+        <p className="mt-5 max-w-md text-sm leading-7 text-stone-600">Luangkan waktu untuk budaya, alam, dan kebersamaan. Rencanakan harimu bersama Lembur Udjo Parahyangan.</p>
+        <div className="relative mt-7 aspect-[16/10] overflow-hidden rounded-2xl lg:aspect-[4/3]"><Image src="/Hero.ecoland.jpg" alt="Suasana alam kawasan Lembur Udjo Parahyangan" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" priority /><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-5 pt-16 text-white"><p className="flex items-center gap-2 text-xs"><MapPin size={14} aria-hidden="true" />Lembur Udjo Parahyangan</p></div></div>
+        <div className="mt-6 flex gap-3 text-xs leading-6 text-stone-500"><Clock3 size={17} className="mt-1 shrink-0" aria-hidden="true" /><p>Pilih jadwal, tentukan jumlah tiket, lalu lengkapi data pemesan. Simpan nomor pesananmu untuk pengecekan.</p></div>
+        <a href={RESERVATION_URL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline underline-offset-4">Butuh bantuan merencanakan kunjungan?<ArrowUpRight size={15} aria-hidden="true" /></a>
+      </aside>
+      <BookingForm initialCatalog={data} />
+    </div>
+  </PortalFrame>;
 }

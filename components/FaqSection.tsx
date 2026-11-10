@@ -34,7 +34,7 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-12 sm:py-16 md:py-20 bg-stone-50 border-y border-stone-200">
+    <section id="faq" className="py-12 sm:py-16 md:py-20 bg-surface-alt border-y border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           <div className="lg:col-span-4">
@@ -44,7 +44,7 @@ export default function FaqSection() {
             <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05] mt-2">
               <MaskText text="FAQ Kunjungan Anda" scrub />
             </h2>
-            <p className="text-stone-600 text-sm md:text-base mt-2.5 sm:mt-3 leading-relaxed">
+            <p className="text-muted text-sm md:text-base mt-2.5 sm:mt-3 leading-relaxed">
               Informasi lokasi, jadwal pertunjukan, dan cara reservasi sebelum berkunjung ke Lembur Udjo Parahyangan.
             </p>
             <div className="pt-4 sm:pt-5">
@@ -52,7 +52,7 @@ export default function FaqSection() {
                 href="https://wa.me/6281219279765?text=Halo%20Lembur%20Udjo,%20saya%20ingin%20tanya%20informasi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-stone-950 text-xs font-extrabold uppercase tracking-wider border-b-2 border-stone-950 pb-1 hover:text-forest hover:border-forest transition-colors"
+                className="inline-flex items-center gap-1.5 text-forest text-xs font-extrabold uppercase tracking-wider border-b-2 border-forest pb-1 hover:text-forest hover:border-forest transition-colors"
               >
                 Masih Ada Pertanyaan? &rarr;
               </a>
@@ -60,7 +60,7 @@ export default function FaqSection() {
           </div>
 
           <div className="lg:col-span-8">
-            <div className="divide-y divide-stone-200 border-t border-b border-stone-200 bg-white rounded-xl sm:rounded-2xl overflow-hidden">
+            <div className="divide-y divide-border border-t border-b border-border bg-surface rounded-xl sm:rounded-2xl overflow-hidden">
               {faqs.map((faq, i) => {
                 const isOpen = openIndex === i;
                 return (
@@ -70,14 +70,14 @@ export default function FaqSection() {
                       onClick={() => setOpenIndex(isOpen ? null : i)}
                       aria-expanded={isOpen}
                       aria-controls={`faq-panel-${i}`}
-                      className="w-full flex items-start justify-between gap-4 text-left px-4 sm:px-6 py-4 sm:py-5 hover:bg-stone-50 transition-colors cursor-pointer"
+                      className="w-full flex items-start justify-between gap-4 text-left px-4 sm:px-6 py-4 sm:py-5 hover:bg-surface-alt transition-colors cursor-pointer"
                     >
-                      <span className="text-sm sm:text-base font-extrabold tracking-tight text-stone-950 leading-snug">
+                      <span className="text-sm sm:text-base font-extrabold tracking-tight text-forest leading-snug">
                         {faq.q}
                       </span>
                       <span
-                        className={`shrink-0 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full border border-stone-300 text-stone-500 transition-transform duration-300 ${
-                          isOpen ? "rotate-45 bg-stone-950 border-stone-950 text-white" : ""
+                        className={`shrink-0 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full border border-border text-muted transition-transform duration-300 ${
+                          isOpen ? "rotate-45 bg-forest border-forest text-white" : ""
                         }`}
                         aria-hidden="true"
                       >
@@ -91,7 +91,7 @@ export default function FaqSection() {
                       hidden={!isOpen}
                       className="px-4 sm:px-6 pb-4 sm:pb-5 -mt-1"
                     >
-                      <p className="text-sm text-stone-600 leading-relaxed max-w-2xl">{faq.a}</p>
+                      <p className="text-sm text-muted leading-relaxed max-w-2xl">{faq.a}</p>
                     </div>
                   </div>
                 );

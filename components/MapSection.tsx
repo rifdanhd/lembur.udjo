@@ -10,12 +10,12 @@ export default function MapSection() {
           <h2 className="font-tan text-2xl sm:text-3xl md:text-4xl tracking-tight text-forest leading-[1.12] sm:leading-[1.05] mt-2">
             <MaskText text="Temui Kami di Bale Pare" scrub />
           </h2>
-          <p className="text-stone-600 text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
+          <p className="text-muted text-xs sm:text-sm sm:text-base mt-2.5 sm:mt-3 leading-relaxed">
             Kawasan Bale Pare, Kota Baru Parahyangan, Padalarang, Kab. Bandung Barat
           </p>
         </div>
 
-        <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-md sm:shadow-lg border border-stone-200">
+        <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-md sm:shadow-lg border border-border">
           <iframe
             src="https://maps.google.com/maps?q=Bale%20Pare%20Kota%20Baru%20Parahyangan%20Padalarang&t=&z=16&ie=UTF8&iwloc=&output=embed"
             title="Peta Lokasi Lembur Udjo Parahyangan"

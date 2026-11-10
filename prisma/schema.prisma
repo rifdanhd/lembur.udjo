@@ -1,0 +1,226 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  ADMIN
+  STAFF
+}
+
+enum ProductType {
+  ADULT
+  CHILD
+  GROUP
+  PERFORMANCE_PACKAGE
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  EXPIRED
+  CANCELLED
+  REFUNDED
+  PAYMENT_REVIEW
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  SETTLED
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum TicketStatus {
+  ISSUED
+  USED
+  CANCELLED
+}
+
+model User {
+  id          String      @id @default(cuid())
+  name        String?
+  email       String      @unique
+  role        AdminRole   @default(STAFF)
+  active      Boolean     @default(true)
+  checkIns    CheckIn[]
+  auditLogs   AuditLog[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  description String?
+  type        ProductType
+  price       Int
+  active      Boolean     @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([active, type])
+}
+
+model Schedule {
+  id          String      @id @default(cuid())
+  date        DateTime    @db.Date
+  session     String
+  capacity    Int
+  reserved    Int         @default(0)
+  sold        Int         @default(0)
+  active      Boolean     @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([date, session])
+  @@index([date, active])
+}
+
+model Customer {
+  id          String      @id @default(cuid())
+  name        String
+  email       String      @unique
+  whatsapp    String?
+  orders      Order[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Order {
+  id          String       @id @default(cuid())
+  orderNumber String       @unique
+  customerId  String
+  customer    Customer     @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  status      OrderStatus  @default(PENDING)
+  totalAmount Int
+  expiresAt   DateTime
+  paidAt      DateTime?
+  requestKeyHash String?    @unique
+  requestHash    String?
+  visitorId     String?
+  visitor       VisitorAccount? @relation(fields: [visitorId], references: [id], onDelete: Restrict)
+  items       OrderItem[]
+  payments    Payment[]
+  tickets     Ticket[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([customerId, createdAt])
+  @@index([status, expiresAt])
+  @@index([visitorId, createdAt])
+}
+
+model VisitorAccount {
+  id           String @id @default(cuid())
+  name         String
+  email        String @unique
+  passwordHash String
+  sessions     VisitorSession[]
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VisitorSession {
+  id        String @id @default(cuid())
+  tokenHash String @unique
+  visitorId String
+  visitor   VisitorAccount @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([visitorId])
+}
+
+model OrderItem {
+  id          String    @id @default(cuid())
+  orderId     String
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  scheduleId  String
+  schedule    Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  productName String
+  unitPrice   Int
+  quantity    Int
+  lineTotal   Int
+  createdAt   DateTime  @default(now())
+
+  @@index([orderId])
+  @@index([scheduleId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider          String
+  providerPaymentId String?
+  status            PaymentStatus @default(PENDING)
+  amount            Int
+  rawResponse       Json?
+  paidAt            DateTime?
+  checkoutUrl       String?
+  checkoutStartedAt DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@unique([provider, providerPaymentId])
+  @@index([orderId, status])
+}
+
+model RateLimit {
+  key       String   @id
+  count     Int      @default(1)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model Ticket {
+  id          String       @id @default(cuid())
+  orderId     String
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  code        String       @unique
+  qrToken     String       @unique
+  status      TicketStatus @default(ISSUED)
+  issuedAt    DateTime     @default(now())
+  usedAt      DateTime?
+  checkIn     CheckIn?
+
+  @@index([orderId, status])
+}
+
+model CheckIn {
+  id          String   @id @default(cuid())
+  ticketId    String   @unique
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+  checkedById String?
+  checkedBy   User?    @relation(fields: [checkedById], references: [id], onDelete: SetNull)
+  checkedAt   DateTime @default(now())
+  source      String?
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+}

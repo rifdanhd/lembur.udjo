@@ -1,5 +1,6 @@
 import Image from "next/image";
 import MaskText from "./anim/MaskText";
+import Reveal from "./anim/Reveal";
 
 export default function AboutSection() {
   return (
@@ -32,7 +33,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
+          <Reveal y={48} parallax={5} className="relative overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
             <Image
               src="/arsip%20Abah%20Udjo/abah-udjo-legend.webp"
               alt="Foto arsip Abah Udjo dan Uum Sumiati"
@@ -41,7 +42,7 @@ export default function AboutSection() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="h-auto w-full object-cover"
             />
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

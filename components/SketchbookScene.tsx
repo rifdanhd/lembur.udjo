@@ -1,6 +1,6 @@
 "use client";
 
-import { MengToSketchbookLandingPage } from "@designcodeio/threeui";
+import { MengToSketchbookLandingPage } from "@designcodeio/threeui/components/MengToSketchbookLandingPage";
 import "@designcodeio/threeui/style.css";
 
 export function Scene() {

@@ -3,7 +3,7 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    DO $$ BEGIN
-    CREATE TYPE "public"."enum_visual_kawasan_section" AS ENUM('banner', 'fasilitas', 'galeri');
+    CREATE TYPE "public"."enum_visual_kawasan_section" AS ENUM('banner', 'fasilitas', 'galeri', 'masterplan', 'siteplan', 'zona-siteplan', 'trending');
   EXCEPTION WHEN duplicate_object THEN NULL; END $$;
   DO $$ BEGIN
     CREATE TYPE "public"."enum_visual_kawasan_area" AS ENUM('area-depan', 'panggung', 'kolam', 'fasilitas', 'lainnya');

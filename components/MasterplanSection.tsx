@@ -2,89 +2,17 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import MaskText from "./anim/MaskText";
+import { DEFAULT_WEBSITE_IMAGES, sectionImages, type WebsiteImage } from "@/lib/website/content";
 
-type Zone = {
-  img: string;
-  category: string;
-  title: string;
-  desc: string;
-  cta: string;
-  href: string;
-};
-
-const toSrc = (path: string) =>
-  path
-    .split("/")
-    .map((seg) => encodeURIComponent(seg))
-    .join("/");
-
-const zones: Zone[] = [
-  {
-    img: "/Masterplan.jpg",
-    category: "Visualisasi Kawasan 01",
-    title: "Visualisasi Kawasan",
-    desc: "Denah lengkap kawasan Lembur Udjo Parahyangan — panggung, kriya bambu, dan kampung budaya dalam satu perjalanan.",
-    cta: "Jelajahi Kawasan",
-    href: "#fasilitas",
-  },
-  {
-    img: "/Masterplan2.jpg",
-    category: "Visualisasi Kawasan 02",
-    title: "Zona & Fasilitas",
-    desc: "Peta zona dan fasilitas kawasan: area pertunjukan, workshop, agrowalk, hingga galeri budaya.",
-    cta: "Jelajahi Kawasan",
-    href: "#fasilitas",
-  },
-  {
-    img: "/Masterplan3.jpg",
-    category: "Visualisasi Kawasan 03",
-    title: "Denah Area Kawasan",
-    desc: "Denah detail area kawasan beserta akses jalur penunjuk arah untuk memudahkan perjalanan berkunjung.",
-    cta: "Jelajahi Kawasan",
-    href: "#fasilitas",
-  },
-  ...[
-    "Copy of 1_1 - Photo.jpg",
-    "Copy of 1_2 - Photo.jpg",
-    "Copy of 1_3 - Photo.jpg",
-    "Copy of 1_4 - Photo.jpg",
-    "Copy of 1_5 - Photo.jpg",
-    "Copy of 1_6 - Photo.jpg",
-    "Copy of 1_7 - Photo.jpg",
-    "Copy of 1_8 - Photo.jpg",
-    "Copy of 1_9 - Photo.jpg",
-    "Copy of 1_10 - Photo.jpg",
-    "Copy of 2_1 - Photo.jpg",
-    "Copy of 2_2 - Photo.jpg",
-    "Copy of 2_3 - Photo.jpg",
-    "Copy of 2_4 - Photo.jpg",
-    "Copy of 2_5 - Photo.jpg",
-    "Copy of 2_6 - Photo.jpg",
-    "Copy of 2_7 - Photo.jpg",
-    "Copy of 2_8 - Photo.jpg",
-    "Copy of 2_9 - Photo.jpg",
-    "Copy of 2_10 - Photo.jpg",
-  ].map((file, i) => ({
-    img: toSrc(`/Masterplan/${file}`),
-    category: `Visualisasi Kawasan ${String(i + 4).padStart(2, "0")}`,
-    title: `Foto Kawasan ${i + 1}`,
-    desc: "Dokumentasi visual kawasan Lembur Udjo Parahyangan.",
-    cta: "Jelajahi Kawasan",
-    href: "#fasilitas",
-  })),
-];
-
-const AUTOPLAY_MS = 8000;
-const DOT_COUNT = 3;
-
-const dotIndexFor = (index: number) =>
-  Math.min(DOT_COUNT - 1, Math.floor((index * DOT_COUNT) / zones.length));
-
-const slideForDot = (dot: number) =>
-  Math.min(zones.length - 1, Math.floor((dot * zones.length) / DOT_COUNT));
-
-export default function MasterplanSection() {
+export default function MasterplanSection({
+  items = sectionImages(DEFAULT_WEBSITE_IMAGES, "masterplan"),
+}: { items?: WebsiteImage[] }) {
+  const zones = items;
+  const dotCount = Math.min(3, zones.length);
+  const dotIndexFor = (index: number) => Math.min(dotCount - 1, Math.floor(index * dotCount / zones.length));
+  const slideForDot = (dot: number) => Math.min(zones.length - 1, Math.floor(dot * zones.length / dotCount));
   const [currentIndex, setCurrentIndex] = useState(0);
+  const activeIndex = zones.length ? currentIndex % (zones.length || 1) : 0;
   const [paused, setPaused] = useState(false);
   const elapsedRef = useRef(0);
   const touchStartRef = useRef<number | null>(null);
@@ -95,14 +23,14 @@ export default function MasterplanSection() {
   }, []);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex((p) => (p + 1) % zones.length);
+    setCurrentIndex((p) => (p + 1) % (zones.length || 1));
     elapsedRef.current = 0;
-  }, []);
+  }, [zones.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentIndex((p) => (p - 1 + zones.length) % zones.length);
+    setCurrentIndex((p) => (p - 1 + zones.length) % (zones.length || 1));
     elapsedRef.current = 0;
-  }, []);
+  }, [zones.length]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     setPaused(true);
@@ -124,21 +52,24 @@ export default function MasterplanSection() {
   };
 
   useEffect(() => {
+    if (zones.length < 2) return;
     const interval = setInterval(() => {
-      if (paused) return;
+      if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       elapsedRef.current += 50;
-      if (elapsedRef.current >= AUTOPLAY_MS) {
+      if (elapsedRef.current >= 8000) {
         elapsedRef.current = 0;
-        setCurrentIndex((p) => (p + 1) % zones.length);
+        setCurrentIndex((p) => (p + 1) % (zones.length || 1));
       }
     }, 50);
     return () => clearInterval(interval);
-  }, [paused]);
+  }, [paused, zones.length]);
+
+  if (!zones.length) return null;
 
   return (
     <section
       id="masterplan"
-      className="relative w-full bg-cream text-gray-900 py-12 sm:py-16 md:py-20 overflow-hidden"
+      className="relative w-full bg-cream text-forest py-12 sm:py-16 md:py-20 overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -158,22 +89,22 @@ export default function MasterplanSection() {
         <div
           className="flex transition-transform duration-700 ease-out items-center [--card-width:88%] [--step:88%] [--offset:44%] md:[--card-width:72%] md:[--step:72%] md:[--offset:36%]"
           style={{
-            transform: `translateX(calc(50% - (${currentIndex} * var(--step)) - var(--offset)))`,
+            transform: `translateX(calc(50% - (${activeIndex} * var(--step)) - var(--offset)))`,
           }}
         >
           {zones.map((zone, i) => {
-            const active = i === currentIndex;
+            const active = i === activeIndex;
             return (
               <div
-                key={zone.title}
+                key={zone.key}
                 className={`w-[var(--card-width)] shrink-0 px-1.5 sm:px-2 transition-all duration-500 ${
                   active ? "scale-100 z-20" : "scale-95 z-10 opacity-70 sm:opacity-90"
                 }`}
               >
-                <div className="relative aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] bg-stone-950">
+                <div className="relative aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] bg-forest">
                   <img
-                    src={zone.img}
-                    alt={zone.title}
+                    src={zone.image}
+                    alt={zone.alt}
                     loading="lazy"
                     draggable={false}
                     className="absolute inset-0 w-full h-full object-cover"
@@ -185,13 +116,23 @@ export default function MasterplanSection() {
         </div>
       </div>
 
+      <div className="mx-auto mt-5 max-w-3xl px-4 text-center" aria-live="off">
+        {zones[activeIndex].category ? (
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">
+            {zones[activeIndex].category}
+          </p>
+        ) : null}
+        <h3 className="mt-1 text-base font-semibold text-forest">{zones[activeIndex].title}</h3>
+        {zones[activeIndex].description && <p className="mt-2 text-sm text-muted">{zones[activeIndex].description}</p>}
+      </div>
       {/* Navigasi Bawah */}
       <div className="flex items-center justify-between max-w-xs mx-auto mt-6 sm:mt-10 px-4">
         <button
           type="button"
           onClick={prevSlide}
+          disabled={zones.length < 2}
           aria-label="Slide sebelumnya"
-          className="w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-sm"
+          className="w-11 h-11 rounded-full bg-surface hover:bg-surface-alt flex items-center justify-center text-forest transition-colors cursor-pointer shadow-sm"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -199,8 +140,8 @@ export default function MasterplanSection() {
         </button>
 
         <div className="flex items-center">
-          {Array.from({ length: DOT_COUNT }, (_, i) => {
-            const isActive = dotIndexFor(currentIndex) === i;
+          {Array.from({ length: dotCount }, (_, i) => {
+            const isActive = dotIndexFor(activeIndex) === i;
             return (
               <button
                 key={i}
@@ -210,7 +151,7 @@ export default function MasterplanSection() {
                 aria-current={isActive ? "true" : undefined}
                 className="flex h-11 w-11 items-center justify-center rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest"
               >
-                <span className={`block h-1.5 rounded-full transition-all duration-300 ${isActive ? "w-8 bg-stone-950" : "w-2 bg-stone-300"}`} />
+                <span className={`block h-1.5 rounded-full transition-all duration-300 ${isActive ? "w-8 bg-forest" : "w-2 bg-border"}`} />
               </button>
             );
           })}
@@ -219,8 +160,9 @@ export default function MasterplanSection() {
         <button
           type="button"
           onClick={nextSlide}
+          disabled={zones.length < 2}
           aria-label="Slide berikutnya"
-          className="w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-sm"
+          className="w-11 h-11 rounded-full bg-surface hover:bg-surface-alt flex items-center justify-center text-forest transition-colors cursor-pointer shadow-sm"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

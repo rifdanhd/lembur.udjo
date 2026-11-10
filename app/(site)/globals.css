@@ -7,16 +7,56 @@
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 96rem;
 
+  /* LUP neutral foundation */
+  --color-background: #f7f5f0;
   --color-forest: #0d2317;
   --color-forest-light: #163826;
-  --color-cream: #fcfaf6;
+  --color-ink: #0d2317;
+  --color-cream: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-surface-alt: #efe7da;
+  --color-muted: #57534e;
+  --color-border: #ddd6c9;
   --color-bamboo: #8b6914;
+
+  /* LUP signature accents */
+  --color-lup-blue: #7bbce8;
+  --color-lup-green: #86c95a;
+  --color-lup-yellow: #ecce68;
+  --color-lup-orange: #e59a62;
+  --color-lup-red: #c95a4a;
+
   --font-cinzel: "Cinzel Decorative", Georgia, serif;
   --font-playfair: var(--font-playfair-src), "Playfair Display", "Georgia", serif;
   --font-lobster: var(--font-lobster-src), "Lobster", cursive;
   --font-tan: var(--font-tan-meringue), "TAN MERINGUE", cursive;
   --font-sans: var(--font-jakarta-src), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-jakarta: var(--font-jakarta-src), "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+:root {
+  --immersive-ink: #030712;
+  --immersive-forest: #07130d;
+  --immersive-earth: #e8e1d3;
+  --immersive-warm: #f4d58d;
+  --immersive-content: min(100% - 2.5rem, 80rem);
+
+  --lup-gradient: linear-gradient(
+    90deg,
+    #7bbce8 0%,
+    #86c95a 25%,
+    #ecce68 50%,
+    #e59a62 75%,
+    #c95a4a 100%
+  );
+  --lup-gradient-soft: linear-gradient(
+    90deg,
+    rgba(123, 188, 232, 0.55) 0%,
+    rgba(134, 201, 90, 0.55) 25%,
+    rgba(236, 206, 104, 0.55) 50%,
+    rgba(229, 154, 98, 0.55) 75%,
+    rgba(201, 90, 74, 0.55) 100%
+  );
 }
 
 *, *::before, *::after {
@@ -30,12 +70,37 @@ html {
 }
 
 body {
-  background-color: #fcfaf6;
-  color: #1c1917;
+  background-color: #f7f5f0;
+  color: #0d2317;
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+}
+
+.immersive-site {
+  background: var(--immersive-ink);
+  color: #f8fafc;
+}
+
+/* LUP signature gradient — single source for the five soft brand colors. */
+.lup-gradient {
+  background-image: var(--lup-gradient);
+}
+
+.lup-gradient-soft {
+  background-image: var(--lup-gradient-soft);
+}
+
+.lup-rule {
+  height: 2px;
+  background-image: var(--lup-gradient);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 section,
@@ -55,10 +120,6 @@ section,
     height: auto;
     display: block;
   }
-}
-
-a {
-  color: inherit;
 }
 
 .divider {

@@ -51,7 +51,7 @@ export default function SiteplanSection() {
   };
 
   return (
-    <section id="siteplan" className="py-12 sm:py-16 md:py-20 bg-stone-50 border-y border-stone-200">
+    <section id="siteplan" className="py-12 sm:py-16 md:py-20 bg-surface-alt border-y border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
           <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-forest block">
@@ -60,12 +60,12 @@ export default function SiteplanSection() {
           <h2 className="font-tan text-2xl sm:text-3xl md:text-5xl mt-2 text-forest tracking-tight">
             <MaskText text="Zona & Titik Kawasan" scrub />
           </h2>
-          <p className="text-stone-600 text-sm mt-3 leading-relaxed">
+          <p className="text-muted text-sm mt-3 leading-relaxed">
             Sebaran 10 titik utama dalam siteplan Lembur Udjo Parahyangan — dari gerbang, ruang publik, pertunjukan, hingga fasilitas pengunjung.
           </p>
         </div>
 
-        <div className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm sm:mb-8">
+        <div className="mb-6 overflow-hidden rounded-2xl border border-border bg-white shadow-sm sm:mb-8">
           <img
             src="/SITEPLAN.png"
             alt="Siteplan kawasan Lembur Udjo Parahyangan dengan penanda lokasi 1 sampai 10"
@@ -81,10 +81,10 @@ export default function SiteplanSection() {
           {zones.map((zone) => (
             <div
               key={zone.num}
-              className="group snap-start shrink-0 w-[80%] sm:w-[47%] lg:w-[calc((100%-2rem)/3)] p-4 sm:p-5 bg-white rounded-xl border border-stone-200 hover:border-stone-950 hover:shadow-lg transition-all duration-300"
+              className="group snap-start shrink-0 w-[80%] sm:w-[47%] lg:w-[calc((100%-2rem)/3)] p-4 sm:p-5 bg-surface rounded-xl border border-border hover:border-forest hover:shadow-lg transition-all duration-300"
             >
               <div className="flex items-start gap-3.5">
-                <span className="flex-shrink-0 w-9 h-9 rounded-lg bg-stone-100 group-hover:bg-forest group-hover:text-white text-stone-500 flex items-center justify-center text-xs font-extrabold transition-colors">
+                <span className="flex-shrink-0 w-9 h-9 rounded-lg bg-surface group-hover:bg-forest group-hover:text-white text-muted flex items-center justify-center text-xs font-extrabold transition-colors">
                   {zone.num}
                 </span>
                 <div className="min-w-0 break-words">
@@ -94,7 +94,7 @@ export default function SiteplanSection() {
                   <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-forest mb-1.5">
                     {zone.en}
                   </span>
-                  <p className="text-sm text-stone-600 leading-relaxed">{zone.desc}</p>
+                  <p className="text-sm text-muted leading-relaxed">{zone.desc}</p>
                 </div>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function SiteplanSection() {
             onClick={() => scrollByAmount(-1)}
             disabled={atStart}
             aria-label="Geser ke kiri"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-100 text-stone-950 hover:bg-stone-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-forest hover:bg-surface-alt disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M15 18 9 12l6-6" />
@@ -118,7 +118,7 @@ export default function SiteplanSection() {
             onClick={() => scrollByAmount(1)}
             disabled={atEnd}
             aria-label="Geser ke kanan"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-100 text-stone-950 hover:bg-stone-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-forest hover:bg-surface-alt disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="m9 18 6-6-6-6" />

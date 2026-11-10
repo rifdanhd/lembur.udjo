@@ -1,0 +1,18 @@
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
+export function VisitorAuthForm({ register, next }: { register: boolean; next: string }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false); const [error, setError] = useState("");
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); const form = new FormData(event.currentTarget); setBusy(true); setError("");
+    try {
+      const response = await fetch(`/api/ticketing/auth/${register ? "register" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: form.get("email"), password: form.get("password"), ...(register ? { name: form.get("name"), consent: form.get("consent") === "on" } : {}) }) });
+      const data = await response.json(); if (!response.ok) throw new Error(data.error || "Akun belum dapat diproses.");
+      router.replace(next); router.refresh();
+    } catch (err) { setError(err instanceof Error ? err.message : "Layanan akun belum dapat dihubungi."); } finally { setBusy(false); }
+  }
+  const field = "mt-2 min-h-12 w-full rounded-xl border border-forest/20 bg-white px-4 py-3 text-sm focus:outline-forest";
+  return <form method="post" action={`/api/ticketing/auth/${register ? "register" : "login"}`} onSubmit={submit} className="mx-auto max-w-lg space-y-5 rounded-2xl border border-forest/10 bg-white p-6 sm:p-9"><noscript><p className="text-sm text-red-800">Aktifkan JavaScript untuk menggunakan formulir akun ini.</p></noscript><fieldset disabled={busy} className="space-y-5">{register && <label className="block text-sm font-medium">Nama lengkap<input name="name" autoComplete="name" minLength={2} maxLength={100} required className={field} /></label>}<label className="block text-sm font-medium">Email<input name="email" type="email" autoComplete="email" maxLength={254} required className={field} /></label><label className="block text-sm font-medium">Kata sandi<input name="password" type="password" autoComplete={register ? "new-password" : "current-password"} minLength={register ? 12 : 1} maxLength={128} required className={field} /></label>{register && <><p className="text-xs leading-6 text-stone-500">Gunakan minimal 12 karakter. Pilih kata sandi yang unik untuk akun ini.</p><label className="flex items-start gap-3 text-xs leading-6 text-stone-600"><input name="consent" type="checkbox" required className="mt-1 size-4 shrink-0 accent-forest" />Saya menyetujui penggunaan nama dan email untuk mengelola akun, pesanan, dan tiket saya.</label></>}<button type="submit" className="min-h-12 w-full rounded-full bg-forest px-6 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Memproses…" : register ? "Buat akun" : "Masuk"}</button></fieldset>{error && <p role="alert" className="text-sm text-red-800">{error}</p>}<p className="text-center text-sm text-stone-600">{register ? "Sudah memiliki akun?" : "Belum memiliki akun?"} <Link href={`${register ? "/masuk" : "/daftar"}?lanjut=${encodeURIComponent(next)}`} className="font-semibold text-forest underline">{register ? "Masuk" : "Daftar"}</Link></p>{!register && <p className="text-center text-xs"><Link href="/bantuan#akun" className="inline-flex min-h-11 items-center underline">Butuh bantuan akun?</Link></p>}</form>;
+}

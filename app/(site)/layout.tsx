@@ -39,6 +39,7 @@ const SITE_URL = "https://lemburudjoparahyangan.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  themeColor: "#030712",
   robots: {
     index: false,
     follow: false,

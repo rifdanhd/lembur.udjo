@@ -1,0 +1,11 @@
+import Link from "next/link";
+import { PortalTitle, LoginPrompt } from "@/components/ticketing/PortalShared";
+import { currentVisitor } from "@/lib/ticketing/visitor-server";
+import { ticketingDb } from "@/lib/ticketing/db";
+export const metadata = { title: "Tiket Saya" };
+export default async function MyTicketsPage() {
+  const visitor = await currentVisitor();
+  if (!visitor) return <><PortalTitle title="Tiket saya" description="Tiket yang sudah diterbitkan tersimpan bersama akun pemiliknya." /><LoginPrompt next="/tiket-saya" /></>;
+  const tickets = await ticketingDb().ticket.findMany({ where: { order: { visitorId: visitor.id } }, orderBy: { issuedAt: "desc" }, take: 100, select: { code: true, status: true, order: { select: { orderNumber: true, items: { select: { productName: true, schedule: { select: { date: true, session: true } } } } } } } });
+  return <><PortalTitle title="Tiket saya" description="Simpan kode tiket dan periksa informasi kunjungan. Hanya tiket milik akunmu yang ditampilkan." />{tickets.length ? <div className="grid gap-5 sm:grid-cols-2">{tickets.map(ticket => <article key={ticket.code} className="rounded-2xl border border-dashed border-forest/25 bg-white p-6"><p className="text-[10px] uppercase tracking-widest text-stone-500">{ticket.status === "ISSUED" ? "Tiket uji terbit" : ticket.status === "USED" ? "Sudah digunakan" : "Tidak berlaku"}</p><h2 className="mt-4 break-all font-mono text-sm">{ticket.code}</h2><p className="mt-3 text-xs leading-6 text-stone-500">{ticket.order.items.map(item => item.productName).join(", ")}</p><p className="mt-3 text-xs text-amber-800">Tiket sandbox — tidak berlaku untuk masuk kawasan.</p><Link href={`/pesanan/${ticket.order.orderNumber}`} className="mt-4 inline-flex min-h-11 items-center text-sm underline">Lihat pesanan</Link></article>)}</div> : <section className="rounded-2xl border border-forest/10 bg-white p-8"><h2 className="font-playfair text-2xl">Belum ada tiket yang terbit</h2><p className="mt-3 max-w-lg text-sm leading-7 text-stone-500">Tiket akan muncul setelah pesananmu mendapat konfirmasi pembayaran. Saat ini penjualan belum dibuka.</p><Link href="/order-tickets" className="mt-5 inline-flex min-h-11 items-center text-sm font-semibold underline">Jelajahi kategori tiket</Link></section>}</>;
+}

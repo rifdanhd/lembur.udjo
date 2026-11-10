@@ -4,59 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { TICKET_URL } from "@/lib/site-domains";
+import { BASE_NAV_ANCHORS, PRIMARY_NAV, type NavItem } from "@/lib/website/navigation";
 
-type NavChild = { href: string; label: string };
-type NavItem = { label: string; children: NavChild[] };
-
-// Satu sumber konfigurasi menu — ubah di sini saja.
-const navItems: NavItem[] = [
-  {
-    label: "Tentang Kami",
-    children: [
-      { label: "Sejarah Abah Udjo", href: "/the-story-of-angklung" },
-      { label: "Warisan Budaya", href: "/#about" },
-      { label: "Penghargaan", href: "/#penghargaan" },
-        { label: "Karier", href: "/karier" },
-    ],
-  },
-  {
-    label: "Pengalaman",
-    children: [
-      { label: "Pertunjukan", href: "/#jadwal" },
-      { label: "Workshop Angklung", href: "/#fasilitas" },
-      { label: "Kaulinan Budak Lembur", href: "/#kaulinan" },
-      { label: "Kunjungan Sekolah", href: "/#jadwal" },
-      { label: "Paket Rombongan", href: "/#jadwal" },
-      { label: "Acara dan Festival", href: "/#jadwal" },
-    ],
-  },
-  {
-    label: "Kawasan",
-    children: [
-      { label: "Fasilitas", href: "/#fasilitas" },
-      { label: "Visualisasi Kawasan", href: "/#masterplan" },
-      { label: "Siteplan", href: "/#siteplan" },
-    ],
-  },
-  {
-    label: "Galeri",
-    children: [
-      { label: "Foto", href: "/#galeri" },
-      { label: "Video", href: "/#galeri" },
-      { label: "Arsip Abah Udjo", href: "/#kata" },
-    ],
-  },
-  {
-    label: "Informasi",
-    children: [
-      { label: "Jam Operasional", href: "/#jadwal" },
-      { label: "Harga Tiket", href: "/#jadwal" },
-      { label: "Lokasi dan Peta", href: "/#lokasi" },
-      { label: "FAQ", href: "/#faq" },
-      { label: "Kontak", href: "/#kontak" },
-    ],
-  },
-];
+// Satu sumber konfigurasi menu ada di lib/website/navigation.ts.
+const navItems: NavItem[] = PRIMARY_NAV;
 
 const ticketHref = TICKET_URL;
 
@@ -65,10 +16,13 @@ const CLOSE_DELAY_MS = 150;
 // Semua anchor section yang dipakai menu (untuk scrollspy)
 const anchors = Array.from(
   new Set(
-    navItems
-      .flatMap((item) => item.children.map((child) => child.href))
-      .filter((href) => href.startsWith("/#"))
-      .map((href) => href.slice(2)),
+    [
+      ...navItems
+        .flatMap((item) => item.children.map((child) => child.href))
+        .filter((href) => href.startsWith("/#"))
+        .map((href) => href.slice(2)),
+      ...BASE_NAV_ANCHORS,
+    ],
   ),
 );
 
@@ -254,7 +208,7 @@ export default function Navbar() {
       className={`fixed top-0 left-0 w-full z-50 border-b transition-all duration-300 motion-reduce:transition-none ${
         transparent
           ? "border-transparent bg-transparent text-white shadow-none"
-          : "border-stone-200 bg-cream text-stone-950 shadow-sm shadow-black/5"
+          : "border-border bg-background text-forest shadow-sm shadow-black/5"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -265,15 +219,25 @@ export default function Navbar() {
         >
           {/* Logo Brand + Tagline */}
           <Link href="/#beranda" className="flex items-center shrink-0 group" aria-label="Lembur Udjo Parahyangan">
-            <img
-              src="/LOGO_Lembur.udjo.png"
-              alt="Logo Lembur Udjo Parahyangan"
-              width={44}
-              height={44}
-              className={`w-10 h-10 object-contain transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 ${transparent ? "brightness-0 invert" : ""}`}
-            />
+            <span
+              className={`flex items-center rounded-xl p-1.5 transition-all duration-300 group-hover:scale-105 ${
+                transparent ? "bg-white/95 shadow-[0_6px_20px_rgba(0,0,0,.18)]" : "bg-white ring-1 ring-border"
+              }`}
+            >
+              <img
+                src="/LOGO_Lembur.udjo.png"
+                alt="Logo Lembur Udjo Parahyangan"
+                width={44}
+                height={44}
+                className="w-8 h-8 object-contain sm:w-9 sm:h-9"
+              />
+            </span>
             <span className="block ml-2 sm:ml-2.5 leading-none">
-              <span className={`block text-[8px] sm:text-[10px] font-extrabold uppercase tracking-[0.18em] sm:tracking-[0.24em] whitespace-nowrap ${transparent ? "text-white" : "text-bamboo"}`}>
+              <span
+                className={`block text-[8px] sm:text-[10px] font-extrabold uppercase tracking-[0.18em] sm:tracking-[0.24em] whitespace-nowrap ${
+                  transparent ? "text-white" : "text-forest"
+                }`}
+              >
                 Angklung Journey
               </span>
             </span>
@@ -329,8 +293,8 @@ export default function Navbar() {
                             ? "bg-white/15 font-extrabold text-white after:scale-x-100"
                             : "text-white/90 hover:bg-white/10 hover:text-white after:scale-x-0 hover:after:scale-x-100"
                           : isActive || isOpen
-                            ? "bg-stone-100 font-extrabold text-stone-950 after:scale-x-100"
-                            : "text-stone-600 hover:bg-stone-100 hover:text-stone-950 after:scale-x-0 hover:after:scale-x-100"
+                            ? "bg-surface-alt font-extrabold text-forest after:scale-x-100"
+                            : "text-muted hover:bg-surface-alt hover:text-forest after:scale-x-0 hover:after:scale-x-100"
                       }`}
                     >
                       {item.label}
@@ -353,7 +317,7 @@ export default function Navbar() {
                           moveInPanel(e.currentTarget, "prev");
                         }
                       }}
-                      className={`absolute left-0 top-full mt-1.5 min-w-[220px] w-max origin-top rounded-2xl border border-stone-200 bg-cream text-stone-950 p-1.5 shadow-lg shadow-black/10 transition-all duration-200 ease-out motion-reduce:transition-none z-50 ${
+                      className={`absolute left-0 top-full mt-1.5 min-w-[220px] w-max origin-top rounded-2xl border border-border bg-background text-forest p-1.5 shadow-lg shadow-black/10 transition-all duration-200 ease-out motion-reduce:transition-none z-50 ${
                         isOpen
                           ? "visible translate-y-0 scale-100 opacity-100"
                           : "invisible pointer-events-none -translate-y-1 scale-95 opacity-0"
@@ -367,7 +331,7 @@ export default function Navbar() {
                               role="menuitem"
                               aria-current={isCurrent(child.href) ? "page" : undefined}
                               onClick={() => setOpenIndex(null)}
-                              className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-950 focus-visible:ring-2 focus-visible:ring-forest"
+                              className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-muted transition-colors hover:bg-surface-alt hover:text-forest focus-visible:ring-2 focus-visible:ring-forest"
                             >
                               {child.label}
                               {child.href.startsWith("/#") ? null : <ExternalArrowIcon />}
@@ -388,7 +352,7 @@ export default function Navbar() {
               href={ticketHref}
               target="_blank"
               rel="noopener noreferrer"
-              className={`hidden xl:inline-flex items-center justify-center whitespace-nowrap rounded-full border px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.16em] transition-all focus-visible:ring-2 ${transparent ? "border-white/60 bg-white/10 text-white hover:bg-white/20 focus-visible:ring-white" : "border-stone-200 bg-white text-forest hover:bg-stone-100 focus-visible:ring-forest"}`}
+              className={`hidden xl:inline-flex items-center justify-center whitespace-nowrap rounded-full border px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.16em] transition-all focus-visible:ring-2 ${transparent ? "border-white/70 bg-white/15 text-white hover:bg-white/25 focus-visible:ring-white" : "border-forest bg-forest text-[#F7F5F0] hover:bg-forest-light focus-visible:ring-forest"}`}
             >
               Pesan Tiket
             </a>
@@ -396,7 +360,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className={`p-2 rounded-xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer xl:hidden focus-visible:ring-2 ${transparent ? "text-white hover:bg-white/10 focus-visible:ring-white" : "text-stone-900 hover:bg-stone-100 focus-visible:ring-forest"}`}
+              className={`p-2 rounded-xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer xl:hidden focus-visible:ring-2 ${transparent ? "text-white hover:bg-white/10 focus-visible:ring-white" : "text-forest hover:bg-surface-alt focus-visible:ring-forest"}`}
               aria-label={menuOpen ? "Tutup menu" : "Buka menu navigasi"}
               aria-expanded={menuOpen}
               aria-controls="nav-mobile-panel"
@@ -414,7 +378,7 @@ export default function Navbar() {
       {/* Mobile Drawer — panel penuh di bawah navbar */}
       <div
         id="nav-mobile-panel"
-        className={`xl:hidden absolute left-0 top-full z-40 w-full h-[calc(100dvh_-_100%)] bg-cream border-b border-stone-200 flex flex-col transition-all duration-300 ease-out motion-reduce:transition-none ${
+        className={`xl:hidden absolute left-0 top-full z-40 w-full h-[calc(100dvh_-_100%)] bg-background border-b border-border flex flex-col transition-all duration-300 ease-out motion-reduce:transition-none ${
           menuOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0 pointer-events-none"
@@ -441,8 +405,8 @@ export default function Navbar() {
                     style={menuOpen ? { animationDelay: `${80 + i * 50}ms` } : undefined}
                     className={`w-full min-h-[48px] cursor-pointer rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-widest flex items-center justify-between transition-colors focus-visible:ring-2 focus-visible:ring-forest ${
                       isActive
-                        ? "text-forest bg-stone-100 font-extrabold"
-                        : "text-stone-700 hover:text-stone-950 hover:bg-stone-100"
+                        ? "text-forest bg-surface-alt font-extrabold"
+                        : "text-muted hover:text-forest hover:bg-surface-alt"
                     } ${menuOpen ? "animate-[fadeInUp_0.4s_ease-out_both]" : ""}`}
                   >
                     <span>{item.label}</span>
@@ -456,7 +420,7 @@ export default function Navbar() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <ul className="ml-5 mt-1 mb-1 space-y-1 border-l-2 border-stone-200 pl-2">
+                      <ul className="ml-5 mt-1 mb-1 space-y-1 border-l-2 border-border pl-2">
                         {item.children.map((child) => (
                           <li key={child.label}>
                             <a
@@ -464,7 +428,7 @@ export default function Navbar() {
                               aria-current={isCurrent(child.href) ? "page" : undefined}
                               tabIndex={isExpanded ? 0 : -1}
                               onClick={() => setMenuOpen(false)}
-                              className="flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-950 focus-visible:ring-2 focus-visible:ring-forest"
+                              className="flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-muted transition-colors hover:bg-surface-alt hover:text-forest focus-visible:ring-2 focus-visible:ring-forest"
                             >
                               {child.label}
                             </a>
@@ -481,13 +445,13 @@ export default function Navbar() {
         </div>
 
         {/* Tombol Pesan Tiket — bawah drawer, lebar penuh */}
-        <div className="shrink-0 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-stone-200">
+        <div className="shrink-0 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border">
           <a
             href={ticketHref}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMenuOpen(false)}
-            className="w-full min-h-[44px] py-3 px-4 rounded-full bg-white border border-stone-200 text-forest text-center text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-all hover:bg-stone-100 focus-visible:ring-2 focus-visible:ring-forest"
+            className="w-full min-h-[44px] py-3 px-4 rounded-full bg-forest text-[#F7F5F0] text-center text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-all hover:bg-forest-light focus-visible:ring-2 focus-visible:ring-forest"
           >
             Pesan Tiket
           </a>

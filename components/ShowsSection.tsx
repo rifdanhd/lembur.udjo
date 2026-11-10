@@ -18,7 +18,7 @@ export default function ShowsSection() {
             </h2>
             <p className="text-stone-600 text-sm sm:text-base mt-3 leading-relaxed">Empat sajian utama yang memadukan keindahan seni musik, tradisi, dan arsitektur Sunda dalam satu kesatuan perjalanan berkesan.</p>
           </div>
-          <a href="#jadwal" className="shrink-0 inline-flex items-center justify-center px-6 py-3 rounded-full bg-stone-950 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-forest transition-colors">
+          <a href="#fasilitas" className="shrink-0 inline-flex items-center justify-center px-6 py-3 rounded-full bg-stone-950 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-forest transition-colors">
             Lihat Semua &rarr;
           </a>
         </div>

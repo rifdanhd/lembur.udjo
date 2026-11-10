@@ -211,9 +211,10 @@ export interface Followup {
 export interface VisualKawasan {
   id: number;
   placement?: string | null;
-  section?: ('banner' | 'fasilitas' | 'galeri') | null;
+  section?: ('banner' | 'fasilitas' | 'galeri' | 'masterplan' | 'siteplan' | 'zona-siteplan' | 'trending') | null;
   title?: string | null;
   category?: string | null;
+  linkUrl?: string | null;
   position?: number | null;
   visible?: boolean | null;
   heroVideo?: (number | null) | VisualKawasan;
@@ -415,6 +416,7 @@ export interface VisualKawasanSelect<T extends boolean = true> {
   section?: T;
   title?: T;
   category?: T;
+  linkUrl?: T;
   position?: T;
   visible?: T;
   heroVideo?: T;

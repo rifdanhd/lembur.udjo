@@ -14,6 +14,7 @@ import {
   Menu,
   Plus,
   Sprout,
+  Ticket,
   Users,
   X,
 } from "lucide-react";
@@ -137,6 +138,13 @@ export default function CrmShell({
             ))}
           </ul>
           <div className="mx-3 mt-7 border-t border-white/10 pt-5">
+            <Link
+              href="/admin/tiket"
+              className="flex min-h-11 items-center justify-between gap-2 rounded-lg text-sm text-white/70 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"
+            >
+              Panel tiket
+              <Ticket size={16} aria-hidden="true" />
+            </Link>
             <Link
               href={WEBSITE_URL}
               className="flex min-h-11 items-center justify-between gap-2 rounded-lg text-sm text-white/70 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200"

@@ -1,0 +1,41 @@
+.portal {
+  --color-forest: #442e25;
+  --color-forest-light: #604536;
+  --color-cream: #faf6ef;
+  --color-bamboo: #a56b3e;
+  background: #faf6ef;
+  color: #442e25;
+  font-family: var(--font-ticket-condensed), "Arial Narrow", sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.portal :global(.font-playfair) {
+  font-family: var(--font-ticket-condensed), "Arial Narrow", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -.015em;
+}
+.portal :global(.italic) { font-style: normal; }
+.portal :global(.text-sm) { font-size: 1rem; }
+.portal :global(.text-xs) { font-size: .875rem; }
+.portal :is(main, section, article, aside, form, fieldset, label) { min-width: 0; }
+.portal :is(h1, h2, h3, p) { overflow-wrap: anywhere; }
+.portal :is(a, button) { touch-action: manipulation; }
+.portal :is(a, button):focus-visible { outline: 2px solid #a56b3e; outline-offset: 4px; }
+.portal :is(a, button) > svg { flex-shrink: 0; }
+
+/* The site's unlayered a { color: inherit } otherwise overrides Tailwind colors. */
+.portal a:global(.text-white) { color: #fff; }
+.portal a:global(.text-forest) { color: #442e25; }
+.portal :is(input, select, textarea) { font-family: inherit; }
+.portal :is(input:not([type="checkbox"]), select, textarea) { max-width: 100%; min-width: 0; font-size: 1rem; }
+.portal :global(.bg-\[\#eeeee5\]) { background-color: #eee3d4; }
+
+@media (max-width: 639px) {
+  .portal :is(a, button):global(.rounded-full):global(.px-6),
+  .portal :is(a, button):global(.rounded-full):global(.px-7) {
+    padding-inline: 1.25rem;
+    text-align: center;
+  }
+}
