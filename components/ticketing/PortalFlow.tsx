@@ -78,9 +78,18 @@ export function CartContents({ summary = false }: { summary?: boolean }) {
 export function PortalCheckout({ visitor, catalog }: { visitor: { name: string; email: string }; catalog: Catalog }) {
   const router = useRouter();
   const lines = useCart(); const [error, setError] = useState(""); const [busy, setBusy] = useState(false); const key = useRef<string | null>(null);
-  const official = lines.length > 0 && lines.every(line => !line.example && line.productId && line.scheduleId && catalog.products.some(product => product.id === line.productId));
+  const hasExample = lines.some(line => line.example);
+  const stale = lines.some(line => !line.example && (!catalog.products.some(product => product.id === line.productId) || !catalog.schedules.some(schedule => schedule.id === line.scheduleId)));
+  const official = lines.length > 0 && !hasExample && !stale;
   const oneSession = new Set(lines.map(line => line.scheduleId)).size === 1;
   const canPay = official && oneSession && catalog.checkoutEnabled;
+  const blockers = [
+    ...(catalog.checkoutEnabled ? [] : ["Pembayaran belum diaktifkan tim."]),
+    ...(hasExample ? ["Keranjang memuat rencana contoh (belum resmi). Data contoh tidak dapat dibayar — hapus baris bertanda “Contoh — belum resmi” di keranjang."] : []),
+    ...(stale ? ["Sesi pada keranjang sudah tidak tersedia atau kuotanya habis. Hapus baris itu, lalu pilih jadwal yang masih dibuka."] : []),
+    ...(!oneSession && official ? ["Satu pesanan hanya dapat berisi satu sesi. Pisahkan rencana kunjungan yang berbeda."] : []),
+    ...(lines.length > 0 && !hasExample && !stale && catalog.state !== "available" ? ["Penjualan tiket sedang ditutup. Belum ada jadwal resmi yang dibuka."] : []),
+  ];
   const total = official ? lines.reduce((sum, line) => sum + (catalog.products.find(p => p.id === line.productId)?.price || 0) * line.quantity, 0) : null;
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!canPay || busy) return;
@@ -94,7 +103,7 @@ export function PortalCheckout({ visitor, catalog }: { visitor: { name: string; 
     finally { setBusy(false); }
   }
   return <div className="grid items-start gap-8 lg:grid-cols-[1.1fr_.9fr]"><form onSubmit={submit} className="space-y-5 rounded-2xl border border-forest/10 bg-white p-6 sm:p-8"><h2 className="font-playfair text-2xl">Data pemesan</h2><label className="block text-sm font-medium">Nama lengkap<input name="name" defaultValue={visitor.name} minLength={2} maxLength={100} required className={field} /></label><label className="block text-sm font-medium">Email akun<input name="email" type="email" value={visitor.email} readOnly className={`${field} bg-stone-50`} /></label><label className="block text-sm font-medium">Nomor WhatsApp<input name="whatsapp" type="tel" autoComplete="tel" placeholder="08xxxxxxxxxx" pattern="(\+62|62|0)8[0-9]{7,12}" maxLength={17} required className={field} /></label><label className="flex items-start gap-3 text-xs leading-6 text-stone-600"><input name="consent" type="checkbox" required className="mt-1 size-4 shrink-0 accent-forest" />Saya menyetujui penggunaan data pemesan untuk memproses pesanan ini.</label>
-      <div className="rounded-xl bg-amber-50 p-4 text-xs leading-6 text-amber-950"><strong>Pembayaran belum diaktifkan.</strong> Harga, jadwal resmi, dan konfigurasi Midtrans masih menunggu kesiapan tim. Data yang diisi tidak dikirim sebelum pemesanan dibuka.</div>{!oneSession && official && <p className="text-xs text-red-800">Satu pesanan hanya dapat berisi satu sesi. Pisahkan rencana kunjungan yang berbeda.</p>}<p className="text-sm font-semibold">Total: {total === null ? "menunggu harga resmi" : rupiah(total)}</p><button type="submit" disabled={!canPay || busy} className={`${primary} w-full`}>{busy ? "Memproses…" : "Buat pesanan & lanjut pembayaran"}</button>{error && <p role="alert" className="text-sm text-red-800">{error}</p>}<Link href="/pesanan/contoh" className="inline-flex min-h-11 items-center gap-2 text-xs underline">Lihat contoh halaman status <ArrowRight size={15} /></Link></form><aside><h2 className="mb-4 text-sm font-semibold">Ringkasan rencana</h2><CartContents summary /></aside></div>;
+      {blockers.length > 0 && <div className="rounded-xl bg-amber-50 p-4 text-xs leading-6 text-amber-950"><strong>Pesanan belum dapat dibuat.</strong><ul className="mt-2 list-disc space-y-1 pl-4">{blockers.map(blocker => <li key={blocker}>{blocker}</li>)}</ul>{lines.length > 0 && <Link href="/keranjang" className="mt-2 inline-flex min-h-11 items-center underline">Kelola keranjang</Link>}</div>}<p className="text-sm font-semibold">Total: {total === null ? "belum dihitung" : rupiah(total)}</p><button type="submit" disabled={!canPay || busy} className={`${primary} w-full`}>{busy ? "Memproses…" : "Buat pesanan & lanjut pembayaran"}</button>{error && <p role="alert" className="text-sm text-red-800">{error}</p>}<Link href="/pesanan/contoh" className="inline-flex min-h-11 items-center gap-2 text-xs underline">Lihat contoh halaman status <ArrowRight size={15} /></Link></form><aside><h2 className="mb-4 text-sm font-semibold">Ringkasan rencana</h2><CartContents summary /></aside></div>;
 }
 
 export function OrderStatus({ initial }: { initial: Receipt }) {
