@@ -1,1 +1,1 @@
-export const portalPaths = ["/beranda-tiket", "/order-tickets", "/pilih-tiket", "/keranjang", "/checkout", "/pesanan", "/tiket-saya", "/masuk", "/daftar", "/akun", "/bantuan", "/faq"];
+export const portalPaths = ["/account", "/lupa-sandi", "/atur-ulang-sandi", "/beranda-tiket", "/order-tickets", "/pilih-tiket", "/keranjang", "/checkout", "/pesanan", "/tiket-saya", "/masuk", "/daftar", "/akun", "/bantuan", "/faq"];

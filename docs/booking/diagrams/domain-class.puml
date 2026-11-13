@@ -1,0 +1,103 @@
+@startuml
+class BookingCategory {
+  id
+  slug
+  active
+}
+class Product {
+  id
+  type
+  price
+  active
+  imagePath
+  policy
+}
+class ProductSchedule {
+  productId
+  scheduleId
+  price
+  active
+}
+class Schedule {
+  id
+  date
+  session
+  capacity
+  reserved
+  sold
+}
+class VisitorAccount {
+  id
+  email
+  passwordHash?
+  googleSubject?
+}
+class VisitorSession {
+  tokenHash
+  expiresAt
+}
+class Customer {
+  id
+  email
+}
+class Order {
+  id
+  orderNumber
+  visitorId?
+  status
+  totalAmount
+  expiresAt
+}
+class OrderItem {
+  id
+  productName
+  unitPrice
+  quantity
+  lineTotal
+}
+class Payment {
+  id
+  provider
+  providerPaymentId?
+  status
+  amount
+}
+class Ticket {
+  id
+  code
+  qrToken
+  status
+  orderItemId?
+}
+class CheckIn {
+  ticketId
+  checkedById?
+  checkedAt
+  source
+}
+class User {
+  id
+  role
+  active
+  passwordHash?
+}
+class StaffSession {
+  tokenHash
+  expiresAt
+}
+BookingCategory "0..1" -- "0..*" Product
+Product "1" -- "0..*" ProductSchedule
+Schedule "1" -- "0..*" ProductSchedule
+VisitorAccount "1" -- "0..*" VisitorSession
+VisitorAccount "0..1" -- "0..*" Order
+Customer "1" -- "0..*" Order
+Order "1" *-- "1..*" OrderItem
+Order "1" *-- "0..*" Payment
+Order "1" *-- "0..*" Ticket
+Product "1" -- "0..*" OrderItem
+Schedule "1" -- "0..*" OrderItem
+OrderItem "0..1" -- "0..*" Ticket
+Ticket "1" -- "0..1" CheckIn
+User "0..1" -- "0..*" CheckIn
+User "1" -- "0..*" StaffSession
+@enduml

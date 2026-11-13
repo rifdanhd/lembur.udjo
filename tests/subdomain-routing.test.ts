@@ -100,3 +100,33 @@ test("ticket API allowlist keeps visitor checkout separate from staff and websit
   }
   assert.equal(request(base, "/UdjoFullColor.png").headers.get("x-middleware-next"), "1");
 });
+
+test("booking alias has the same visitor isolation and serves webhook POST directly", () => {
+  for (const host of ["booking.lemburudjoparahyangan.com", "booking.localhost"]) {
+    const root = proxy(new NextRequest(`https://${host}/`, { headers: { host } }));
+    assert.ok(root.headers.get("x-middleware-rewrite")?.endsWith("/beranda-tiket"));
+    assert.equal(proxy(new NextRequest(`https://${host}/api/staff/orders`, { headers: { host } })).status, 404);
+    const webhook = proxy(new NextRequest(`https://${host}/api/ticketing/webhook`, { method: "POST", headers: { host } }));
+    assert.equal(webhook.headers.get("location"), null);
+    assert.equal(webhook.headers.get("x-middleware-next"), "1");
+  }
+});
+
+test("verified cutover redirects customer GET only and leaves old webhook POST and API intact", () => {
+  const previousFlag = process.env.BOOKING_REDIRECT_VERIFIED;
+  const previousOrigin = process.env.BOOKING_PUBLIC_URL;
+  try {
+    process.env.BOOKING_REDIRECT_VERIFIED = "true";
+    process.env.BOOKING_PUBLIC_URL = "https://booking.lemburudjoparahyangan.com";
+    const host = "ticket.lemburudjoparahyangan.com";
+    const response = proxy(new NextRequest(`https://${host}/account?tab=upcoming`, { headers: { host } }));
+    assert.equal(response.headers.get("location"), "https://booking.lemburudjoparahyangan.com/account?tab=upcoming");
+    for (const path of ["/api/ticketing/webhook", "/api/ticketing/orders"]) {
+      const api = proxy(new NextRequest(`https://${host}${path}`, { method: "POST", headers: { host } }));
+      assert.equal(api.headers.get("location"), null); assert.equal(api.headers.get("x-middleware-next"), "1");
+    }
+  } finally {
+    if (previousFlag === undefined) delete process.env.BOOKING_REDIRECT_VERIFIED; else process.env.BOOKING_REDIRECT_VERIFIED = previousFlag;
+    if (previousOrigin === undefined) delete process.env.BOOKING_PUBLIC_URL; else process.env.BOOKING_PUBLIC_URL = previousOrigin;
+  }
+});

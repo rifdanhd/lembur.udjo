@@ -1,0 +1,19 @@
+"use client";
+import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
+type Staff = { id: string; name: string | null; email: string; active: boolean; role: "ADMIN" | "STAFF" };
+export function StaffUsers() {
+  const [users, setUsers] = useState<Staff[]>([]); const [selected, setSelected] = useState<Staff | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState("");
+  useEffect(() => { fetch("/api/staff/users", { cache: "no-store" }).then(response => response.json()).then(data => { if (data.users) setUsers(data.users); else setMessage(data.error || "Petugas belum dapat dimuat."); }).catch(() => setMessage("Petugas belum dapat dimuat.")); }, []);
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setBusy(true); const form = new FormData(event.currentTarget); const password = String(form.get("password") || "");
+    try {
+      const response = await fetch("/api/staff/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: form.get("name"), email: form.get("email"), role: form.get("role"), active: form.has("active"), ...(password ? { password } : {}) }) });
+      const data = await response.json(); if (!response.ok) throw new Error(data.error || "Belum tersimpan.");
+      const refreshed = await fetch("/api/staff/users", { cache: "no-store" }); const result = await refreshed.json(); if (refreshed.ok) setUsers(result.users);
+      setMessage("Akses petugas tersimpan; sesi sebelumnya dicabut.");
+    } catch (err) { setMessage(err instanceof Error ? err.message : "Layanan belum tersedia."); } finally { setBusy(false); }
+  }
+  const field = "mt-2 min-h-12 w-full rounded-lg border border-forest/20 bg-white px-3";
+  return <section className="mt-8 rounded-2xl border border-forest/15 bg-white p-6"><h2 className="text-xl font-semibold">Akses petugas</h2><p className="mt-3 text-sm leading-6 text-stone-600">STAFF dapat check-in. ADMIN juga dapat mengelola katalog, petugas dan memantau pesanan. Login CRM lama tetap berlaku untuk admin yang sudah ada.</p><Link href="/admin/check-in" className="mt-4 inline-flex min-h-11 items-center underline">Buka meja check-in</Link><select aria-label="Pilih petugas" value={selected?.id || ""} onChange={e => setSelected(users.find(user => user.id === e.target.value) || null)} className={field}><option value="">Petugas baru</option>{users.map(user => <option key={user.id} value={user.id}>{user.email} · {user.role} · {user.active ? "Aktif" : "Nonaktif"}</option>)}</select><form key={selected?.id || "new"} onSubmit={save} className="mt-5"><fieldset disabled={busy} className="grid gap-4 sm:grid-cols-2"><label className="text-sm">Nama<input name="name" defaultValue={selected?.name || ""} required minLength={2} maxLength={100} className={field} /></label><label className="text-sm">Email<input name="email" defaultValue={selected?.email} readOnly={Boolean(selected)} type="email" required className={field} /></label><label className="text-sm">{selected ? "Kata sandi baru (opsional)" : "Kata sandi (minimal 12 karakter)"}<input name="password" type="password" required={!selected} minLength={12} maxLength={128} autoComplete="new-password" className={field} /></label><label className="text-sm">Peran<select name="role" defaultValue={selected?.role || "STAFF"} className={field}><option value="STAFF">STAFF — check-in</option><option value="ADMIN">ADMIN</option></select></label><label className="flex min-h-11 items-center gap-3 text-sm"><input name="active" type="checkbox" defaultChecked={selected?.active ?? true} />Aktif</label><button className="min-h-12 rounded-full bg-forest px-6 text-sm text-white">Simpan akses</button></fieldset></form><p role="status" className="mt-4 text-sm">{message}</p></section>;
+}

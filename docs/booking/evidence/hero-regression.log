@@ -1,0 +1,21 @@
+✔ accepts real MP4 and WebM; does not transcode video (565.550306ms)
+✔ rejects spoofed formats, unsupported MIME, and oversized videos (82.154793ms)
+✔ video can only be selected for banners; existing image forms remain valid (66.003124ms)
+✔ merge preserves image fallback and resolves populated hero videos (69.421338ms)
+✔ upload saves video separately and links it without replacing the poster (61.824936ms)
+✔ new video banner normalizes its poster to WebP without losing the video link (64.749702ms)
+✔ corrupt poster prevents video creation (53.292769ms)
+✔ text edit keeps an existing video; choosing Image detaches without deleting (33.138402ms)
+✔ missing video or poster is rejected before media creation (38.305158ms)
+✔ failed banner save removes only its newly created video (44.5934ms)
+✔ multipart parser bounds uploads and rejects cross-origin writes (74.268155ms)
+✔ homepage reads all pages and requests populated video relations (63.053378ms)
+✔ missing media migration reports setup failure without exposing SQL (45.465262ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2070.961071

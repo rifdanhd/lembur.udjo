@@ -40,7 +40,7 @@ export async function POST(request: NextRequest, context: Context) {
     if (oldToken) await db.visitorSession.deleteMany({ where: { tokenHash: digest(oldToken) } });
     const response = json({ visitor }, action === "register" ? 201 : 200);
     const host = request.headers.get("host") || "";
-    response.cookies.set(VISITOR_COOKIE, session.token, { httpOnly: true, secure: !/^(localhost|127\.0\.0\.1|ticket\.localhost)(:\d+)?$/.test(host), sameSite: "lax", path: "/", maxAge: SESSION_SECONDS });
+    response.cookies.set(VISITOR_COOKIE, session.token, { httpOnly: true, secure: !/^(localhost|127\.0\.0\.1|(?:ticket|booking)\.localhost)(:\d+)?$/.test(host), sameSite: "lax", path: "/", maxAge: SESSION_SECONDS });
     return response;
   } catch (error) { return failure(error); }
 }

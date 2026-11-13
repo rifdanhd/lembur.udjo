@@ -48,12 +48,14 @@ export async function expireDueOrders(db: PrismaClient, now = new Date()) {
 export async function catalog(db: PrismaClient, checkoutEnabled: boolean, now = new Date()): Promise<Catalog> {
   await expireDueOrders(db, now);
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(now);
-  const [products, sessions] = await Promise.all([
-    db.product.findMany({ where: { active: true, price: { gt: 0 } }, select: { id: true, name: true, description: true, price: true, type: true }, orderBy: { price: "asc" } }),
-    db.schedule.findMany({ where: { active: true, date: { gte: new Date(`${today}T00:00:00Z`) } }, orderBy: [{ date: "asc" }, { session: "asc" }], take: 100 }),
+  const [products, sessions, categories] = await Promise.all([
+    db.product.findMany({ where: { active: true, price: { gt: 0 }, OR: [{ categoryId: null }, { category: { active: true } }] }, select: { id: true, name: true, description: true, price: true, type: true, categoryId: true, imagePath: true, policy: true, schedules: { select: { scheduleId: true, price: true, active: true } } }, orderBy: { price: "asc" } }),
+    db.schedule.findMany({ where: { active: true, date: { gte: new Date(`${today}T00:00:00Z`) } }, orderBy: [{ date: "asc" }, { session: "asc" }], take: 1000 }),
+    db.bookingCategory.findMany({ where: { active: true }, select: { id: true, slug: true, name: true, description: true, image: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
   ]);
   const schedules = sessions.filter((s) => sessionStarts(s.date, s.session) > now.getTime()).map((s) => ({ id: s.id, date: s.date.toISOString().slice(0, 10), session: s.session, available: Math.max(0, s.capacity - s.reserved - s.sold) }));
-  return { state: products.length && schedules.length ? "available" : "not_open", sandbox: true, checkoutEnabled, products, schedules };
+  return { state: products.length && schedules.length ? "available" : "not_open", sandbox: true, checkoutEnabled, categories,
+    products: products.map(({ schedules: prices, ...product }) => ({ ...product, ...(prices.length ? { schedulePrices: prices } : {}) })), schedules };
 }
 
 export async function reserveOrder(db: PrismaClient, input: CheckoutInput, now = new Date(), visitorId?: string) {
@@ -73,11 +75,25 @@ export async function reserveOrder(db: PrismaClient, input: CheckoutInput, now =
     if (!schedule?.active || !(sessionStarts(schedule.date, schedule.session) > now.getTime())) throw new BookingError("SCHEDULE_UNAVAILABLE", 409);
     const quantity = input.items.reduce((sum, item) => sum + item.quantity, 0);
     if (schedule.capacity - schedule.reserved - schedule.sold < quantity) throw new BookingError("QUOTA_FULL", 409);
-    const products = await tx.product.findMany({ where: { id: { in: input.items.map((item) => item.productId) }, active: true, price: { gt: 0 } } });
+    let products = await tx.product.findMany({ where: { id: { in: input.items.map((item) => item.productId) }, active: true, price: { gt: 0 }, OR: [{ categoryId: null }, { category: { active: true } }] } });
     if (products.length !== input.items.length) throw new BookingError("PRODUCT_UNAVAILABLE", 409);
+    // Product locks serialize price/configuration changes with reservation snapshots.
+    for (const id of products.map(product => product.id).sort()) {
+      await tx.$queryRaw`SELECT id FROM "ticketing"."Product" WHERE id = ${id} FOR SHARE`;
+    }
+    for (const id of [...new Set(products.flatMap(product => product.categoryId ? [product.categoryId] : []))].sort()) {
+      await tx.$queryRaw`SELECT id FROM "ticketing"."BookingCategory" WHERE id = ${id} FOR SHARE`;
+    }
+    products = await tx.product.findMany({ where: { id: { in: input.items.map(item => item.productId) }, active: true, price: { gt: 0 }, OR: [{ categoryId: null }, { category: { active: true } }] } });
+    if (products.length !== input.items.length) throw new BookingError("PRODUCT_UNAVAILABLE", 409);
+    const prices = await tx.productSchedule.findMany({ where: { productId: { in: products.map(product => product.id) } } });
     const items = input.items.map((item) => {
       const product = products.find((product) => product.id === item.productId)!;
-      return { productId: product.id, scheduleId: schedule.id, productName: product.name, unitPrice: product.price, quantity: item.quantity, lineTotal: product.price * item.quantity };
+      const configured = prices.filter(price => price.productId === product.id);
+      const offer = configured.find(price => price.scheduleId === schedule.id && price.active);
+      if (configured.length && !offer) throw new BookingError("PRODUCT_UNAVAILABLE", 409);
+      const unitPrice = offer?.price ?? product.price;
+      return { productId: product.id, scheduleId: schedule.id, productName: product.name, unitPrice, quantity: item.quantity, lineTotal: unitPrice * item.quantity };
     });
     const totalAmount = items.reduce((sum, item) => sum + item.lineTotal, 0);
     if (!Number.isSafeInteger(totalAmount) || totalAmount <= 0 || totalAmount > 1_000_000_000) throw new BookingError("INVALID_TOTAL");
@@ -145,8 +161,7 @@ export async function applyPaymentStatus(db: PrismaClient, status: ProviderStatu
           const updated = await tx.schedule.updateMany({ where: { id, reserved: { gte: quantity } }, data: { reserved: { decrement: quantity }, sold: { increment: quantity } } });
           if (updated.count !== 1) throw new BookingError("QUOTA_INCONSISTENT", 503);
         }
-        const quantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
-        await tx.ticket.createMany({ data: Array.from({ length: quantity }, () => ({ orderId: order.id, code: `LUT-${randomBytes(12).toString("hex")}`, qrToken: randomBytes(32).toString("hex") })) });
+        await tx.ticket.createMany({ data: order.items.flatMap(item => Array.from({ length: item.quantity }, () => ({ orderId: order.id, orderItemId: item.id, code: `LUT-${randomBytes(12).toString("hex")}`, qrToken: randomBytes(32).toString("hex") }))) });
       }
       await tx.order.update({ where: { id: order.id }, data: { status: late ? "PAYMENT_REVIEW" : "PAID", paidAt: now } });
       await tx.payment.update({ where: { id: payment.id }, data: { status: "SETTLED", providerPaymentId: status.transaction_id, paidAt: now } });

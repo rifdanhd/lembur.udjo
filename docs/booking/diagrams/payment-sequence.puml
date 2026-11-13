@@ -1,0 +1,31 @@
+@startuml
+actor Pelanggan
+participant "Portal / API" as API
+database "PostgreSQL ticketing" as DB
+participant "Midtrans Sandbox" as M
+Pelanggan -> API: POST orders (session, requestKey, scheduleId, items)
+API -> DB: transaction: advisory lock + Schedule FOR UPDATE
+API -> DB: baca harga/kuota, create Order PENDING + items
+DB --> API: order tersimpan, reserved bertambah
+API -> DB: claim Payment.checkoutStartedAt
+API -> M: Snap create (server key privat)
+M --> API: hosted checkout URL
+API --> Pelanggan: order reference/status
+Pelanggan -> M: interaksi pembayaran Sandbox
+M -> API: POST webhook (signature)
+API -> API: verifikasi SHA-512 dan amount/order
+API -> M: GET status (Basic auth server)
+M --> API: status terpercaya
+API -> DB: lock Order FOR UPDATE
+alt paid sah dan hold belum habis
+ API -> DB: reserved -> sold, Order PAID, Ticket + AuditLog
+else late settlement
+ API -> DB: PAYMENT_REVIEW, tanpa tiket/kuota baru
+else status terminal gagal/expired
+ API -> DB: release reserved sekali
+end
+API --> M: hasil webhook
+Pelanggan -> API: GET PDF (session pemilik)
+API -> DB: cek ownership + status PAID
+API --> Pelanggan: PDF + QR privat
+@enduml

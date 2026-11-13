@@ -1,4 +1,4 @@
-import { TICKET_URL } from "../site-domains";
+import { bookingOrigin } from "./booking-origin";
 import type { CheckoutProvider } from "./orders";
 import { requireSandbox } from "./config";
 import { BookingError, verifyNotification } from "./security";
@@ -28,7 +28,7 @@ export function midtransProvider(): CheckoutProvider {
           enabled_payments: ["bca_va", "bni_va", "bri_va", "permata_va", "gopay", "other_qris", "shopeepay"],
           expiry: { start_time: `${new Date(order.expiresAt.getTime() - 900_000).toISOString().slice(0, 19).replace("T", " ")} +0000`, unit: "minutes", duration: 15 },
           page_expiry: { unit: "minutes", duration: 15 },
-          callbacks: { finish: `${TICKET_URL}/pesanan/${order.orderNumber}` },
+          callbacks: { finish: `${bookingOrigin()}/pesanan/${order.orderNumber}` },
         }),
       });
       if (!response.ok) throw new BookingError("GATEWAY_UNAVAILABLE", 502);

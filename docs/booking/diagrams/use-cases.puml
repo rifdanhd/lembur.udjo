@@ -1,0 +1,45 @@
+@startuml
+left to right direction
+actor Pengunjung
+actor "Pemilik akun" as Customer
+actor ADMIN
+actor "STAFF check-in" as Staff
+actor "Midtrans Sandbox" as Midtrans
+actor Google
+rectangle "LUP Booking" {
+ usecase "Lihat kategori/program\ndan jadwal/harga" as Catalog
+ usecase "Daftar / login email" as Login
+ usecase "Login Google" as OAuth
+ usecase "Pulihkan kata sandi" as Reset
+ usecase "Kelola keranjang" as Cart
+ usecase "Buat reservasi" as Reserve
+ usecase "Validasi harga & kuota" as Validate
+ usecase "Bayar melalui Snap" as Pay
+ usecase "Verifikasi webhook/status" as Webhook
+ usecase "Terbitkan tiket setelah paid" as Issue
+ usecase "Akses reservasi / PDF & QR" as Ticket
+ usecase "Kelola katalog/jadwal/harga" as Manage
+ usecase "Pantau status simulasi" as Monitor
+ usecase "Kelola akun petugas" as Users
+ usecase "Check-in QR/manual sekali" as Checkin
+}
+Pengunjung --> Catalog
+Pengunjung --> Login
+Pengunjung --> OAuth
+Pengunjung --> Reset
+Pengunjung --> Cart
+Customer --|> Pengunjung
+Customer --> Reserve
+Reserve ..> Validate : <<include>>
+Customer --> Pay
+Customer --> Ticket
+OAuth --> Google
+Pay --> Midtrans
+Midtrans --> Webhook
+Issue ..> Webhook : <<extend>>\n[paid terverifikasi, hold valid]
+ADMIN --> Manage
+ADMIN --> Monitor
+ADMIN --> Users
+ADMIN --> Checkin
+Staff --> Checkin
+@enduml

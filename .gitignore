@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Local Payload uploads (use MEDIA_UPLOAD_DIR outside the release directory on VPS)
 /visual-kawasan/
+
+# Isolated booking browser QA build
+/.next-booking-tests/

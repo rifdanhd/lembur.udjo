@@ -2,7 +2,8 @@ export type Catalog = {
   state: "available" | "not_open" | "unavailable";
   sandbox: true;
   checkoutEnabled: boolean;
-  products: { id: string; name: string; description: string | null; price: number; type?: string }[];
+  categories?: { id: string; slug: string; name: string; description: string; image: string }[];
+  products: { id: string; name: string; description: string | null; price: number; type?: string; categoryId?: string | null; imagePath?: string | null; policy?: string | null; schedulePrices?: { scheduleId: string; price: number; active: boolean }[] }[];
   schedules: { id: string; date: string; session: string; available: number }[];
 };
 

@@ -41,6 +41,7 @@
   ],
   "exclude": [
     "node_modules",
-    "src/shaders/landing-pages/LandingPages.tsx"
+    "src/shaders/landing-pages/LandingPages.tsx",
+    ".next-booking-tests"
   ]
 }

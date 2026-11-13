@@ -1,3 +1,4 @@
+import { bookingOrigin } from "@/lib/ticketing/booking-origin";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,7 +7,7 @@ import { ArrowRight, Leaf, Music2, Users } from "lucide-react";
 export const metadata: Metadata = {
   title: "Rencanakan Kunjungan ke Lembur Udjo",
   description: "Awali rencana kunjunganmu ke Lembur Udjo Parahyangan. Temukan suasana alam, budaya, dan kebersamaan sebelum memilih tiket.",
-  alternates: { canonical: "https://ticket.lemburudjoparahyangan.com/" },
+  alternates: { canonical: `${bookingOrigin()}/` },
 };
 
 const stories = [
@@ -17,7 +18,7 @@ const stories = [
 const steps = [
   ["01", "Temukan pilihanmu", "Lihat kategori dan pilihan pengalaman yang ingin kamu rencanakan."],
   ["02", "Susun kunjungan", "Pilih tanggal, sesi, dan jumlah pengunjung, lalu periksa keranjang."],
-  ["03", "Simpan di akunmu", "Saat penjualan dibuka, pesanan dan tiket terbit dapat dilihat melalui akunmu."],
+  ["03", "Simpan di akunmu", "Pesanan dan tiket yang telah diterbitkan dapat dilihat melalui akunmu."],
 ];
 
 export default function BookingLandingPage() {
@@ -33,7 +34,7 @@ export default function BookingLandingPage() {
           <Link href="/order-tickets" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest">Pesan Tiket <ArrowRight size={17} aria-hidden="true" /></Link>
           <a href="#tentang-kunjungan" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/50 px-7 py-3 text-sm font-medium text-white">Kenali pengalaman kami</a>
         </div>
-        <p className="mt-5 max-w-lg text-xs leading-6 text-white/80">Portal masih dalam persiapan. Harga dan jadwal resmi belum diumumkan; pembayaran belum dibuka.</p>
+        <p className="mt-5 max-w-lg text-xs leading-6 text-white/80">Harga dan jadwal mengikuti katalog yang dibuka tim. Transaksi Sandbox adalah simulasi pengujian.</p>
       </div>
     </section>
 

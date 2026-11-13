@@ -1,0 +1,10 @@
+{
+  "runAt": "2026-11-13T15:31:21.488Z",
+  "environment": "Midtrans Sandbox",
+  "fixture": "Synthetic IDR 10000 gateway smoke test; not an official LUP price; no database reservation",
+  "orderReference": "LU-04b139cff98d273edded1e29",
+  "creation": "PASS: Snap transaction created; sandbox checkout URL validated (token omitted)",
+  "statusLookup": "HTTP 200: Payment method not selected (expected before Snap interaction)",
+  "verifiedPayment": false,
+  "webhookVerified": false
+}

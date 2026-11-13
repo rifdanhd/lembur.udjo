@@ -23,7 +23,7 @@ export async function checkPassword(password: string, encoded: string) {
 }
 export async function visitorSession(db: PrismaClient, token?: string) {
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
-  const session = await db.visitorSession.findUnique({ where: { tokenHash: digest(token) }, include: { visitor: { select: { id: true, name: true, email: true } } } });
+  const session = await db.visitorSession.findUnique({ where: { tokenHash: digest(token) }, include: { visitor: { select: { id: true, name: true, email: true, emailVerifiedAt: true } } } });
   return session && session.expiresAt > new Date() ? session : null;
 }
 export async function createVisitorSession(db: PrismaClient, visitorId: string) {

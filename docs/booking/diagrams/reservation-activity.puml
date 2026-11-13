@@ -1,0 +1,37 @@
+@startuml
+start
+:Pilih kategori dan program;
+:Backend membaca sesi dan harga database;
+:Pilih tanggal tersedia, sesi, jumlah;
+:Tambahkan ke keranjang;
+if (Sudah login?) then (ya)
+else (tidak)
+ :Login / daftar;
+endif
+:Submit checkout dengan request key;
+:Lock request key dan Schedule;
+:Validasi produk, sesi, harga, kuota;
+if (Valid?) then (ya)
+ :Simpan PENDING + item snapshot;
+ :Tambah reserved, deadline 15 menit;
+ :Claim pembuatan Snap sekali;
+else (tidak)
+ :Tampilkan error / pilih ulang;
+ stop
+endif
+:Browser membuka hosted Snap Sandbox;
+:Webhook signature + GET status terpercaya;
+if (Paid sah sebelum deadline?) then (ya)
+ :Lock Order;
+ :Reserved menjadi sold;
+ :Simpan PAID + terbitkan Ticket item-bound;
+ :Pemilik mengunduh PDF/QR;
+else (tidak)
+ if (Expired / cancelled?) then (ya)
+  :Lepaskan reserved sekali;
+ else (pending / ambigu)
+  :Tunggu / rekonsiliasi;
+ endif
+endif
+stop
+@enduml

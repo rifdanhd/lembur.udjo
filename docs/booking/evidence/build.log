@@ -1,0 +1,114 @@
+
+> lembur.udjo@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.4.6 (webpack)
+- Environments: .env.local
+✓ Running next.config.ts took 59ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 32.9s
+  Running TypeScript ...
+  Finished TypeScript in 18.5s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/35) ...
+  Generating static pages using 7 workers (8/35)
+  Generating static pages using 7 workers (17/35)
+  Generating static pages using 7 workers (26/35)
+✓ Generating static pages using 7 workers (35/35) in 2.3s
+⚠ Unsupported metadata themeColor is configured in metadata export in /admin/login. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /admin/tiket/katalog. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /admin. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /admin/tiket. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /inovasi. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /info. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /info-dapoerangklung. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /karier. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /the-story-of-angklung. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+⚠ Unsupported metadata themeColor is configured in metadata export in /sketchbook. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /account
+├ ƒ /account/bookings
+├ ƒ /account/bookings/[id]
+├ ƒ /account/profile
+├ ƒ /account/tickets
+├ ƒ /admin
+├ ƒ /admin/check-in
+├ ○ /admin/login
+├ ƒ /admin/tiket
+├ ƒ /admin/tiket/katalog
+├ ƒ /akun
+├ ƒ /api/[...slug]
+├ ƒ /api/auth/login
+├ ƒ /api/auth/logout
+├ ƒ /api/graphql
+├ ƒ /api/graphql-playground
+├ ƒ /api/leads
+├ ƒ /api/leads/[id]
+├ ƒ /api/leads/[id]/followups
+├ ƒ /api/leads/[id]/notes
+├ ƒ /api/staff/catalog
+├ ƒ /api/staff/check-in
+├ ƒ /api/staff/orders
+├ ƒ /api/staff/session
+├ ƒ /api/staff/users
+├ ƒ /api/ticketing/auth/[action]
+├ ƒ /api/ticketing/auth/google
+├ ƒ /api/ticketing/auth/google/callback
+├ ƒ /api/ticketing/auth/password-reset
+├ ƒ /api/ticketing/catalog
+├ ƒ /api/ticketing/expire
+├ ƒ /api/ticketing/orders
+├ ƒ /api/ticketing/orders/[orderNumber]
+├ ƒ /api/ticketing/orders/[orderNumber]/tickets
+├ ƒ /api/ticketing/profile
+├ ƒ /api/ticketing/webhook
+├ ƒ /api/website-images
+├ ƒ /api/website-images/[key]
+├ ƒ /atur-ulang-sandi
+├ ƒ /bantuan
+├ ƒ /beranda-tiket
+├ ƒ /checkout
+├ ƒ /daftar
+├ ƒ /faq
+├ ○ /icon-12o0cb.png
+├ ○ /info
+├ ○ /info-dapoerangklung
+├ ○ /inovasi
+├ ○ /karier
+├ ƒ /keranjang
+├ ƒ /lupa-sandi
+├ ƒ /masuk
+├ ƒ /order-tickets
+├ ƒ /pesanan
+├ ƒ /pesanan/[orderNumber]
+├ ƒ /pilih-tiket
+├ ○ /robots.txt
+├ ○ /sitemap.xml
+├ ○ /sketchbook
+├ ○ /the-story-of-angklung
+├ ƒ /ticket
+└ ƒ /tiket-saya
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

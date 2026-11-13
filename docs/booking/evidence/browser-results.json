@@ -1,0 +1,182 @@
+{
+  "runAt": "2026-11-13T15:58:40.990Z",
+  "database": "disposable local PostgreSQL",
+  "payment": "provider simulated in harness; no real Midtrans transaction",
+  "results": [
+    {
+      "id": "UI-desktop-1",
+      "feature": "Earliest available date and responsive width (1440px)",
+      "expected": "Sold-out disabled; earliest available selected; no page overflow",
+      "actual": "2026-11-15 selected, 2026-11-14 disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-desktop-2",
+      "feature": "Keyboard changes date, session and price",
+      "expected": "Next available date and IDR 63,000",
+      "actual": "2026-11-17, 13:00 WIB, Rp63.000",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-desktop-3",
+      "feature": "Calendar rejects sold-out day",
+      "expected": "Selection unchanged and error announced",
+      "actual": "Selection unchanged; live message shown",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-desktop-4",
+      "feature": "Selected date/session survives cart",
+      "expected": "Selected schedule and quantity persisted",
+      "actual": "Correct date, scheduleId and quantity stored",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-desktop-5",
+      "feature": "Checkout reads current backend session price",
+      "expected": "2 × 63,000 = 126,000",
+      "actual": "Rp126.000 rendered from configured session",
+      "status": "PASS"
+    },
+    {
+      "id": "CHECKOUT-HTTP",
+      "feature": "Browser submits checkout through real reservation API",
+      "expected": "Owned PENDING order stored with total 126000 and selected schedule",
+      "actual": "Order stored, total 126000, correct visitor; fake gateway key intentionally cannot pay",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-tablet-1",
+      "feature": "Earliest available date and responsive width (768px)",
+      "expected": "Sold-out disabled; earliest available selected; no page overflow",
+      "actual": "2026-11-15 selected, 2026-11-14 disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-tablet-2",
+      "feature": "Keyboard changes date, session and price",
+      "expected": "Next available date and IDR 63,000",
+      "actual": "2026-11-17, 13:00 WIB, Rp63.000",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-tablet-3",
+      "feature": "Calendar rejects sold-out day",
+      "expected": "Selection unchanged and error announced",
+      "actual": "Selection unchanged; live message shown",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-tablet-4",
+      "feature": "Selected date/session survives cart",
+      "expected": "Selected schedule and quantity persisted",
+      "actual": "Correct date, scheduleId and quantity stored",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-tablet-5",
+      "feature": "Checkout reads current backend session price",
+      "expected": "2 × 63,000 = 126,000",
+      "actual": "Rp126.000 rendered from configured session",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-mobile-1",
+      "feature": "Earliest available date and responsive width (390px)",
+      "expected": "Sold-out disabled; earliest available selected; no page overflow",
+      "actual": "2026-11-15 selected, 2026-11-14 disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-mobile-2",
+      "feature": "Keyboard changes date, session and price",
+      "expected": "Next available date and IDR 63,000",
+      "actual": "2026-11-17, 13:00 WIB, Rp63.000",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-mobile-3",
+      "feature": "Calendar rejects sold-out day",
+      "expected": "Selection unchanged and error announced",
+      "actual": "Selection unchanged; live message shown",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-mobile-4",
+      "feature": "Selected date/session survives cart",
+      "expected": "Selected schedule and quantity persisted",
+      "actual": "Correct date, scheduleId and quantity stored",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-mobile-5",
+      "feature": "Checkout reads current backend session price",
+      "expected": "2 × 63,000 = 126,000",
+      "actual": "Rp126.000 rendered from configured session",
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-MODAL",
+      "feature": "Login dialog keyboard close",
+      "expected": "Escape closes dialog",
+      "actual": "Dialog closed",
+      "status": "PASS"
+    },
+    {
+      "id": "TICKET-PDF",
+      "feature": "Owned paid booking PDF route",
+      "expected": "Authenticated owner receives PDF",
+      "actual": "200 application/pdf, valid PDF header; provider simulated in harness",
+      "status": "PASS"
+    },
+    {
+      "id": "TICKET-OWNER",
+      "feature": "Another browser cannot download ticket",
+      "expected": "404",
+      "actual": "404",
+      "status": "PASS"
+    },
+    {
+      "id": "DATE-ERROR",
+      "feature": "Catalog network error disables booking",
+      "expected": "Error with retry, booking disabled",
+      "actual": "Error shown; booking disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "DATE-EMPTY",
+      "feature": "Empty backend schedules",
+      "expected": "Empty message, booking disabled",
+      "actual": "Empty message shown; no fictional prices",
+      "status": "PASS"
+    },
+    {
+      "id": "STAFF-RBAC",
+      "feature": "Check-in STAFF cannot read admin catalog or orders",
+      "expected": "401 for both admin APIs",
+      "actual": "401 / 401",
+      "status": "PASS"
+    },
+    {
+      "id": "STAFF-CHECKIN",
+      "feature": "Authenticated QR endpoint and duplicate manual entry",
+      "expected": "200 then 409",
+      "actual": "200 first QR check-in; 409 duplicate code; no physical camera claim",
+      "status": "PASS"
+    },
+    {
+      "id": "ADMIN-RBAC",
+      "feature": "Individual ADMIN reads catalog and booking monitor",
+      "expected": "200 for both APIs",
+      "actual": "200 / 200",
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-REGISTER-LOGOUT",
+      "feature": "Email registration and secure logout",
+      "expected": "201 register, 200 logout, session null",
+      "actual": "201 / 200 / null",
+      "status": "PASS"
+    }
+  ]
+}

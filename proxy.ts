@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { APP_URL, siteForHost } from "./lib/site-domains";
+import { APP_URL, BOOKING_URL, siteForHost } from "./lib/site-domains";
 import { portalPaths } from "./lib/ticketing/paths";
 
 function privateResponse(response: NextResponse) {
@@ -34,6 +34,15 @@ export function proxy(request: NextRequest) {
   };
 
   if (site === "preview") return NextResponse.next();
+
+  // Explicit cutover switch: never redirect APIs, webhook POSTs, or assets.
+  const oldBookingHost = (request.headers.get("host") || "").toLowerCase().replace(/:\d+$/, "") === "ticket.lemburudjoparahyangan.com";
+  if (site === "ticket" && oldBookingHost && process.env.BOOKING_REDIRECT_VERIFIED === "true"
+    && process.env.BOOKING_PUBLIC_URL === BOOKING_URL && ["GET", "HEAD"].includes(request.method)
+    && !isApi && !isAsset && (pathname === "/" || portalPaths.some(under) || under("/pemesanan-lama"))) {
+    return privateResponse(NextResponse.redirect(new URL(`${pathname}${request.nextUrl.search}`, BOOKING_URL), 307));
+  }
+
 
   // Retired portal logo: block both the source and the optimized image URL.
   if (site === "ticket") {

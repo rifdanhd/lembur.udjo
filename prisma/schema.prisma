@@ -49,10 +49,21 @@ model User {
   email       String      @unique
   role        AdminRole   @default(STAFF)
   active      Boolean     @default(true)
+  passwordHash String?
+  sessions    StaffSession[]
   checkIns    CheckIn[]
   auditLogs   AuditLog[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+model StaffSession {
+  tokenHash String @id
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model Product {
@@ -60,14 +71,31 @@ model Product {
   name        String
   slug        String      @unique
   description String?
+  imagePath   String?
+  policy      String?
+  categoryId  String?
+  category    BookingCategory? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   type        ProductType
   price       Int
   active      Boolean     @default(true)
   orderItems  OrderItem[]
+  schedules   ProductSchedule[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   @@index([active, type])
+  @@index([categoryId])
+}
+
+model BookingCategory {
+  id          String @id @default(cuid())
+  slug        String @unique
+  name        String
+  description String
+  image       String
+  active      Boolean @default(false)
+  sortOrder   Int @default(0)
+  products    Product[]
 }
 
 model Schedule {
@@ -79,11 +107,27 @@ model Schedule {
   sold        Int         @default(0)
   active      Boolean     @default(true)
   orderItems  OrderItem[]
+  products    ProductSchedule[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   @@unique([date, session])
   @@index([date, active])
+}
+
+// No rows for a product preserves its legacy global schedule/base-price behavior.
+// Once configured, only explicitly active product/schedule pairs can be sold.
+model ProductSchedule {
+  productId  String
+  scheduleId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  price      Int
+  active     Boolean @default(true)
+  updatedAt  DateTime @updatedAt
+
+  @@id([productId, scheduleId])
+  @@index([scheduleId, active])
 }
 
 model Customer {
@@ -124,11 +168,32 @@ model VisitorAccount {
   id           String @id @default(cuid())
   name         String
   email        String @unique
-  passwordHash String
+  passwordHash String?
+  googleSubject String? @unique
+  emailVerifiedAt DateTime?
+  resets PasswordReset[]
   sessions     VisitorSession[]
   orders       Order[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model PasswordReset {
+  tokenHash String @id
+  visitorId String
+  visitor VisitorAccount @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  @@index([visitorId])
+  @@index([expiresAt])
+}
+
+model OAuthAttempt {
+  stateHash String @id
+  verifier String
+  nonce String
+  continueTo String
+  expiresAt DateTime
+  @@index([expiresAt])
 }
 
 model VisitorSession {
@@ -155,6 +220,7 @@ model OrderItem {
   unitPrice   Int
   quantity    Int
   lineTotal   Int
+  tickets     Ticket[]
   createdAt   DateTime  @default(now())
 
   @@index([orderId])
@@ -192,6 +258,8 @@ model Ticket {
   id          String       @id @default(cuid())
   orderId     String
   order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItemId String?
+  orderItem   OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
   code        String       @unique
   qrToken     String       @unique
   status      TicketStatus @default(ISSUED)

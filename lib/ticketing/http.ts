@@ -10,6 +10,17 @@ export function json(data: unknown, status = 200) {
 }
 
 const messages: Record<string, string> = {
+  RESET_INVALID: "Tautan pemulihan sudah digunakan, kedaluwarsa, atau tidak valid.",
+  EMAIL_UNAVAILABLE: "Pemulihan email belum tersedia. Hubungi bantuan akun.",
+  GOOGLE_UNAVAILABLE: "Masuk dengan Google belum dikonfigurasi.",
+  GOOGLE_ORIGIN: "Buka portal pada domain login yang dikonfigurasi untuk melanjutkan Google.",
+  STAFF_REQUIRED: "Masuk sebagai petugas yang masih aktif untuk memvalidasi tiket.",
+  TICKET_INVALID: "Kode tiket tidak valid atau tidak ditemukan.",
+  TICKET_USED: "Tiket ini sudah digunakan. Check-in kedua ditolak.",
+  TICKET_INACTIVE: "Tiket belum dibayar, dibatalkan, atau tidak berlaku.",
+  TICKET_DATE: "Tanggal kunjungan tiket berbeda dengan hari ini (WIB).",
+  SCHEDULE_IN_USE: "Sesi sudah memiliki reservasi. Tanggal dan jamnya tidak dapat dipindahkan.",
+  QUOTA_INCONSISTENT: "Kuota tidak boleh lebih kecil dari jumlah ditahan dan terjual.",
   QUOTA_FULL: "Kuota sesi ini tidak mencukupi. Pilih sesi atau jumlah tiket lain.",
   SCHEDULE_UNAVAILABLE: "Jadwal ini sudah tidak tersedia. Silakan pilih jadwal lain.",
   PRODUCT_UNAVAILABLE: "Kategori tiket berubah. Muat ulang daftar tiket.",
@@ -64,7 +75,7 @@ export function grantOrder(response: NextResponse, request: NextRequest, orderNu
   const { secret } = requireSandbox();
   const host = request.headers.get("host") || new URL(request.url).host;
   response.cookies.set(cookieName(orderNumber), orderAccess(orderNumber, secret), {
-    httpOnly: true, sameSite: "lax", secure: !/^(localhost|127\.0\.0\.1|ticket\.localhost)(:\d+)?$/.test(host),
+    httpOnly: true, sameSite: "lax", secure: !/^(localhost|127\.0\.0\.1|(?:ticket|booking)\.localhost)(:\d+)?$/.test(host),
     path: "/", maxAge: 60 * 60 * 24 * 30,
   });
   return response;

@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { isAuthed, unauthorized } from "@/lib/crm/auth";
+import { unauthorized } from "@/lib/crm/auth";
+import { isTicketAdmin } from "@/lib/ticketing/admin-access";
 import { BookingError, requireSameOrigin, boundedJson } from "@/lib/ticketing/security";
 import { json } from "@/lib/ticketing/http";
 import { ticketingDb } from "@/lib/ticketing/db";
@@ -16,7 +17,7 @@ const actionSchema = { refresh: true, expire: true } as const;
 
 export async function GET(request: NextRequest) {
   try {
-    if (!(await isAuthed())) return unauthorized();
+    if (!(await isTicketAdmin())) return unauthorized();
     const db = ticketingDb();
     const params = request.nextUrl.searchParams;
     const [orders, summary] = await Promise.all([
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!(await isAuthed())) return unauthorized();
+    if (!(await isTicketAdmin())) return unauthorized();
     requireSameOrigin(request);
     const body = await boundedJson(request) as Record<string, unknown> | null;
     if (!body) throw new BookingError("INVALID_INPUT");

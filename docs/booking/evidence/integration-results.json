@@ -1,0 +1,316 @@
+{
+  "runAt": "2026-11-13T15:48:12.343Z",
+  "database": "Disposable local PostgreSQL; never the shared database",
+  "provider": "Stubbed provider responses in integration suite",
+  "exitCode": 0,
+  "cases": [
+    {
+      "id": "INT-1",
+      "scenario": "website and local previews keep existing public routes",
+      "expected": "website and local previews keep existing public routes",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-2",
+      "scenario": "staff URLs reach the existing protected CRM and preserve queries",
+      "expected": "staff URLs reach the existing protected CRM and preserve queries",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-3",
+      "scenario": "ticket hostname cannot reach staff pages or APIs",
+      "expected": "ticket hostname cannot reach staff pages or APIs",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-4",
+      "scenario": "karier subdomain serves the careers page and isolates staff, ticket, and API routes",
+      "expected": "karier subdomain serves the careers page and isolates staff, ticket, and API routes",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-5",
+      "scenario": "static assets remain accessible, private pages are not cached or indexed",
+      "expected": "static assets remain accessible, private pages are not cached or indexed",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-6",
+      "scenario": "staff API retains session handlers and rejects cross-origin writes",
+      "expected": "staff API retains session handlers and rejects cross-origin writes",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-7",
+      "scenario": "local subdomains use the same mappings without production redirects",
+      "expected": "local subdomains use the same mappings without production redirects",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-8",
+      "scenario": "complete ticket portal routes are isolated and the original reservation remains reachable",
+      "expected": "complete ticket portal routes are isolated and the original reservation remains reachable",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-9",
+      "scenario": "ticket API allowlist keeps visitor checkout separate from staff and website",
+      "expected": "ticket API allowlist keeps visitor checkout separate from staff and website",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-10",
+      "scenario": "retired logo is unavailable on ticket host while website assets remain unchanged",
+      "expected": "retired logo is unavailable on ticket host while website assets remain unchanged",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-11",
+      "scenario": "booking alias has the same visitor isolation and serves webhook POST directly",
+      "expected": "booking alias has the same visitor isolation and serves webhook POST directly",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-12",
+      "scenario": "verified cutover redirects customer GET only and leaves old webhook POST and API intact",
+      "expected": "verified cutover redirects customer GET only and leaves old webhook POST and API intact",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-13",
+      "scenario": "10 simultaneous buyers cannot oversell 5 seats; totals and 15-minute hold come from server",
+      "expected": "10 simultaneous buyers cannot oversell 5 seats; totals and 15-minute hold come from server",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-14",
+      "scenario": "concurrent retries create exactly one order; changed payload cannot reuse its key",
+      "expected": "concurrent retries create exactly one order; changed payload cannot reuse its key",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-15",
+      "scenario": "inactive and past sessions cannot be booked, and inactive examples remain hidden",
+      "expected": "inactive and past sessions cannot be booked, and inactive examples remain hidden",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-16",
+      "scenario": "expired reservation releases quota exactly once under concurrent expiry",
+      "expected": "expired reservation releases quota exactly once under concurrent expiry",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-17",
+      "scenario": "concurrent signed webhook replay issues tickets and converts reserved quota only once",
+      "expected": "concurrent signed webhook replay issues tickets and converts reserved quota only once",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-18",
+      "scenario": "valid signature with forged success cannot override provider pending; bad signature never calls provider",
+      "expected": "valid signature with forged success cannot override provider pending; bad signature never calls provider",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-19",
+      "scenario": "wrong amount and challenged capture cannot issue tickets",
+      "expected": "wrong amount and challenged capture cannot issue tickets",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-20",
+      "scenario": "late settlement goes to manual review without overselling or issuing tickets",
+      "expected": "late settlement goes to manual review without overselling or issuing tickets",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-21",
+      "scenario": "provider expiry releases hold and full refunds revoke tickets without reopening used capacity",
+      "expected": "provider expiry releases hold and full refunds revoke tickets without reopening used capacity",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-22",
+      "scenario": "gateway timeout never retries a possibly created payment or releases its quota early",
+      "expected": "gateway timeout never retries a possibly created payment or releases its quota early",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-23",
+      "scenario": "buyer cannot overwrite another customer's profile and receipts never expose customer PII or QR secrets",
+      "expected": "buyer cannot overwrite another customer's profile and receipts never expose customer PII or QR secrets",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-24",
+      "scenario": "database rate limiting remains atomic under concurrent requests",
+      "expected": "database rate limiting remains atomic under concurrent requests",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-25",
+      "scenario": "visitor registration hashes passwords; login, session expiry and server-side revocation work",
+      "expected": "visitor registration hashes passwords; login, session expiry and server-side revocation work",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-26",
+      "scenario": "orders are account-owned; matching email never claims historical orders; another account cannot replay an order",
+      "expected": "orders are account-owned; matching email never claims historical orders; another account cannot replay an order",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-27",
+      "scenario": "date-specific prices, product sessions and checkout share authoritative configuration",
+      "expected": "date-specific prices, product sessions and checkout share authoritative configuration",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-28",
+      "scenario": "disabled and unconfigured product sessions cannot bypass checkout, including stale carts",
+      "expected": "disabled and unconfigured product sessions cannot bypass checkout, including stale carts",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-29",
+      "scenario": "earliest available day skips sold out dates; unavailable days have no invented price; WIB boundary",
+      "expected": "earliest available day skips sold out dates; unavailable days have no invented price; WIB boundary",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-30",
+      "scenario": "admin cannot shrink held quota or move a reserved session; price constraints and audit are persisted",
+      "expected": "admin cannot shrink held quota or move a reserved session; price constraints and audit are persisted",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-31",
+      "scenario": "paid tickets are item-bound, downloadable PDFs contain QR; unpaid orders cannot download",
+      "expected": "paid tickets are item-bound, downloadable PDFs contain QR; unpaid orders cannot download",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-32",
+      "scenario": "concurrent QR/manual check-in permits exactly one entry and records individual staff",
+      "expected": "concurrent QR/manual check-in permits exactly one entry and records individual staff",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-33",
+      "scenario": "refunded tickets and inactive staff cannot check in; staff sessions revoke immediately",
+      "expected": "refunded tickets and inactive staff cannot check in; staff sessions revoke immediately",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-34",
+      "scenario": "Google verified identity never links matching local email or accepts unverified email",
+      "expected": "Google verified identity never links matching local email or accepts unverified email",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-35",
+      "scenario": "password reset is hashed, single-use under concurrency and revokes every visitor session",
+      "expected": "password reset is hashed, single-use under concurrency and revokes every visitor session",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-36",
+      "scenario": "configured categories, program photo and policy come from DB; inactive category closes checkout",
+      "expected": "configured categories, program photo and policy come from DB; inactive category closes checkout",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-37",
+      "scenario": "checkout rejects client pricing, fractional/negative quantities, duplicate lines, missing consent and totals above 20",
+      "expected": "checkout rejects client pricing, fractional/negative quantities, duplicate lines, missing consent and totals above 20",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-38",
+      "scenario": "same-origin checks reject missing, opaque and sibling origins even behind TLS termination",
+      "expected": "same-origin checks reject missing, opaque and sibling origins even behind TLS termination",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-39",
+      "scenario": "request body limit works without Content-Length and rejects invalid JSON",
+      "expected": "request body limit works without Content-Length and rejects invalid JSON",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-40",
+      "scenario": "order capabilities are scope-bound and signature verification rejects tampering",
+      "expected": "order capabilities are scope-bound and signature verification rejects tampering",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-41",
+      "scenario": "checkout redirects allow only the sandbox hosted payment domain",
+      "expected": "checkout redirects allow only the sandbox hosted payment domain",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-42",
+      "scenario": "production keys and missing settings cannot enable sandbox sales",
+      "expected": "production keys and missing settings cannot enable sandbox sales",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-43",
+      "scenario": "cart planning rejects impossible dates and oversized or duplicate selections; account redirect stays internal",
+      "expected": "cart planning rejects impossible dates and oversized or duplicate selections; account redirect stays internal",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-44",
+      "scenario": "sandbox request returns to the account order page and shares the server reservation deadline",
+      "expected": "sandbox request returns to the account order page and shares the server reservation deadline",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    }
+  ]
+}

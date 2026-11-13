@@ -11,7 +11,8 @@
     "db:migrate": "node scripts/ticketing-db.mjs migrate",
     "db:seed": "node scripts/ticketing-db.mjs seed",
     "db:check": "node scripts/ticketing-db.mjs check",
-    "test:ticketing": "node scripts/test-ticketing.mjs"
+    "test:ticketing": "node scripts/test-ticketing.mjs",
+    "test:booking-browser": "node --import tsx scripts/test-booking-browser.mjs"
   },
   "dependencies": {
     "@designcodeio/threeui": "^1.2.0",
@@ -24,19 +25,25 @@
     "gsap": "^3.15.0",
     "lenis": "^1.3.27",
     "lucide-react": "^1.52.0",
-    "next": "16.3.5",
+    "next": "16.4.6",
+    "openid-client": "^6.8.9",
     "payload": "^3.90.2",
+    "pdfkit": "^0.20.2",
+    "qrcode": "^1.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdfkit": "^0.17.7",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.4.6",
     "prisma": "^6.19.0",
     "tailwindcss": "^4",
     "typescript": "^5"
@@ -44,5 +51,9 @@
   "prisma": {
     "seed": "node prisma/seed.mjs"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "dompurify": "3.4.17",
+    "undici": "7.30.2"
+  }
 }

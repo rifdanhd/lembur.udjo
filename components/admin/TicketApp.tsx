@@ -190,7 +190,8 @@ export default function TicketApp({
   async function logout() {
     setLoggingOut(true);
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      const responses = await Promise.all([fetch("/api/auth/logout", { method: "POST" }), fetch("/api/staff/session", { method: "DELETE" })]);
+      if (responses.some(response => !response.ok)) throw new Error("Belum dapat keluar. Coba lagi.");
       router.push("/admin/login");
       router.refresh();
     } finally {
@@ -231,6 +232,7 @@ export default function TicketApp({
             <p className="mt-0.5 truncate text-sm font-semibold text-forest">Tiket Lembur Udjo</p>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <Link href="/admin/tiket/katalog" className="inline-flex min-h-11 items-center rounded-xl border border-stone-300 px-3 text-sm font-semibold">Katalog & jadwal</Link>
             <Link
               href="/admin"
               className={`inline-flex min-h-11 items-center gap-2 rounded-xl border border-stone-300 px-3 text-sm font-semibold text-stone-700 transition-colors hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest ${focus}`}

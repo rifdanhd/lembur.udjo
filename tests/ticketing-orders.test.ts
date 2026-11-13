@@ -8,6 +8,14 @@ import { BookingError } from "../lib/ticketing/security";
 import type { CheckoutInput, ProviderStatus } from "../lib/ticketing/validation";
 import { registerVisitor, loginVisitor, visitorSession, createVisitorSession, ownedOrder } from "../lib/ticketing/visitor-auth";
 import { digest } from "../lib/ticketing/security";
+import { bookingDates, pricedSessions, selectedPrice, jakartaDate } from "../lib/ticketing/availability";
+import { checkInTicket, ticketDownloadData } from "../lib/ticketing/tickets";
+import { ticketPdf } from "../lib/ticketing/ticket-pdf";
+import { googleVisitor } from "../lib/ticketing/google-auth";
+import { createReset, resetPassword } from "../lib/ticketing/password-reset";
+import { loginStaff, staffSession } from "../lib/ticketing/staff-auth";
+import { hashPassword } from "../lib/ticketing/visitor-auth";
+import { saveCatalog } from "../lib/ticketing/catalog-admin";
 
 const url = process.env.TICKETING_TEST_DATABASE_URL;
 if (!url || new URL(url).hostname !== "127.0.0.1" || new URL(url).pathname !== "/ticketing_phase2_test") throw new Error("Run node scripts/test-ticketing.mjs. Tests may only use the disposable local database.");
@@ -17,7 +25,7 @@ let productId: string;
 let scheduleId: string;
 
 beforeEach(async () => {
-  await db.$transaction([db.checkIn.deleteMany(), db.ticket.deleteMany(), db.payment.deleteMany(), db.orderItem.deleteMany(), db.order.deleteMany(), db.visitorSession.deleteMany(), db.visitorAccount.deleteMany(), db.customer.deleteMany(), db.product.deleteMany(), db.schedule.deleteMany(), db.auditLog.deleteMany(), db.rateLimit.deleteMany()]);
+  await db.$transaction([db.checkIn.deleteMany(), db.ticket.deleteMany(), db.payment.deleteMany(), db.orderItem.deleteMany(), db.order.deleteMany(), db.passwordReset.deleteMany(), db.oAuthAttempt.deleteMany(), db.staffSession.deleteMany(), db.user.deleteMany(), db.visitorSession.deleteMany(), db.visitorAccount.deleteMany(), db.customer.deleteMany(), db.productSchedule.deleteMany(), db.product.deleteMany(), db.bookingCategory.deleteMany(), db.schedule.deleteMany(), db.auditLog.deleteMany(), db.rateLimit.deleteMany()]);
   const product = await db.product.create({ data: { name: "Tiket Uji", slug: "test", type: "ADULT", price: 75000 } });
   const date = new Date(Date.now() + 86_400_000);
   const schedule = await db.schedule.create({ data: { date, session: "13:00", capacity: 5 } });
@@ -156,7 +164,7 @@ test("visitor registration hashes passwords; login, session expiry and server-si
   const data = { name: "Pengunjung Tes", email: "visitor@example.test", password: "Kata-Sandi-Uji-Panjang-123", consent: true as const };
   const visitor = await registerVisitor(db, data);
   const saved = await db.visitorAccount.findUniqueOrThrow({ where: { id: visitor.id } });
-  assert.notEqual(saved.passwordHash, data.password); assert.ok(saved.passwordHash.startsWith("scrypt-v1$"));
+  assert.notEqual(saved.passwordHash, data.password); assert.ok(saved.passwordHash!.startsWith("scrypt-v1$"));
   await assert.rejects(loginVisitor(db, { email: data.email, password: "salah" }), isError("LOGIN_FAILED"));
   assert.equal((await loginVisitor(db, data)).id, visitor.id);
   const session = await createVisitorSession(db, visitor.id);
@@ -181,4 +189,128 @@ test("orders are account-owned; matching email never claims historical orders; a
   assert.equal((await ownedOrder(db, a.id, order.orderNumber)).id, order.id);
   await assert.rejects(ownedOrder(db, b.id, order.orderNumber), isError("NOT_FOUND"));
   await assert.rejects(reserveOrder(db, next, new Date(), b.id), isError("REQUEST_CONFLICT"));
+});
+
+test("date-specific prices, product sessions and checkout share authoritative configuration", async () => {
+  const second = await db.schedule.create({ data: { date: new Date(Date.now() + 2 * 86400000), session: "10:00", capacity: 3 } });
+  await saveCatalog(db, { action: "offer", productId, scheduleId, price: 91000, active: true });
+  await saveCatalog(db, { action: "offer", productId, scheduleId: second.id, price: 62000, active: true });
+  const result = await catalog(db, true);
+  assert.equal(selectedPrice(result, productId, scheduleId), 91000);
+  assert.equal(selectedPrice(result, productId, second.id), 62000);
+  const order = await reserveOrder(db, { ...input(2), scheduleId: second.id });
+  assert.equal(order.totalAmount, 124000);
+  assert.equal(order.items[0].unitPrice, 62000);
+  assert.equal(order.items[0].scheduleId, second.id);
+  assert.equal((await receipt(db, order.orderNumber)).items[0].date, second.date.toISOString().slice(0, 10));
+  await saveCatalog(db, { action: "offer", productId, scheduleId: second.id, price: 64000, active: true });
+  assert.equal((await receipt(db, order.orderNumber)).totalAmount, 124000);
+  assert.equal((await reserveOrder(db, { ...input(), scheduleId: second.id })).totalAmount, 64000);
+});
+
+test("disabled and unconfigured product sessions cannot bypass checkout, including stale carts", async () => {
+  const second = await db.schedule.create({ data: { date: new Date(Date.now() + 2 * 86400000), session: "10:00", capacity: 3 } });
+  await saveCatalog(db, { action: "offer", productId, scheduleId, price: 91000, active: false });
+  assert.equal(pricedSessions(await catalog(db, true), productId).length, 0);
+  await assert.rejects(reserveOrder(db, input()), isError("PRODUCT_UNAVAILABLE"));
+  await assert.rejects(reserveOrder(db, { ...input(), scheduleId: second.id }), isError("PRODUCT_UNAVAILABLE"));
+});
+
+test("earliest available day skips sold out dates; unavailable days have no invented price; WIB boundary", async () => {
+  await db.schedule.update({ where: { id: scheduleId }, data: { sold: 5 } });
+  const second = await db.schedule.create({ data: { date: new Date(Date.now() + 3 * 86400000), session: "10:00", capacity: 3 } });
+  const result = await catalog(db, true);
+  const days = bookingDates(result, productId);
+  assert.equal(days.find(item => item.status === "available")?.date, second.date.toISOString().slice(0, 10));
+  assert.equal(days.find(item => item.date === result.schedules.find(item => item.id === scheduleId)!.date)?.status, "sold_out");
+  assert.ok(days.filter(item => item.status === "unavailable").every(item => item.price === null));
+  assert.equal(jakartaDate(new Date("2026-11-13T17:00:00Z")), "2026-11-14");
+  await assert.rejects(reserveOrder(db, input()), isError("QUOTA_FULL"));
+});
+
+test("admin cannot shrink held quota or move a reserved session; price constraints and audit are persisted", async () => {
+  await reserveOrder(db, input(3));
+  const schedule = await db.schedule.findUniqueOrThrow({ where: { id: scheduleId } });
+  const data = { action: "schedule" as const, id: scheduleId, date: schedule.date.toISOString().slice(0, 10), session: schedule.session, capacity: 2, active: true };
+  await assert.rejects(saveCatalog(db, data), isError("QUOTA_INCONSISTENT"));
+  await assert.rejects(saveCatalog(db, { ...data, capacity: 5, session: "14:00" }), isError("SCHEDULE_IN_USE"));
+  await assert.rejects(db.productSchedule.create({ data: { productId, scheduleId, price: -1 } }));
+  await saveCatalog(db, { action: "offer", productId, scheduleId, price: 90000, active: true });
+  assert.equal(await db.auditLog.count({ where: { action: "CATALOG_OFFER_SAVED" } }), 1);
+});
+
+test("paid tickets are item-bound, downloadable PDFs contain QR; unpaid orders cannot download", async () => {
+  const order = await reserveOrder(db, input(2));
+  await assert.rejects(ticketDownloadData(db, order.orderNumber), isError("TICKET_INACTIVE"));
+  await applyPaymentStatus(db, status(order));
+  const data = await ticketDownloadData(db, order.orderNumber);
+  assert.equal(data.tickets.length, 2);
+  assert.ok(data.tickets.every(ticket => ticket.orderItemId === order.items[0].id));
+  assert.equal(new Set(data.tickets.map(ticket => ticket.qrToken)).size, 2);
+  const pdf = await ticketPdf(data);
+  assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
+  assert.ok(pdf.includes(Buffer.from("/Subtype /Image")));
+});
+
+test("concurrent QR/manual check-in permits exactly one entry and records individual staff", async () => {
+  const staff = await db.user.create({ data: { email: "staff@example.test", role: "STAFF", active: true } });
+  const order = await reserveOrder(db, input()); await applyPaymentStatus(db, status(order));
+  const ticket = await db.ticket.findFirstOrThrow();
+  const schedule = await db.schedule.findUniqueOrThrow({ where: { id: scheduleId } });
+  const visit = new Date(`${schedule.date.toISOString().slice(0, 10)}T10:00:00+07:00`);
+  await assert.rejects(checkInTicket(db, staff.id, `LUP1:${ticket.code}:${"0".repeat(64)}`, visit), isError("TICKET_INVALID"));
+  await assert.rejects(checkInTicket(db, staff.id, ticket.code, new Date("2000-01-01")), isError("TICKET_DATE"));
+  const results = await Promise.allSettled(Array.from({ length: 6 }, (_, index) => checkInTicket(db, staff.id, index % 2 ? ticket.code : `LUP1:${ticket.code}:${ticket.qrToken}`, visit)));
+  assert.equal(results.filter(result => result.status === "fulfilled").length, 1);
+  assert.equal(await db.checkIn.count({ where: { ticketId: ticket.id, checkedById: staff.id } }), 1);
+  assert.equal((await db.ticket.findUniqueOrThrow({ where: { id: ticket.id } })).status, "USED");
+});
+
+test("refunded tickets and inactive staff cannot check in; staff sessions revoke immediately", async () => {
+  const password = "Staff-Sandi-Panjang-123";
+  const staff = await db.user.create({ data: { email: "staff@example.test", passwordHash: await hashPassword(password), role: "STAFF", active: true } });
+  const token = await loginStaff(db, staff.email, password);
+  assert.equal((await staffSession(db, token))?.role, "STAFF");
+  await assert.rejects(loginStaff(db, staff.email, "wrong"), isError("LOGIN_FAILED"));
+  const order = await reserveOrder(db, input()); await applyPaymentStatus(db, status(order));
+  const ticket = await db.ticket.findFirstOrThrow(); await applyPaymentStatus(db, status(order, "refund"));
+  await assert.rejects(checkInTicket(db, staff.id, ticket.code), isError("TICKET_INACTIVE"));
+  await db.user.update({ where: { id: staff.id }, data: { active: false } });
+  assert.equal(await staffSession(db, token), null);
+  await assert.rejects(checkInTicket(db, staff.id, ticket.code), isError("STAFF_REQUIRED"));
+});
+
+test("Google verified identity never links matching local email or accepts unverified email", async () => {
+  await registerVisitor(db, { name: "Local", email: "local@example.test", password: "Local-Sandi-Panjang-123", consent: true });
+  await assert.rejects(googleVisitor(db, { sub: "google-sub", email: "local@example.test", email_verified: true }), isError("GOOGLE_LINK_REQUIRED"));
+  await assert.rejects(googleVisitor(db, { sub: "google-sub", email: "new@example.test", email_verified: false }), isError("GOOGLE_LOGIN_FAILED"));
+  const user = await googleVisitor(db, { sub: "google-sub", email: "new@example.test", email_verified: true, name: "Google User" });
+  const repeated = await googleVisitor(db, { sub: "google-sub", email: "changed@example.test", email_verified: true });
+  assert.equal(user.id, repeated.id);
+  assert.equal((await db.visitorAccount.findUniqueOrThrow({ where: { id: user.id } })).passwordHash, null);
+});
+
+test("password reset is hashed, single-use under concurrency and revokes every visitor session", async () => {
+  const user = await registerVisitor(db, { name: "Reset", email: "reset@example.test", password: "Old-Sandi-Panjang-123", consent: true });
+  const session = await createVisitorSession(db, user.id);
+  assert.equal(await createReset(db, "unknown@example.test"), null);
+  const token = await createReset(db, "reset@example.test"); assert.ok(token);
+  assert.equal(await db.passwordReset.count({ where: { tokenHash: token } }), 0);
+  const attempts = await Promise.allSettled([resetPassword(db, token, "New-Sandi-Panjang-123"), resetPassword(db, token, "New-Sandi-Panjang-123")]);
+  assert.equal(attempts.filter(item => item.status === "fulfilled").length, 1);
+  assert.equal(await visitorSession(db, session.token), null);
+  assert.equal((await loginVisitor(db, { email: "reset@example.test", password: "New-Sandi-Panjang-123" })).id, user.id);
+  await assert.rejects(resetPassword(db, token, "Third-Sandi-Panjang-123"), isError("RESET_INVALID"));
+});
+
+test("configured categories, program photo and policy come from DB; inactive category closes checkout", async () => {
+  await saveCatalog(db, { action: "category", slug: "program-qa", name: "Program QA", description: "Kategori fixture lokal", image: "/angklung.webp", active: true, sortOrder: 1 });
+  const category = await db.bookingCategory.findUniqueOrThrow({ where: { slug: "program-qa" } });
+  await db.product.update({ where: { id: productId }, data: { categoryId: category.id, policy: "Ketentuan fixture", imagePath: "/angklung.webp" } });
+  const result = await catalog(db, true);
+  assert.equal(result.categories?.[0].slug, "program-qa");
+  assert.equal(result.products[0].policy, "Ketentuan fixture");
+  await saveCatalog(db, { action: "category", id: category.id, slug: category.slug, name: category.name, description: category.description, image: category.image, active: false, sortOrder: 1 });
+  assert.equal((await catalog(db, true)).products.length, 0);
+  await assert.rejects(reserveOrder(db, input()), isError("PRODUCT_UNAVAILABLE"));
 });
