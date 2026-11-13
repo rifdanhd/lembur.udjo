@@ -1,56 +1,139 @@
-import { bookingOrigin } from "@/lib/ticketing/booking-origin";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Leaf, Music2, Users } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Calendar, Ticket, Users, Star } from "lucide-react";
+import { catalogCategories, categoryProducts } from "@/lib/ticketing/portal-data";
+import { PortalTitle, PreviewNotice } from "@/components/ticketing/PortalShared";
+import { portalCatalog } from "@/lib/ticketing/portal-catalog";
+import { bookingOrigin } from "@/lib/ticketing/booking-origin";
+import { pricedSessions } from "@/lib/ticketing/availability";
+import { rupiah } from "@/lib/ticketing/types";
 
 export const metadata: Metadata = {
-  title: "Rencanakan Kunjungan ke Lembur Udjo",
-  description: "Awali rencana kunjunganmu ke Lembur Udjo Parahyangan. Temukan suasana alam, budaya, dan kebersamaan sebelum memilih tiket.",
+  title: "Pesan Tiket — Lembur Udjo Parahyangan",
+  description: "Rencanakan kunjunganmu ke Lembur Udjo Parahyangan. Pilih pengalaman, tanggal, dan sesi yang tersedia.",
   alternates: { canonical: `${bookingOrigin()}/` },
 };
 
-const stories = [
-  { icon: Leaf, title: "Dekat dengan alam", text: "Ambil jeda dari keseharian dan temukan suasana hijau Lembur Udjo." },
-  { icon: Music2, title: "Berjumpa dengan budaya", text: "Kenali angklung dan cerita budaya yang tumbuh bersama masyarakat Sunda." },
-  { icon: Users, title: "Berbagi kebersamaan", text: "Rencanakan waktu bersama keluarga, sahabat, atau rombonganmu." },
-];
-const steps = [
-  ["01", "Temukan pilihanmu", "Lihat kategori dan pilihan pengalaman yang ingin kamu rencanakan."],
-  ["02", "Susun kunjungan", "Pilih tanggal, sesi, dan jumlah pengunjung, lalu periksa keranjang."],
-  ["03", "Simpan di akunmu", "Pesanan dan tiket yang telah diterbitkan dapat dilihat melalui akunmu."],
+const featureCards = [
+  {
+    icon: Ticket,
+    title: "Pilih pengalaman",
+    text: "Kunjungan kawasan, pertunjukan angklung, atau workshop yang tersedia.",
+  },
+  {
+    icon: Calendar,
+    title: "Pilih tanggal & sesi",
+    text: "Pilih tanggal kunjungan dan sesi yang sesuai jadwalmu.",
+  },
+  {
+    icon: Users,
+    title: "Tentukan jumlah",
+    text: "Atur banyaknya tiket sesuai kebutuhan keluarga atau rombongan.",
+  },
 ];
 
-export default function BookingLandingPage() {
+export default async function BookingHomePage() {
+  const catalog = await portalCatalog();
+  const categories = catalogCategories(catalog);
   return <>
-    <section aria-labelledby="booking-welcome" className="relative isolate overflow-hidden rounded-3xl bg-forest text-white">
-      <Image src="/Hero.ecoland.jpg" alt="Suasana hijau kawasan Lembur Udjo Parahyangan" fill priority sizes="(min-width:1152px) 1088px, 100vw" className="-z-20 object-cover" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/80 via-black/50 to-black/15" />
-      <div className="flex min-h-[520px] flex-col justify-end px-6 py-10 sm:min-h-[590px] sm:px-12 sm:py-14 lg:px-16">
-        <p className="text-[10px] font-semibold uppercase tracking-[.25em] text-white/80">Selamat datang di Lembur Udjo Parahyangan</p>
-        <h1 id="booking-welcome" className="mt-5 max-w-2xl font-playfair text-4xl leading-[1.12] sm:text-6xl">Satu kunjungan,<br /><span className="italic">banyak cerita.</span></h1>
-        <p className="mt-6 max-w-lg text-sm leading-7 text-white/85 sm:text-base">Alam yang menyambut, budaya yang mendekatkan. Awali rencana waktumu bersama orang-orang tersayang di sini.</p>
-        <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
-          <Link href="/order-tickets" className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest">Pesan Tiket <ArrowRight size={17} aria-hidden="true" /></Link>
-          <a href="#tentang-kunjungan" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/50 px-7 py-3 text-sm font-medium text-white">Kenali pengalaman kami</a>
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden rounded-3xl bg-forest text-white min-h-[640px] flex flex-col justify-center">
+      <Image src="/Hero.ecoland.jpg" alt="Suasana hijau kawasan Lembur Udjo Parahyangan" fill priority sizes="(min-width:1152px) 1088px, 100vw" className="-z-20 object-cover object-center" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#3d2a1f]/95 via-[#3d2a1f]/60 to-[#3d2a1f]/30" />
+      <div className="relative z-10 flex min-h-[640px] flex-col justify-center px-6 py-10 sm:px-12 sm:py-14 lg:px-16">
+        <p className="text-[10px] font-semibold uppercase tracking-[.25em] text-white/70">TIKET LEMBUR UDJO</p>
+        <h1 id="hero-title" className="mt-4 max-w-2xl text-4xl font-playfair leading-[1.12] sm:text-6xl">Rencanakan kunjunganmu<br /><span className="italic text-white/95">ke Lembur Udjo Parahyangan.</span></h1>
+        <p className="mt-6 max-w-lg text-sm leading-7 text-white/85 sm:text-base">Pilih pengalaman, tanggal, dan sesi kunjungan yang tersedia. Kami menyiapkan perjalanan budaya yang tak terlupakan.</p>
+        <div className="mt-10 flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:flex-wrap">
+          <Link href="/order-tickets" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-semibold text-forest shadow-lg hover:shadow-xl transition-shadow">Pesan Tiket <ArrowRight size={18} aria-hidden="true" /></Link>
+          <a href="#pengalaman" className="inline-flex min-h-13 items-center justify-center rounded-full border border-white/40 px-8 py-4 text-sm font-medium text-white hover:bg-white/10 transition-all">Lihat pengalaman</a>
         </div>
-        <p className="mt-5 max-w-lg text-xs leading-6 text-white/80">Harga dan jadwal mengikuti katalog yang dibuka tim. Transaksi Sandbox adalah simulasi pengujian.</p>
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {featureCards.map(({ icon: Icon, title, text }) => (
+            <article key={title} className="rounded-2xl border border-white/10 p-6 bg-white/5 backdrop-blur-sm">
+              <Icon size={20} strokeWidth={1.5} aria-hidden="true" className="text-white/70" />
+              <h3 className="mt-4 font-playfair text-xl">{title}</h3>
+              <p className="mt-3 text-xs leading-6 text-white/70">{text}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
 
-    <section id="tentang-kunjungan" aria-labelledby="experience-title" className="scroll-mt-28 py-14 sm:py-20">
-      <div className="grid items-center gap-9 md:grid-cols-2 lg:gap-16">
-        <div className="relative aspect-[5/4] overflow-hidden rounded-3xl"><Image src="/Pertunjukanluar.webp" alt="Suasana pertunjukan angklung di Lembur Udjo" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover" /></div>
-        <div><p className="text-[10px] font-semibold uppercase tracking-[.22em] text-forest/60">Ruang untuk berjumpa</p><h2 id="experience-title" className="mt-4 font-playfair text-3xl leading-tight sm:text-4xl">Datang bersama.<br /><span className="italic">Pulang membawa cerita.</span></h2><p className="mt-5 text-sm leading-7 text-stone-600">Lembur Udjo mempertemukan alam, angklung, dan kebersamaan. Mulai dari mengenal suasananya, lalu susun rencana kunjungan yang sesuai dengan kebutuhanmu.</p><Link href="/bantuan" className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline underline-offset-4">Bicarakan rencana kunjungan <ArrowRight size={16} aria-hidden="true" /></Link></div>
+    <section id="pengalaman" aria-labelledby="category-title" className="py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[.24em] text-bamboo">Pengalaman yang tersedia</p>
+            <h2 id="category-title" className="mt-3 font-playfair text-3xl sm:text-4xl">Temukan pilihan yang cocok untukmu</h2>
+          </div>
+          <Link href="/order-tickets" className="inline-flex min-h-12 items-center gap-2 rounded-full border border-forest/20 bg-white px-6 py-3 text-sm font-semibold text-forest hover:bg-forest/5 transition-colors">Lihat semua kategori <ArrowRight size={16} /></Link>
+        </div>
+
+        <nav aria-label="Kategori pengalaman" className="mt-10 flex gap-2 overflow-x-auto pb-4 scrollbar-hide sm:px-2">
+          {categories.map((item, index) => (
+            <Link key={item.slug} href={`/order-tickets?tab=${item.slug}`} className={`shrink-0 rounded-full border px-5 py-3 text-xs font-semibold transition-all hover:bg-forest/5 hover:border-forest/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest ${index === 0 ? "border-forest bg-forest text-white" : "border-border text-forest"}`}>
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.slice(0, 6).map((item, index) => {
+            const products = categoryProducts(catalog, item);
+            const firstProduct = products[0];
+            const startingPrice = () => {
+              if (!firstProduct) return "Jadwal segera diumumkan";
+              const sessions = pricedSessions(catalog, firstProduct.id).filter(s => s.available > 0);
+              return sessions.length ? `Mulai ${rupiah(Math.min(...sessions.map(s => s.price)))}` : "Jadwal segera diumumkan";
+            };
+            return (
+              <Link key={item.slug} href={`/order-tickets?tab=${item.slug}`} className="group relative overflow-hidden rounded-2xl border border-border transition-all hover:shadow-xl hover:border-bamboo/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image src={item.image} alt={item.name} fill sizes="(min-width:1024px) 33vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" priority={index === 0} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#3d2a1f]/60 via-[#3d2a1f]/20 to-transparent" />
+                  <span className="absolute left-4 top-4 z-10 rounded-full bg-white px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-forest">{item.example ? "Contoh" : "Program kunjungan"}</span>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <h2 className="font-playfair text-xl">{item.name}</h2>
+                    <ArrowRight size={18} className="mt-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-stone-600 line-clamp-2">{item.description}</p>
+                  {firstProduct && (
+                    <div className="mt-6 flex items-center gap-2">
+                      <Ticket size={14} className="text-bamboo" aria-hidden="true" />
+                      <span className="text-sm font-semibold text-forest">{startingPrice()}</span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="mt-16 rounded-2xl border border-bamboo/20 bg-white p-8 sm:p-12 lg:p-16">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <Star size={20} className="text-bamboo shrink-0" aria-hidden="true" />
+              <h3 className="mt-3 font-playfair text-xl">Kunjungan siap pakai</h3>
+              <p className="mt-2 text-sm leading-6 text-stone-600">Pilih paket kunjungan yang sudah kami siapkan untukmu.</p>
+            </div>
+            <div>
+              <Calendar size={20} className="text-bamboo shrink-0" aria-hidden="true" />
+              <h3 className="mt-3 font-playfair text-xl">Pilih tanggal bebas</h3>
+              <p className="mt-2 text-sm leading-6 text-stone-600">Atur kunjungan sesuai jadwal dan kuota yang tersedia.</p>
+            </div>
+            <div>
+              <Users size={20} className="text-bamboo shrink-0" aria-hidden="true" />
+              <h3 className="mt-3 font-playfair text-xl">Untuk keluarga & rombongan</h3>
+              <p className="mt-2 text-sm leading-6 text-stone-600">Kunjungan bersama keluarga, sekolah, atau komunitas.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="mt-10 grid gap-7 sm:grid-cols-3">{stories.map(({ icon: Icon, title, text }) => <article key={title} className="border-t border-forest/15 pt-6"><Icon size={24} strokeWidth={1.4} aria-hidden="true" /><h3 className="mt-4 font-playfair text-2xl">{title}</h3><p className="mt-3 text-sm leading-7 text-stone-600">{text}</p></article>)}</div>
     </section>
 
-    <section aria-labelledby="planning-title" className="rounded-3xl bg-[#eeeee5] p-6 sm:p-10 lg:p-12">
-      <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:flex-wrap sm:items-end"><div><p className="text-[10px] font-semibold uppercase tracking-[.22em] text-forest/60">Mulai dari sini</p><h2 id="planning-title" className="mt-3 font-playfair text-3xl sm:text-4xl">Rencanakan kunjunganmu</h2></div><Link href="/order-tickets" className="inline-flex min-h-12 items-center gap-3 rounded-full bg-forest px-7 py-3 text-sm font-semibold text-white">Lihat pilihan tiket <ArrowRight size={17} aria-hidden="true" /></Link></div>
-      <ol className="mt-9 grid gap-8 sm:grid-cols-3">{steps.map(([number, title, text]) => <li key={number}><span className="font-playfair text-3xl italic text-forest/40">{number}</span><h3 className="mt-3 text-base font-semibold">{title}</h3><p className="mt-3 text-sm leading-7 text-stone-600">{text}</p></li>)}</ol>
-      <p className="mt-8 border-t border-forest/15 pt-5 text-xs leading-6 text-stone-600">Pilihan yang bertanda contoh belum resmi dan tidak menahan kuota. Pemesanan serta pembayaran akan tersedia setelah harga dan jadwal resmi siap. <Link href="/faq" className="font-semibold underline">Baca pertanyaan umum</Link>.</p>
-    </section>
-    <div className="flex flex-wrap items-center justify-between gap-4 py-10"><p className="font-playfair text-xl">Sudah punya akun pengunjung?</p><div className="flex flex-wrap gap-5 text-sm font-semibold"><Link href="/masuk" className="inline-flex min-h-11 items-center underline underline-offset-4">Masuk ke akun</Link><Link href="/tiket-saya" className="inline-flex min-h-11 items-center gap-2">Lihat tiket saya <ArrowRight size={16} aria-hidden="true" /></Link></div></div>
+    <PreviewNotice />
   </>;
-}
+};

@@ -16,10 +16,15 @@ export function DateBookingSelector({ dates, value, onChange, loading = false, e
   const [message, setMessage] = useState("");
   const selected = dates.find(day => day.date === value && day.status === "available");
   const month = value || dates[0]?.date;
+  const visibleDates = dates.filter(day => day.status !== "unavailable");
   useEffect(() => {
     const container = row.current;
-    const selected = container?.querySelector<HTMLElement>(`[data-date="${value}"]`);
-    if (container && selected) container.scrollTo({ left: container.scrollLeft + selected.getBoundingClientRect().left - container.getBoundingClientRect().left - (container.clientWidth - selected.clientWidth) / 2, behavior: "instant" });
+    const selectedEl = container?.querySelector<HTMLElement>(`[data-date="${value}"]`);
+    if (container && selectedEl) {
+      const rect = selectedEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      container.scrollTo({ left: container.scrollLeft + rect.left - containerRect.left - (containerRect.width - rect.width) / 2, behavior: "smooth" });
+    }
   }, [value, loading, error]);
   function choose(date: string) {
     if (loading) return;
@@ -33,22 +38,39 @@ export function DateBookingSelector({ dates, value, onChange, loading = false, e
     const target = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 : Math.max(0, Math.min(buttons.length - 1, current + (event.key === "ArrowRight" ? 1 : -1)));
     event.preventDefault(); buttons[target]?.focus({ preventScroll: true });
     const container = row.current; const button = buttons[target];
-    if (container && button) container.scrollTo({ left: container.scrollLeft + button.getBoundingClientRect().left - container.getBoundingClientRect().left - (container.clientWidth - button.clientWidth) / 2, behavior: "instant" });
+    if (container && button) container.scrollTo({ left: container.scrollLeft + button.getBoundingClientRect().left - container.getBoundingClientRect().left - (container.clientWidth - button.clientWidth) / 2, behavior: "smooth" });
   }
-  return <section aria-labelledby={`${id}-label`} aria-busy={loading} className="min-w-0 space-y-4">
-    <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 id={`${id}-label`} className="text-sm font-semibold">Pilih tanggal kunjungan</h3><p className="mt-1 text-sm capitalize text-stone-600">{month ? format(month, { month: "long", year: "numeric" }) : "Jadwal kunjungan"} <span className="text-xs">· WIB</span></p></div>
-      <div className="flex gap-2"><button type="button" aria-label="Tanggal sebelumnya" onClick={() => row.current?.scrollBy({ left: -320, behavior: "smooth" })} className="flex size-11 items-center justify-center rounded-full border border-forest/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2"><ChevronLeft size={18} /></button><button type="button" aria-label="Tanggal berikutnya" onClick={() => row.current?.scrollBy({ left: 320, behavior: "smooth" })} className="flex size-11 items-center justify-center rounded-full border border-forest/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2"><ChevronRight size={18} /></button><button type="button" aria-label="Buka kalender" aria-expanded={calendar} aria-controls={`${id}-calendar`} onClick={() => { setCalendar(!calendar); }} className="flex size-11 items-center justify-center rounded-full border border-forest/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2"><CalendarDays size={18} /></button></div>
+  return <section aria-labelledby={`${id}-label`} aria-busy={loading} className="min-w-0 space-y-5">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h3 id={`${id}-label`} className="text-sm font-semibold uppercase tracking-[.12em] text-stone-600">Pilih tanggal kunjungan</h3>
+        <p className="mt-1 text-xs capitalize text-bamboo font-semibold">{month ? format(month, { month: "long", year: "numeric" }) : "Jadwal kunjungan"} <span className="text-[10px] text-stone-500">· WIB</span></p>
+      </div>
+      <div className="flex gap-2 sm:order-none">
+        <button type="button" aria-label="Tanggal sebelumnya" onClick={() => row.current?.scrollBy({ left: -340, behavior: "smooth" })} disabled={!dates.some(d => d.date < value && d.status === "available")} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><ChevronLeft size={18} className="text-bamboo" /></button>
+        <button type="button" aria-label="Tanggal berikutnya" onClick={() => row.current?.scrollBy({ left: 340, behavior: "smooth" })} disabled={!dates.some(d => d.date > value && d.status === "available")} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><ChevronRight size={18} className="text-bamboo" /></button>
+        <button type="button" aria-label="Buka kalender" aria-expanded={calendar} aria-controls={`${id}-calendar`} onClick={() => { setCalendar(!calendar); }} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><CalendarDays size={18} className="text-bamboo" /></button>
+      </div>
     </div>
-    {calendar && <div id={`${id}-calendar`} className="rounded-xl bg-cream p-4"><label htmlFor={`${id}-picker`} className="block text-xs font-medium">Cari tanggal melalui kalender</label><input ref={picker} id={`${id}-picker`} type="date" min={dates[0]?.date} max={dates.at(-1)?.date} value={value} onChange={event => choose(event.target.value)} className="mt-2 min-h-12 w-full rounded-lg border border-forest/20 bg-white px-3 text-sm" /><p className="mt-2 text-xs text-stone-600">Tanggal tanpa jadwal dan tanggal habis tidak dapat dipilih.</p></div>}
-    {loading && <p role="status" className="rounded-xl bg-cream p-5 text-sm">Memuat harga dan ketersediaan…</p>}{error ? <div role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-900">{error}{onRetry && <button type="button" onClick={onRetry} className="ml-3 min-h-11 underline">Coba lagi</button>}</div> : <>
-      <div ref={row} onKeyDown={keyboard} role="group" aria-label="Tanggal kunjungan, gunakan tombol panah untuk berpindah" className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 py-2 [scrollbar-width:thin]">
-        {dates.map(day => <button key={day.date} type="button" data-date={day.date} disabled={day.status !== "available"} aria-pressed={day.date === selected?.date} onClick={() => choose(day.date)} className={`relative flex min-h-36 w-32 shrink-0 snap-start flex-col items-center justify-center rounded-2xl border px-2 py-4 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest ${day.date === selected?.date ? "border-forest bg-forest text-white shadow-md" : day.status === "available" ? "border-forest/20 bg-white text-forest hover:bg-cream" : day.status === "sold_out" ? "cursor-not-allowed border-amber-200 bg-amber-50 text-amber-950" : "cursor-not-allowed border-dashed border-stone-200 bg-stone-50 text-stone-500"}`}>
-          {day.date === selected?.date && <Check aria-hidden="true" size={14} className="absolute right-2 top-2" />}<span className="text-xs capitalize">{format(day.date, { weekday: "long" })}</span><span className="mt-1 text-lg font-semibold">{format(day.date, { day: "numeric", month: "short" })}</span><span className="mt-3 text-xs font-semibold">{day.price === null ? "—" : rupiah(day.price)}</span><span className="mt-1 text-[11px]">{day.status === "available" ? "Tersedia" : day.status === "sold_out" ? "Habis" : "Tidak tersedia"}</span>
+    {calendar && <div id={`${id}-calendar`} className="rounded-2xl border border-bamboo/20 bg-white p-5 sm:p-6">
+      <label htmlFor={`${id}-picker`} className="block text-xs font-semibold uppercase tracking-[.12em] text-stone-600">Cari tanggal melalui kalender</label>
+      <input ref={picker} id={`${id}-picker`} type="date" min={dates[0]?.date} max={dates.at(-1)?.date} value={value} onChange={event => choose(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-bamboo/20 bg-white px-3 text-sm focus:border-bamboo focus:ring-2 focus:ring-bamboo/10" />
+      <p className="mt-2 text-xs text-stone-500">Tanggal tanpa jadwal dan tanggal habis tidak dapat dipilih.</p>
+    </div>}
+    {loading && <p role="status" className="rounded-2xl border border-bamboo/20 bg-white p-5 text-sm text-forest">Memuat harga dan ketersediaan…</p>}{error ? <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">{error}{onRetry && <button type="button" onClick={onRetry} className="ml-3 min-h-11 underline">Coba lagi</button>}</div> : <>
+      <div ref={row} onKeyDown={keyboard} role="group" aria-label="Tanggal kunjungan, gunakan tombol panah untuk berpindah" className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-1 py-3 [scrollbar-width:thin]">
+        {visibleDates.map(day => <button key={day.date} type="button" data-date={day.date} disabled={day.status !== "available"} aria-pressed={day.date === selected?.date} onClick={() => choose(day.date)} className={`relative flex min-h-44 w-36 shrink-0 snap-start flex-col items-center justify-center rounded-2xl border px-2 py-4 text-center transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo ${day.date === selected?.date ? "border-bamboo bg-bamboo text-white shadow-lg" : day.status === "available" ? "border-bamboo/20 bg-white text-forest hover:bg-white/50 hover:border-bamboo/40" : day.status === "sold_out" ? "cursor-not-allowed border-amber-100 bg-amber-50 text-amber-800" : "cursor-not-allowed border-dashed border-stone-200 bg-stone-50 text-stone-500"}`}>
+          {day.date === selected?.date && <Check aria-hidden="true" size={14} className="absolute right-2 top-2 text-white" />}
+          <span className="text-[10px] uppercase tracking-wider font-semibold">{format(day.date, { weekday: "long" })}</span>
+          <span className="mt-2 text-lg font-semibold tabular-nums">{format(day.date, { day: "numeric" })}</span>
+          <span className="mt-1 text-[10px] capitalize text-stone-500">{format(day.date, { month: "short" })}</span>
+          <span className="mt-3 text-xs font-semibold">{day.price === null ? "—" : rupiah(day.price)}</span>
+          <span className="mt-1 text-[10px]">{day.status === "available" ? "Tersedia" : day.status === "sold_out" ? "Habis" : "Tidak tersedia"}</span>
         </button>)}
       </div>
-      {!dates.some(day => day.status === "available") && <p role="status" className="rounded-xl bg-cream p-4 text-sm">Belum ada tanggal yang dapat dipesan untuk program ini.</p>}
+      {!dates.some(day => day.status === "available") && <p role="status" className="rounded-2xl border border-bamboo/20 bg-white p-4 text-sm text-stone-600">Belum ada tanggal yang dapat dipesan untuk program ini.</p>}
       <p className="text-xs leading-5 text-stone-500">Harga per pengunjung, mulai dari sesi yang tersedia. Harga akhir mengikuti sesi pilihanmu.</p>
     </>}
     <p role="status" aria-live="polite" className="text-xs text-forest">{message || (selected ? `Dipilih: ${format(selected.date, { dateStyle: "full" })}` : "")}</p>
   </section>;
-}
+};

@@ -14,13 +14,31 @@ export function validCheckoutUrl(value: string) {
   } catch { return false; }
 }
 
+// Per-transaction override only for disposable local testing. Never changes the
+// merchant dashboard, and refuses any shared database or non-HTTPS receiver.
+export function sandboxNotificationOverride() {
+  const value = process.env.TICKETING_SANDBOX_NOTIFICATION_URL;
+  if (!value) return undefined;
+  const urls = [process.env.DATABASE_URL, process.env.POSTGRES_URL, process.env.DATABASE_URL_UNPOOLED].filter(Boolean);
+  const local = urls.length > 0 && urls.every(value => {
+    const url = new URL(value!);
+    return url.hostname === "127.0.0.1" && url.pathname === "/ticketing_midtrans_e2e";
+  });
+  const receiver = new URL(value);
+  if (process.env.TICKETING_ISOLATED_SANDBOX_TEST !== "true" || !local
+    || receiver.protocol !== "https:" || receiver.username || receiver.password || receiver.port
+    || receiver.search || receiver.hash || !receiver.pathname.endsWith("/api/ticketing/webhook")) throw new BookingError("CONFIGURATION_INVALID", 503);
+  return receiver.toString();
+}
+
 export function midtransProvider(): CheckoutProvider {
   const { key } = requireSandbox();
   const headers = { Authorization: `Basic ${Buffer.from(`${key}:`).toString("base64")}`, "Content-Type": "application/json", Accept: "application/json" };
   return {
     async create(order, customer) {
+      const notification = sandboxNotificationOverride();
       const response = await fetch("https://app.sandbox.midtrans.com/snap/v1/transactions", {
-        method: "POST", headers, redirect: "error", signal: AbortSignal.timeout(10_000), cache: "no-store",
+        method: "POST", headers: { ...headers, ...(notification ? { "X-Override-Notification": notification } : {}) }, redirect: "error", signal: AbortSignal.timeout(10_000), cache: "no-store",
         body: JSON.stringify({
           transaction_details: { order_id: order.orderNumber, gross_amount: order.totalAmount },
           item_details: order.items.map((item) => ({ id: item.productId, name: item.productName.slice(0, 50), price: item.unitPrice, quantity: item.quantity })),

@@ -22,6 +22,8 @@ Sumber kebutuhan: master prompt dan feature request pengguna pada 13 November 20
 | F10 | Check-in sekali pakai | Login petugas individual, role ADMIN/STAFF, lock Order, update Ticket atomik dan unique CheckIn |
 | F11 | Admin katalog dan pemantauan | kategori, program/foto/ketentuan, sesi, kuota, harga; pencarian pesanan, status, statistik simulasi, pengelolaan petugas |
 | F12 | Domain migration tanpa memutus webhook | booking alias, origin terkonfigurasi, cutover GET/HEAD opt-in; endpoint POST lama tetap langsung |
+| F13 | UI/UX redesign booking portal | Premium hero, kategori horizontal, date selector kartu horizontal, login modal dua kolom, dashboard pelanggan, checkout dua kolom, e-ticket dengan QR |
+| F14 | Preview deployment | Vercel preview deployment untuk branch feat/lup-booking-platform, tidak mengganggu produksi |
 
 | ID | Kebutuhan nonfungsional | Bukti/batas |
 | --- | --- | --- |
@@ -153,6 +155,7 @@ Webhook pending/replay tidak mengembalikan order paid menjadi pending. Tiket han
 | 4 | Kategori/foto/ketentuan DB dan alias domain, cutover guard | 44 tes PASS, termasuk constraints dan replay |
 | 5 | QA browser tiga viewport; inspeksi screenshot menemukan overflow setelah keyboard | Perbaikan grid dan scroll lokal; assertion pasca interaksi ditambahkan; hasil final di test-report |
 | 6 | Audit dependency menemukan advisory kritis dan build/QA berebut generated types | Patch dependency; tsconfig QA terpisah; final check dicatat tanpa menghapus kegagalan awal dari catatan |
+| 7 | UI/UX redesign Phase 3: desain sistem token, homepage premium, date selector kartu horizontal, login modal dua kolom, dashboard pelanggan, checkout dua kolom, halaman e-ticket | 44/44 tes integrasi, 25/25 tes browser, TypeScript/lint/build lulus; semua uji dijalankan pada disposable local DB |
 
 ## Cutover
 

@@ -77,7 +77,7 @@ try {
     await page.screenshot({ path: `${evidence}/date-selector-${name}.png`, fullPage: true });
     // Login and test the real checkout UI total without contacting Midtrans.
     const login = await context.request.post(`${base}/api/ticketing/auth/login`, { headers: { Origin: base }, data: { email: visitor.email, password: "Browser-Test-Panjang-123" } }); assert.equal(login.status(), 200);
-    await page.goto(`${base}/checkout`); await page.getByText(/Total:.*126\.000/).waitFor();
+    await page.goto(`${base}/checkout`); await page.getByText(/126\.000/).waitFor();
     record(`UI-${name}-5`, "Checkout reads current backend session price", "2 × 63,000 = 126,000", "Rp126.000 rendered from configured session");
     if (name === "desktop") {
       await page.getByLabel("Nomor WhatsApp").fill("081234567890");

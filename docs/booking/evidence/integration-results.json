@@ -1,5 +1,5 @@
 {
-  "runAt": "2026-11-13T16:30:45.822Z",
+  "runAt": "2026-11-13T21:06:15.670Z",
   "database": "Disposable local PostgreSQL; never the shared database",
   "provider": "Stubbed provider responses in integration suite",
   "exitCode": 0,

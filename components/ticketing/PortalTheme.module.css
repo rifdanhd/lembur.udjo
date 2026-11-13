@@ -1,10 +1,23 @@
 .portal {
-  --color-forest: #442e25;
-  --color-forest-light: #604536;
-  --color-cream: #faf6ef;
+  /* Lembur Udjo Parahyangan design tokens — bamboo & earth palette */
+  --color-forest: #3d2a1f;
+  --color-forest-light: #6d4c41;
   --color-bamboo: #a56b3e;
-  background: #faf6ef;
-  color: #442e25;
+  --color-bamboo-light: #c8915d;
+  --color-cream: #faf8f3;
+  --color-surface: #ffffff;
+  --color-border: #e3dbd1;
+  --color-text: #3d2a1f;
+  --color-text-muted: #6b5b52;
+  --color-text-soft: #9a8a7c;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --shadow-sm: 0 1px 2px 0 rgb(61 42 31 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(61 42 31 / 0.08), 0 2px 4px -2px rgb(61 42 31 / 0.04);
+  --shadow-lg: 0 10px 15px -3px rgb(61 42 31 / 0.08), 0 4px 6px -4px rgb(61 42 31 / 0.04);
+
+  background: var(--color-cream);
+  color: var(--color-text);
   font-family: var(--font-ticket-condensed), "Arial Narrow", sans-serif;
   font-size: 18px;
   line-height: 1.6;
@@ -22,15 +35,14 @@
 .portal :is(main, section, article, aside, form, fieldset, label) { min-width: 0; }
 .portal :is(h1, h2, h3, p) { overflow-wrap: anywhere; }
 .portal :is(a, button) { touch-action: manipulation; }
-.portal :is(a, button):focus-visible { outline: 2px solid #a56b3e; outline-offset: 4px; }
+.portal :is(a, button):focus-visible { outline: 2px solid var(--color-bamboo); outline-offset: 4px; }
 .portal :is(a, button) > svg { flex-shrink: 0; }
 
-/* The site's unlayered a { color: inherit } otherwise overrides Tailwind colors. */
 .portal a:global(.text-white) { color: #fff; }
-.portal a:global(.text-forest) { color: #442e25; }
+.portal a:global(.text-forest) { color: var(--color-forest); }
 .portal :is(input, select, textarea) { font-family: inherit; }
 .portal :is(input:not([type="checkbox"]), select, textarea) { max-width: 100%; min-width: 0; font-size: 1rem; }
-.portal :global(.bg-\[\#eeeee5\]) { background-color: #eee3d4; }
+.portal :global(.bg-\[\#eeeee5\]) { background-color: #f3efea; }
 
 @media (max-width: 639px) {
   .portal :is(a, button):global(.rounded-full):global(.px-6),
