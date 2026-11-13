@@ -41,6 +41,31 @@ test("ticket hostname cannot reach staff pages or APIs", () => {
   assert.equal(request(`app.${base}`, "/info").status, 404);
 });
 
+test("karier subdomain serves the careers page and isolates staff, ticket, and API routes", async () => {
+  const host = "karier.lemburudjoparahyangan.co.id";
+  assert.equal(siteForHost(host), "karier");
+  assert.equal(siteForHost(`KARIER.lemburudjoparahyangan.co.id:443`), "karier");
+  assert.equal(siteForHost("karier.lemburudjoparahyangan.com"), "karier");
+  assert.equal(request(host).headers.get("x-middleware-rewrite"), `https://${host}/karier`);
+  assert.equal(request(host, "/karier").headers.get("x-middleware-rewrite"), `https://${host}/karier`);
+  assert.equal(request("karier.localhost:3107").headers.get("x-middleware-rewrite"), "https://karier.localhost:3107/karier");
+
+  const moved = request(host, "/info?tab=2");
+  assert.equal(moved.status, 307);
+  assert.equal(moved.headers.get("location"), `https://${base}/info?tab=2`);
+
+  for (const path of ["/admin", "/login", "/api/leads", "/api/ticketing/catalog", "/ticket", "/checkout", "/pemesanan-lama"]) {
+    assert.equal(request(host, path).status, 404, path);
+  }
+  assert.equal(request(host, "/info", { method: "POST" }).status, 404);
+
+  assert.equal(await request(host, "/robots.txt").text(), "User-agent: *\nDisallow: /\n");
+  assert.equal(request(host).headers.get("x-robots-tag"), "noindex, nofollow");
+  for (const path of ["/_next/static/chunk.js", "/LOGO_Lembur.udjo.png"]) {
+    assert.equal(request(host, path).headers.get("x-middleware-next"), "1", path);
+  }
+});
+
 test("static assets remain accessible, private pages are not cached or indexed", async () => {
   for (const host of [`app.${base}`, `ticket.${base}`]) {
     for (const path of ["/_next/static/chunk.js", "/_next/image?url=%2FHero.ecoland.jpg&w=640&q=75", "/favicon.ico"]) {

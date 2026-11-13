@@ -4,7 +4,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name app.lemburudjoparahyangan.com ticket.lemburudjoparahyangan.com booking.lemburudjoparahyangan.com;
+    server_name app.lemburudjoparahyangan.com ticket.lemburudjoparahyangan.com booking.lemburudjoparahyangan.com karier.lemburudjoparahyangan.co.id;
 
     client_max_body_size 10m;
 
@@ -22,5 +22,5 @@ server {
 
 # Sesudah nginx -t berhasil dan DNS mengarah ke VPS, aktifkan TLS dengan
 # Certbot (jika sudah dipakai di server ini):
-# sudo certbot --nginx -d app.lemburudjoparahyangan.com -d ticket.lemburudjoparahyangan.com -d booking.lemburudjoparahyangan.com --redirect
+# sudo certbot --nginx -d app.lemburudjoparahyangan.com -d ticket.lemburudjoparahyangan.com -d booking.lemburudjoparahyangan.com -d karier.lemburudjoparahyangan.co.id --redirect
 # Jangan gunakan login staf melalui HTTP sebelum HTTPS aktif.

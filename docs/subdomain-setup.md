@@ -9,12 +9,19 @@
 | app.lemburudjoparahyangan.com | /dashboard | rewrite /admin (CRM yang ada) |
 | app.lemburudjoparahyangan.com | /login | rewrite /admin/login |
 | ticket.lemburudjoparahyangan.com | / | rewrite /ticket |
+| karier.lemburudjoparahyangan.co.id | / | rewrite /karier |
+| karier.lemburudjoparahyangan.co.id | halaman situs lain | redirect ke domain utama |
 
 Proxy memilih bagian aplikasi berdasarkan Host yang diteruskan Nginx. Rewrite
 mempertahankan alamat subdomain di browser. Link lama /admin di domain utama
 diarahkan ke app, dan link /admin di app dinormalisasi ke /dashboard atau /login.
 Localhost dan preview Vercel mempertahankan /admin dan /admin/login yang lama.
 Pada app/ticket, rute halaman lain menghasilkan 404; ticket juga menutup API CRM/Payload.
+Subdomain karier hanya melayani halaman karier: / dan /karier menampilkan halaman
+yang sama, sedangkan halaman publik lain (mis. /info, /the-story-of-angklung)
+dialihkan ke domain utama agar menu Navbar/Footer tetap berfungsi. Rute admin,
+API, ticket, dan portal tiket menghasilkan 404 di host ini. Host
+ticket/karier.lemburudjoparahyangan.com juga dikenali sebagai alias karier.
 Static assets tetap tersedia. Subdomain memiliki noindex dan robots Disallow: /.
 Coming Soon homepage tidak menutupi halaman subdomain.
 
@@ -31,7 +38,7 @@ Coming Soon homepage tidak menutupi halaman subdomain.
 
 ## Aktivasi di VPS
 
-1. Pastikan DNS A untuk app dan ticket menuju IP VPS 157.10.160.37.
+1. Pastikan DNS A untuk app, ticket, dan karier menuju IP VPS 157.10.160.37.
 2. Periksa service Lembur Udjo dan port sebelum mengubah konfigurasi. Catatan lama
    menyebut lembur-udjo.service pada 3001, tetapi kondisi aktual harus diperiksa.
    Jangan mengubah service lain pada port 3000.
@@ -46,7 +53,7 @@ Coming Soon homepage tidak menutupi halaman subdomain.
 5. Jalankan sudo nginx -t, kemudian sudo systemctl reload nginx hanya jika valid.
 6. Gunakan mekanisme TLS yang sudah dipakai server. Untuk Certbot/Nginx yang
    sudah terpasang: sudo certbot --nginx -d app.lemburudjoparahyangan.com
-   -d ticket.lemburudjoparahyangan.com --redirect (satu baris).
+   -d ticket.lemburudjoparahyangan.com -d karier.lemburudjoparahyangan.co.id --redirect (satu baris).
    Validasi nginx -t lagi. HTTPS harus aktif sebelum menguji login staf.
 7. Uji HTTPS: website utama tetap tampil, ticket menampilkan reservasi, app
    mengarah ke login. Setelah masuk, CRM bisa mengambil leads dan menyimpan
@@ -68,7 +75,8 @@ npm run build
 ```
 
 Untuk uji browser, jalankan Next.js di port yang kosong, lalu buka
-http://app.localhost:PORT/login dan http://ticket.localhost:PORT/.
-Jika browser/OS tidak mendukung *.localhost, petakan kedua nama itu ke 127.0.0.1.
+http://app.localhost:PORT/login, http://ticket.localhost:PORT/, dan
+http://karier.localhost:PORT/.
+Jika browser/OS tidak mendukung *.localhost, petakan ketiga nama itu ke 127.0.0.1.
 Halaman ticket juga dapat dipreview pada localhost:PORT/ticket. Uji Host dengan
 curl membuktikan routing server, tetapi tidak membuktikan DNS/TLS atau login di VPS.

@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { FOOTER_NAV_LINKS, SOCIAL_LINKS } from "@/lib/website/navigation";
 
-export default function Footer() {
+export default function Footer({ hrefBase = "" }: { hrefBase?: string }) {
   const year = new Date().getFullYear();
+  // Pada subdomain karier, menu diarahkan ke situs utama.
+  const url = (href: string) => (hrefBase && href.startsWith("/") ? `${hrefBase}${href}` : href);
 
   return (
     <footer id="kontak" className="relative overflow-hidden bg-forest text-[#F7F5F0]">
@@ -52,7 +54,7 @@ export default function Footer() {
               {FOOTER_NAV_LINKS.slice(0, 6).map((item) => (
                 <li key={item.href + item.label}>
                   <a
-                    href={item.href}
+                    href={url(item.href)}
                     className="inline-flex min-h-[36px] items-center py-1 text-[13px] leading-snug text-white/70 transition-colors hover:text-lup-yellow"
                   >
                     {item.label}
@@ -74,7 +76,7 @@ export default function Footer() {
               {FOOTER_NAV_LINKS.slice(6).map((item) => (
                 <li key={item.href + item.label}>
                   <a
-                    href={item.href}
+                    href={url(item.href)}
                     className="inline-flex min-h-[36px] items-center py-1 text-[13px] leading-snug text-white/70 transition-colors hover:text-lup-yellow"
                   >
                     {item.label}
@@ -126,13 +128,13 @@ export default function Footer() {
         <div className="flex flex-col justify-between gap-4 pt-6 text-[10px] uppercase tracking-[0.2em] text-white/45 sm:flex-row sm:items-center">
           <p>&copy; {year} Lembur Udjo Parahyangan. Dilindungi Hak Cipta.</p>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <Link href="/#faq" className="transition-colors hover:text-white">
+            <Link href={url("/#faq")} className="transition-colors hover:text-white">
               FAQ
             </Link>
-            <Link href="/#lokasi" className="transition-colors hover:text-white">
+            <Link href={url("/#lokasi")} className="transition-colors hover:text-white">
               Lokasi
             </Link>
-            <Link href="/#beranda" className="transition-colors hover:text-white">
+            <Link href={url("/#beranda")} className="transition-colors hover:text-white">
               Kembali ke Atas &uarr;
             </Link>
           </div>

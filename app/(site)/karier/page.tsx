@@ -12,12 +12,14 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { KARIER_URL, WEBSITE_URL } from "@/lib/site-domains";
 
 export const metadata: Metadata = {
   title: "Karier | Lembur Udjo Parahyangan",
   description:
     "Bergabung dengan Lembur Udjo Parahyangan untuk merawat budaya Sunda dan menciptakan pengalaman bermakna bagi setiap pengunjung.",
-  alternates: { canonical: "/karier" },
+  alternates: { canonical: KARIER_URL },
+  openGraph: { url: KARIER_URL },
 };
 
 const values = [
@@ -42,7 +44,7 @@ const steps = [
 export default function KarierPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream text-stone-900">
-      <Navbar />
+      <Navbar hrefBase={WEBSITE_URL} />
 
       <section className="relative overflow-hidden bg-forest pt-28 text-white sm:pt-36">
         <div className="mx-auto grid max-w-6xl items-end gap-12 px-4 pb-16 sm:px-6 sm:pb-24 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:px-8">
@@ -100,7 +102,7 @@ export default function KarierPage() {
         <div className="relative mx-auto flex max-w-6xl flex-col justify-between gap-10 lg:flex-row lg:items-end"><div><p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.28em] text-forest"><MapPin size={14} aria-hidden="true" /> Padalarang, Bandung Barat</p><h2 className="mt-5 max-w-2xl font-tan text-4xl leading-[1.08] text-forest sm:text-6xl">Punya cerita yang ingin dibawa ke Lembur Udjo?</h2></div><div className="shrink-0"><a href="mailto:corsec.lemburudjo@gmail.com?subject=Perkenalan%20Karier%20-%20Lembur%20Udjo" className="inline-flex min-h-14 items-center gap-3 rounded-full bg-forest px-7 py-4 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-forest-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest focus-visible:ring-offset-2 focus-visible:ring-offset-[#e4eddf]"><Mail size={18} aria-hidden="true" /> Kirim perkenalan Anda <ArrowRight size={17} aria-hidden="true" /></a><p className="mt-3 text-center text-xs text-stone-500">corsec.lemburudjo@gmail.com</p></div></div>
       </section>
 
-      <Footer />
+      <Footer hrefBase={WEBSITE_URL} />
     </main>
   );
 }

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { APP_URL, BOOKING_URL, siteForHost } from "./lib/site-domains";
+import { APP_URL, WEBSITE_URL, BOOKING_URL, siteForHost } from "./lib/site-domains";
 import { portalPaths } from "./lib/ticketing/paths";
 
 function privateResponse(response: NextResponse) {
@@ -57,6 +57,22 @@ export function proxy(request: NextRequest) {
 
   // Ticketing handlers belong only to the visitor host, including webhooks.
   if (under("/api/ticketing") && site !== "ticket") return notFound();
+
+  // Subdomain karier hanya menampilkan halaman karier; halaman situs lain
+  // diteruskan ke domain utama agar menu di halaman karier tetap berfungsi.
+  if (site === "karier") {
+    if (pathname === "/robots.txt") {
+      return privateResponse(new NextResponse("User-agent: *\nDisallow: /\n", {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      }));
+    }
+    if (isAsset) return NextResponse.next();
+    if (pathname === "/" || under("/karier")) return rewrite("/karier");
+    const privatePath = isApi || under("/admin") || under("/cms") || under("/login")
+      || under("/dashboard") || under("/pemesanan-lama") || under("/ticket") || portalPaths.some(under);
+    if (privatePath || !["GET", "HEAD"].includes(request.method)) return notFound();
+    return privateResponse(NextResponse.redirect(new URL(`${pathname}${request.nextUrl.search}`, WEBSITE_URL), 307));
+  }
 
   if (site === "website") {
     if (portalPaths.some(under) || under("/pemesanan-lama")) return notFound();

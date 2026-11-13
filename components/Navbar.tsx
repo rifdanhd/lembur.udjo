@@ -54,7 +54,9 @@ function ExternalArrowIcon() {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ hrefBase = "" }: { hrefBase?: string }) {
+  // Pada subdomain karier, menu diarahkan ke situs utama.
+  const url = (href: string) => (hrefBase && href.startsWith("/") ? `${hrefBase}${href}` : href);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -218,7 +220,7 @@ export default function Navbar() {
           }`}
         >
           {/* Logo Brand + Tagline */}
-          <Link href="/#beranda" className="flex items-center shrink-0 group" aria-label="Lembur Udjo Parahyangan">
+          <Link href={url("/#beranda")} className="flex items-center shrink-0 group" aria-label="Lembur Udjo Parahyangan">
             <span
               className={`flex items-center rounded-xl p-1.5 transition-all duration-300 group-hover:scale-105 ${
                 transparent ? "bg-white/95 shadow-[0_6px_20px_rgba(0,0,0,.18)]" : "bg-white ring-1 ring-border"
@@ -327,7 +329,7 @@ export default function Navbar() {
                         {item.children.map((child) => (
                           <li key={child.label} role="none">
                             <a
-                              href={child.href}
+                              href={url(child.href)}
                               role="menuitem"
                               aria-current={isCurrent(child.href) ? "page" : undefined}
                               onClick={() => setOpenIndex(null)}
@@ -424,7 +426,7 @@ export default function Navbar() {
                         {item.children.map((child) => (
                           <li key={child.label}>
                             <a
-                              href={child.href}
+                              href={url(child.href)}
                               aria-current={isCurrent(child.href) ? "page" : undefined}
                               tabIndex={isExpanded ? 0 : -1}
                               onClick={() => setMenuOpen(false)}

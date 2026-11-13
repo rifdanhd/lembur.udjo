@@ -1,0 +1,57 @@
+{
+  "runAt": "2026-11-13T16:39:23.818Z",
+  "environment": "Midtrans Sandbox",
+  "database": "Disposable local PostgreSQL",
+  "webhook": "Simulated with correct SHA512 signature (not delivered by Midtrans)",
+  "results": [
+    {
+      "id": "E2E-04-01",
+      "feature": "Real reservation created",
+      "expected": "PENDING order with 2 tickets worth Rp150.000",
+      "actual": "order LU-bf8a772ba46c26100999ca26, status PENDING, total 150000",
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-04-02",
+      "feature": "REAL Midtrans Sandbox Snap transaction created",
+      "expected": "redirect_url on app.sandbox.midtrans.com",
+      "actual": "HTTP 201, redirect_url present",
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-04-03",
+      "feature": "REAL Midtrans status lookup before payment",
+      "expected": "404 (no payment method selected yet)",
+      "actual": "HTTP 200: 404",
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-04-04",
+      "feature": "SIMULATED webhook → PAID (signature verified, amount matched)",
+      "expected": "Order becomes PAID, tickets issued, quota converted reserved→sold",
+      "actual": "status=PAID, tickets=2, payment=SETTLED, schedule.reserved=0, schedule.sold=2",
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-08",
+      "feature": "SIMULATED duplicate webhook notification",
+      "expected": "Still PAID, exactly 2 tickets, no oversell",
+      "actual": "status=PAID, tickets=2, payment=SETTLED, schedule.reserved=0, schedule.sold=2",
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-11",
+      "feature": "E-ticket PDF generation",
+      "expected": "Valid PDF with QR codes for each ticket",
+      "actual": "PDF 16611 bytes, 2 tickets",
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-04-05",
+      "feature": "Unique QR codes per ticket",
+      "expected": "Every ticket has unique QR token",
+      "actual": "2 tickets, 2 unique",
+      "status": "PASS"
+    }
+  ]
+}
