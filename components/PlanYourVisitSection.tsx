@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "./SectionHeading";
 import CTA from "./CTA";
-import { RESERVATION_URL, TICKET_URL } from "@/lib/site-domains";
+import { RESERVATION_URL, BOOKING_URL } from "@/lib/site-domains";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -127,7 +127,7 @@ export default function PlanYourVisitSection() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row lg:shrink-0">
-            <CTA href={TICKET_URL} external variant="solid">
+            <CTA href={BOOKING_URL} external variant="solid">
               <Ticket size={15} aria-hidden="true" strokeWidth={2.2} />
               Pesan Tiket
             </CTA>

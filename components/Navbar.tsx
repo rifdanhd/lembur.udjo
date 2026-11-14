@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TICKET_URL } from "@/lib/site-domains";
+import { BOOKING_URL } from "@/lib/site-domains";
 import { BASE_NAV_ANCHORS, PRIMARY_NAV, type NavItem } from "@/lib/website/navigation";
 
 // Satu sumber konfigurasi menu ada di lib/website/navigation.ts.
 const navItems: NavItem[] = PRIMARY_NAV;
 
-const ticketHref = TICKET_URL;
+const ticketHref = BOOKING_URL;
 
 const CLOSE_DELAY_MS = 150;
 

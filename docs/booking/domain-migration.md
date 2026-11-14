@@ -1,5 +1,17 @@
 # Migrasi domain booking
 
+## Pembaruan langsung — 14 November 2026, sesudah penerbitan sertifikat
+
+Owner memperbaiki upstream Nginx booking dari port 3000 (Maxius) ke 3001 (LUP), lalu menerbitkan sertifikat khusus booking melalui Certbot. Pemeriksaan HTTPS dari luar VPS dengan hostname booking dan IP 157.10.160.37 memberi HTTP200 tanpa melewati verifikasi TLS. Blocker sertifikat pada probe awal di bawah sudah teratasi.
+
+Pemeriksaan endpoint Google: host ticket memberi HTTP409 GOOGLE_ORIGIN, sedangkan host booking memberi HTTP307 menuju accounts.google.com dengan redirect_uri `https://booking.lemburudjoparahyangan.com/api/ticketing/auth/google/callback`. Ini membuktikan awal OAuth pada booking, belum membuktikan consent/callback/sesi pelanggan lengkap. Domain login tidak boleh berganti setelah state/cookie dibuat.
+
+Source Navbar dan PlanYourVisitSection masih mengarahkan pelanggan ke TICKET_URL; tautan baru diperbaiki ke BOOKING_URL pada branch pengembangan. Alias/rute/webhook lama dan fallback konfigurasi deployment lama tetap dipertahankan. Tidak mengaktifkan redirect global, karena webhook langsung pada target domain belum diuji dengan transaksi nyata.
+
+VPS yang dilaporkan owner masih di branch deploy/ticket-logo, service Next16.3.5, dengan staged/unstaged/untracked changes. Perubahan tersebut perlu diamankan dan direview sebelum deployment branch baru. Tidak melakukan checkout, reset, pull, migrasi atau deployment pada VPS dalam tindak lanjut ini.
+
+## Probe awal — historis sebelum sertifikat booking diterbitkan
+
 Status 14 November 2026: **belum cutover, belum deploy**. Probe read-only terbaru menunjukkan A `ticket` dan `booking` sama-sama `157.10.160.37`. Domain lama HTTPS200 dengan chain valid; koneksi HTTPS domain booking mengembalikan ECONNREFUSED dari lingkungan ini. Probe lanjutan `curl --resolve` ke IP tersebut menemukan hostname mismatch: sertifikat SAN hanya mencakup app/ticket, belum booking. Metadata TLS mengonfirmasi ERR_TLS_CERT_ALTNAME_INVALID; tidak mengirim HTTP dengan verifikasi TLS dimatikan. Penyebab refusal awal di VPS/SNI/firewall belum dikonfirmasi. DNS provider, Google Console, Midtrans Dashboard global dan VPS tidak diubah. [Bukti](phase-2/evidence/domain-probes.json).
 
 Pembayaran nyata berhasil melalui tunnel HTTPS khusus webhook pada database lokal terisolasi. Itu membuktikan integrasi kode/payment, belum membuktikan endpoint target domain.
