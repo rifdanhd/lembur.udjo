@@ -5,7 +5,7 @@ import { createServer } from 'node:http';
 import { mkdtempSync, mkdirSync, openSync, closeSync, writeFileSync } from 'node:fs';
 import { tmpdir, userInfo } from 'node:os';
 import { join } from 'node:path';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import assert from 'node:assert/strict';
 import nextEnv from '@next/env';
 import { PrismaClient } from '@prisma/client';
@@ -20,9 +20,17 @@ const pgPort=58000+Math.floor(Math.random()*2000), webPort=3700+Math.floor(Math.
 const database=`postgresql://${encodeURIComponent(userInfo().username)}@127.0.0.1:${pgPort}/ticketing_midtrans_e2e?schema=ticketing`;
 const base=`http://127.0.0.1:${webPort}`;
 const route=`/${randomBytes(24).toString('hex')}/api/ticketing/webhook`;
-const tunnels=await (await fetch('http://127.0.0.1:4040/api/tunnels')).json();
-const publicUrl=tunnels.tunnels.find(t=>t.config.addr==='http://127.0.0.1:3999')?.public_url;
-if(!publicUrl?.startsWith('https://')) throw Error('Start HTTPS ngrok tunnel to 127.0.0.1:3999 first');
+let tunnelProcess;
+async function tunnelUrl() {
+ try { const data=await (await fetch('http://127.0.0.1:4040/api/tunnels',{signal:AbortSignal.timeout(2000)})).json();return data.tunnels.find(t=>t.config.addr==='http://127.0.0.1:3999')?.public_url; } catch { return undefined; }
+}
+let publicUrl=await tunnelUrl();
+if(!publicUrl){
+ const log=openSync(join(dir,'tunnel.log'),'w');
+ tunnelProcess=spawn('ngrok',['http','http://127.0.0.1:3999','--log=stdout','--log-format=json'],{stdio:['ignore',log,log],detached:true});closeSync(log);
+ for(let i=0;i<60;i++){await new Promise(r=>setTimeout(r,500));publicUrl=await tunnelUrl();if(publicUrl)break;}
+}
+if(!publicUrl?.startsWith('https://')) { if(tunnelProcess?.pid)try{process.kill(-tunnelProcess.pid,'SIGTERM');}catch{} throw Error('HTTPS tunnel unavailable; see private tunnel.log'); }
 const callback=publicUrl+route;
 const env={...process.env,NODE_ENV:'development',DATABASE_URL:database,POSTGRES_URL:database,DATABASE_URL_UNPOOLED:database,LUP_TEST_DIST_DIR:'.next-booking-tests',BOOKING_PUBLIC_URL:base,TICKETING_SALES_APPROVED:'true',TICKETING_SANDBOX_ENABLED:'true',TICKETING_SECRET:randomBytes(32).toString('hex'),TICKETING_TRUST_PROXY:'false',MIDTRANS_IS_PRODUCTION:'false',TICKETING_ISOLATED_SANDBOX_TEST:'true',TICKETING_SANDBOX_NOTIFICATION_URL:callback,GOOGLE_CLIENT_ID:'',GOOGLE_CLIENT_SECRET:'',RESEND_API_KEY:'',EMAIL_FROM:'',NEXT_PUBLIC_SHOW_COMING_SOON:'false'};
 let started=false,server,db,browser,relay,activePage;
@@ -73,15 +81,18 @@ try {
  writeFileSync(join(dir,'snap-before.txt'),await page.locator('body').innerText());
  let bni=page.getByText(/^BNI(?: Virtual Account)?$/i).first();
  if(!await bni.isVisible()){const bank=page.getByText(/Bank transfer|Transfer bank|Virtual account/i).first();if(await bank.isVisible())await bank.click();}
- await bni.click();
+ if(await bni.isVisible()) await bni.click();
+ else await page.locator('img[src*="bni" i]').last().click();
  const pay=page.getByRole('button',{name:/pay now|bayar sekarang|lihat nomor|see account|confirm/i}).first();if(await pay.isVisible())await pay.click();
- let state;for(let i=0;i<20;i++){state=await gatewayStatus(order.orderNumber);if(state.va_numbers?.length)break;await pause(1000);}
+ let state;for(let i=0;i<20;i++){state=await gatewayStatus(order.orderNumber);if(state.va_numbers?.some(x=>x.bank==='bni' && /^\d{8,}$/.test(x.va_number)))break;await pause(1000);}
  if(!state.va_numbers?.length){writeFileSync(join(dir,'snap-after.txt'),await page.locator('body').innerText());throw Error('BNI virtual account not created; inspect private Snap diagnostics');}
+ writeFileSync(join(dir,'gateway-pending.json'),JSON.stringify(state));
  assert.equal(state.transaction_status,'pending');assert.equal(Number(state.gross_amount),20000);assert.equal(await db.ticket.count(),0);record('REAL-PENDING','Midtrans GET status pending; amount/order verified; zero tickets');
  await page.screenshot({path:`${evidence}/real-snap-pending.png`,fullPage:true});
  const simulator=await context.newPage();activePage=simulator;simulator.setDefaultTimeout(60000);await simulator.goto('https://simulator.sandbox.midtrans.com/bni/va/index');
  writeFileSync(join(dir,'simulator-before.txt'),await simulator.locator('body').innerText());
- await simulator.locator('input:not([type="hidden"]):not([type="submit"])').first().fill(state.va_numbers[0].va_number);
+ await pause(5000);
+ await simulator.locator('input[name="va_number"]').fill(state.va_numbers.find(x=>x.bank==='bni').va_number);
  for(let i=0;i<4;i++){
   const button=simulator.getByRole('button',{name:/inquire|pay|submit|confirm|bayar/i}).first();
   const inputSubmit=simulator.locator('input[type="submit"]').first();
@@ -89,6 +100,7 @@ try {
   await simulator.waitForLoadState('domcontentloaded');await pause(1000);
   writeFileSync(join(dir,`simulator-step-${i}.txt`),await simulator.locator('body').innerText());
   if((await gatewayStatus(order.orderNumber)).transaction_status==='settlement')break;
+  if((await simulator.locator('body').innerText()).includes('not found')){await pause(5000);await simulator.goto('https://simulator.sandbox.midtrans.com/bni/va/index');await simulator.locator('input[name="va_number"]').fill(state.va_numbers.find(x=>x.bank==='bni').va_number);}
  }
  await simulator.screenshot({path:`${evidence}/real-simulator-result.png`,fullPage:true});
  state=await gatewayStatus(order.orderNumber);assert.equal(state.transaction_status,'settlement');record('REAL-BANK-SETTLEMENT','Official BNI simulator completed; trusted Midtrans API reports settlement');
@@ -100,6 +112,10 @@ try {
  record('REAL-TICKETS','DB order PAID, payment SETTLED, exactly two unique tickets issued from real notification');
  replayPhase=true;const replays=await Promise.all(Array.from({length:3},()=>fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(paidBody)})));assert.ok(replays.every(r=>r.status===200));assert.equal(await db.ticket.count({where:{orderId:paid.id}}),2);assert.equal(await db.auditLog.count({where:{entityId:paid.id,action:'PAYMENT_SETTLED'}}),1);record('REAL-REPLAY','Three concurrent HTTPS replays of genuine signed notification: 200, still 2 tickets and 1 settlement event');
  const tampered=await fetch(callback,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...paidBody,signature_key:'0'.repeat(128)})});assert.equal(tampered.status,403);record('REAL-INVALID','Tampered signature rejected over HTTPS with 403');
+ const { dispatchEmails } = await import('../lib/ticketing/email-outbox.ts');
+ const failedMail = await dispatchEmails(db, { async send() { throw Error('Controlled test: email provider unavailable'); } });
+ assert.equal(failedMail.failed, 3); assert.equal((await db.order.findUniqueOrThrow({ where: { id: paid.id } })).status, 'PAID');
+ record('REAL-PAID-EMAIL-FAILURE', 'Actual Sandbox payment remains PAID with 2 valid tickets after controlled email transport failure; real email delivery is not claimed');
  const pdf=await context.request.get(`${base}/api/ticketing/orders/${paid.orderNumber}/tickets`);assert.equal(pdf.status(),200);assert.equal((await pdf.body()).subarray(0,5).toString(),'%PDF-');writeFileSync(`${evidence}/real-paid-tickets.pdf`,await pdf.body());
  await page.goto(`${base}/account/bookings/${paid.orderNumber}`);await page.getByText('Pembayaran terkonfirmasi',{exact:true}).waitFor();await page.screenshot({path:`${evidence}/real-paid-booking.png`,fullPage:true});record('REAL-PDF','Authenticated owner downloaded PDF containing the two paid tickets');
  const staff=await browser.newContext();assert.equal((await staff.request.post(`${base}/api/staff/session`,{headers:{Origin:base},data:{email:admin.email,password:staffPassword}})).status(),200);
@@ -108,8 +124,26 @@ try {
  const scans=await Promise.all(Array.from({length:3},()=>staff.request.post(`${base}/api/staff/check-in`,{headers:{Origin:base},data:{code}})));assert.deepEqual(scans.map(r=>r.status()).sort(),[200,409,409]);assert.equal(await db.checkIn.count(),1);record('REAL-CHECKIN','Real paid ticket: three concurrent QR payload scans produce 200/409/409 and one CheckIn; no physical camera claim');
  const invalid=await staff.request.post(`${base}/api/staff/check-in`,{headers:{Origin:base},data:{code:'LUT-'+'0'.repeat(24)}});assert.equal(invalid.status(),404);
  record('REAL-INVALID-TICKET','Unknown manual code rejected');
-} catch(error){console.error('Real Sandbox test failed:',error.message);results.push({id:'RUN',status:'FAIL',actual:error.message});try{if(activePage){writeFileSync(join(dir,'failure-page.txt'),await activePage.locator('body').innerText());await activePage.screenshot({path:`${evidence}/real-failure.png`,fullPage:true});}}catch{}process.exitCode=1;}
+ replayPhase=false;
+ for (const action of ['cancel','expire']) {
+  const reserved=await context.request.post(`${base}/api/ticketing/orders`,{headers:{Origin:base},data:{requestKey:randomUUID(),scheduleId:schedule.id,items:[{productId:product.id,quantity:1}],customer:{name:'Pelanggan QA Sandbox',email,whatsapp:'081234567890'},consent:true}});
+  assert.equal(reserved.status(),201);const next=await reserved.json();assert.ok(next.checkoutUrl);
+  await page.goto(next.checkoutUrl);
+  const bank=page.getByText(/Virtual account/i).first();await bank.click();await page.locator('img[src*="bni" i]').last().click();
+  for(let i=0;i<20;i++){if((await gatewayStatus(next.orderNumber)).transaction_status==='pending')break;await pause(1000);}
+  const operation=await fetch(`https://api.sandbox.midtrans.com/v2/${next.orderNumber}/${action}`,{method:'POST',headers:{...gatewayHeaders,'Content-Type':'application/json'},signal:AbortSignal.timeout(15000)});
+  const result=await operation.json();assert.ok(['200','407'].includes(result.status_code));assert.equal(result.transaction_status,action);
+  const expected=action==='cancel'?'CANCELLED':'EXPIRED';
+  for(let i=0;i<90;i++){const row=await db.order.findUnique({where:{orderNumber:next.orderNumber}});if(row.status===expected && callbacks.some(event=>event.order===next.orderNumber && event.providerStatus===action && event.http===200))break;if(i===89)throw Error(`No real ${action} delivery verified`);await pause(2000);}
+  assert.equal((await db.order.findUniqueOrThrow({where:{orderNumber:next.orderNumber}})).status,expected);
+  assert.equal(await db.ticket.count({where:{order:{orderNumber:next.orderNumber}}}),0);
+  assert.equal((await db.schedule.findUniqueOrThrow({where:{id:schedule.id}})).reserved,0);
+  record(`REAL-${action.toUpperCase()}`,`Real Sandbox ${action} API + genuine HTTPS notification: ${expected}, zero tickets, capacity released`);
+ }
+
+ const history=await staff.request.get(`${base}/api/staff/check-ins?orderNumber=${paid.orderNumber}`);assert.equal(history.status(),200);assert.equal((await history.json()).checkIns.length,1);record('REAL-CHECKIN-HISTORY','Admin can inspect the one recorded check-in on the actual paid Sandbox booking');
+} catch(error){console.error('Real Sandbox test failed:',error.message);results.push({id:'RUN',status:'FAIL',actual:error.message});try{if(activePage){writeFileSync(join(dir,'failure-page.txt'),await activePage.locator('body').innerText());writeFileSync(join(dir,'failure-page.html'),await activePage.content());await activePage.screenshot({path:`${evidence}/real-failure.png`,fullPage:true});}}catch{}process.exitCode=1;}
 finally{
  writeFileSync(`${evidence}/real-midtrans-delivery.json`,JSON.stringify({runAt:new Date().toISOString(),database:'Disposable local PostgreSQL only',gateway:'Real Midtrans Sandbox API and official bank simulator',webhook:'Actual Midtrans HTTPS delivery through webhook-only tunnel; no synthetic provider status',callbacks,results},null,2));
- await browser?.close();if(relay)await new Promise(r=>relay.close(r));await db?.$disconnect();if(server?.pid){try{process.kill(-server.pid,'SIGTERM');}catch{}}if(started)run(join(pgBin,'pg_ctl'),['-D',join(dir,'data'),'-m','fast','-w','stop']);console.log('Private logs:',dir);
+ await browser?.close();if(relay)await new Promise(r=>relay.close(r));await db?.$disconnect();if(tunnelProcess?.pid){try{process.kill(-tunnelProcess.pid,'SIGTERM');}catch{}}if(server?.pid){try{process.kill(-server.pid,'SIGTERM');}catch{}}if(started)run(join(pgBin,'pg_ctl'),['-D',join(dir,'data'),'-m','fast','-w','stop']);console.log('Private logs:',dir);
 }

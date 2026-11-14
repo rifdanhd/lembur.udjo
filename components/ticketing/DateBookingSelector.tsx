@@ -16,7 +16,17 @@ export function DateBookingSelector({ dates, value, onChange, loading = false, e
   const [message, setMessage] = useState("");
   const selected = dates.find(day => day.date === value && day.status === "available");
   const month = value || dates[0]?.date;
-  const visibleDates = dates.filter(day => day.status !== "unavailable");
+  const visibleDates = dates;
+  const [scrollable, setScrollable] = useState({ left: false, right: dates.length > 2 });
+  useEffect(() => {
+    const container = row.current;
+    if (!container) return;
+    const update = () => setScrollable({ left: container.scrollLeft > 2, right: container.scrollLeft + container.clientWidth < container.scrollWidth - 2 });
+    const observer = new ResizeObserver(update);
+    observer.observe(container);
+    container.addEventListener("scroll", update, { passive: true });
+    return () => { observer.disconnect(); container.removeEventListener("scroll", update); };
+  }, [dates.length, loading, error]);
   useEffect(() => {
     const container = row.current;
     const selectedEl = container?.querySelector<HTMLElement>(`[data-date="${value}"]`);
@@ -47,8 +57,8 @@ export function DateBookingSelector({ dates, value, onChange, loading = false, e
         <p className="mt-1 text-xs capitalize text-bamboo font-semibold">{month ? format(month, { month: "long", year: "numeric" }) : "Jadwal kunjungan"} <span className="text-[10px] text-stone-500">· WIB</span></p>
       </div>
       <div className="flex gap-2 sm:order-none">
-        <button type="button" aria-label="Tanggal sebelumnya" onClick={() => row.current?.scrollBy({ left: -340, behavior: "smooth" })} disabled={!dates.some(d => d.date < value && d.status === "available")} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><ChevronLeft size={18} className="text-bamboo" /></button>
-        <button type="button" aria-label="Tanggal berikutnya" onClick={() => row.current?.scrollBy({ left: 340, behavior: "smooth" })} disabled={!dates.some(d => d.date > value && d.status === "available")} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><ChevronRight size={18} className="text-bamboo" /></button>
+        <button type="button" aria-label="Tanggal sebelumnya" onClick={() => row.current?.scrollBy({ left: -340, behavior: "smooth" })} disabled={!scrollable.left} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><ChevronLeft size={18} className="text-bamboo" /></button>
+        <button type="button" aria-label="Tanggal berikutnya" onClick={() => row.current?.scrollBy({ left: 340, behavior: "smooth" })} disabled={!scrollable.right} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><ChevronRight size={18} className="text-bamboo" /></button>
         <button type="button" aria-label="Buka kalender" aria-expanded={calendar} aria-controls={`${id}-calendar`} onClick={() => { setCalendar(!calendar); }} className="flex size-11 items-center justify-center rounded-xl border border-bamboo/20 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bamboo"><CalendarDays size={18} className="text-bamboo" /></button>
       </div>
     </div>
@@ -63,7 +73,7 @@ export function DateBookingSelector({ dates, value, onChange, loading = false, e
           {day.date === selected?.date && <Check aria-hidden="true" size={14} className="absolute right-2 top-2 text-white" />}
           <span className="text-[10px] uppercase tracking-wider font-semibold">{format(day.date, { weekday: "long" })}</span>
           <span className="mt-2 text-lg font-semibold tabular-nums">{format(day.date, { day: "numeric" })}</span>
-          <span className="mt-1 text-[10px] capitalize text-stone-500">{format(day.date, { month: "short" })}</span>
+          <span className={`mt-1 text-[10px] capitalize ${day.date === selected?.date ? "text-white/90" : "text-stone-500"}`}>{format(day.date, { month: "short" })}</span>
           <span className="mt-3 text-xs font-semibold">{day.price === null ? "—" : rupiah(day.price)}</span>
           <span className="mt-1 text-[10px]">{day.status === "available" ? "Tersedia" : day.status === "sold_out" ? "Habis" : "Tidak tersedia"}</span>
         </button>)}

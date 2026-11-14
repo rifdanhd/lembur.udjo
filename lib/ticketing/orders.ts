@@ -1,3 +1,4 @@
+import { queueBookingEmail } from "./email-outbox";
 import { randomBytes } from "node:crypto";
 import { Prisma, type PrismaClient } from "@prisma/client";
 import type { CheckoutInput, ProviderStatus } from "./validation";
@@ -104,6 +105,7 @@ export async function reserveOrder(db: PrismaClient, input: CheckoutInput, now =
         requestKeyHash, requestHash, expiresAt: new Date(now.getTime() + 15 * 60_000),
         items: { create: items }, payments: { create: { provider: "midtrans-sandbox", amount: totalAmount } } }, include: includeOrder,
     });
+    await queueBookingEmail(tx, order.id, input.customer.email, "RESERVATION");
     await tx.schedule.update({ where: { id: schedule.id }, data: { reserved: { increment: quantity } } });
     await tx.auditLog.create({ data: { action: "ORDER_RESERVED", entityType: "Order", entityId: order.id } });
     return order;
@@ -165,6 +167,11 @@ export async function applyPaymentStatus(db: PrismaClient, status: ProviderStatu
       }
       await tx.order.update({ where: { id: order.id }, data: { status: late ? "PAYMENT_REVIEW" : "PAID", paidAt: now } });
       await tx.payment.update({ where: { id: payment.id }, data: { status: "SETTLED", providerPaymentId: status.transaction_id, paidAt: now } });
+      if (!late) {
+        const customer = await tx.customer.findUniqueOrThrow({ where: { id: order.customerId }, select: { email: true } });
+        await queueBookingEmail(tx, order.id, customer.email, "PAYMENT");
+        await queueBookingEmail(tx, order.id, customer.email, "TICKETS");
+      }
       await tx.auditLog.create({ data: { action: late ? "LATE_PAYMENT_REVIEW" : "PAYMENT_SETTLED", entityType: "Order", entityId: order.id } });
     } else if (["deny", "cancel", "expire", "failure"].includes(status.transaction_status) && order.status === "PENDING") {
       await releaseQuota(tx, order.items);

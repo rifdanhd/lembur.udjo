@@ -46,7 +46,7 @@ try {
       const rows = await prisma.$queryRaw`
         SELECT table_name FROM information_schema.tables WHERE table_schema = 'ticketing'
       `;
-      const expected = ["User", "Product", "Schedule", "Customer", "Order", "OrderItem", "Payment", "Ticket", "CheckIn", "AuditLog", "RateLimit", "VisitorAccount", "VisitorSession", "ProductSchedule", "StaffSession", "PasswordReset", "OAuthAttempt", "BookingCategory"];
+      const expected = ["User", "Product", "Schedule", "Customer", "Order", "OrderItem", "Payment", "Ticket", "CheckIn", "AuditLog", "RateLimit", "VisitorAccount", "VisitorSession", "ProductSchedule", "StaffSession", "PasswordReset", "OAuthAttempt", "BookingCategory", "EmailDelivery"];
       const found = new Set(rows.map((row) => row.table_name));
       const missing = expected.filter((table) => !found.has(table));
       const data = missing.length ? null : {

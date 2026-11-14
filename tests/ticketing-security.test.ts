@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { randomUUID, createHash } from "node:crypto";
 import { checkoutSchema, providerStatusSchema } from "../lib/ticketing/validation";
 import { BookingError, boundedJson, equalSecret, orderAccess, requireSameOrigin, verifyNotification } from "../lib/ticketing/security";
-import { validCheckoutUrl, midtransProvider } from "../lib/ticketing/midtrans";
+import { validCheckoutUrl, midtransProvider, sandboxNotificationOverride } from "../lib/ticketing/midtrans";
 import type { CheckoutProvider } from "../lib/ticketing/orders";
 import { sandboxConfig } from "../lib/ticketing/config";
 import { cartSchema, safeContinue } from "../lib/ticketing/portal-data";
@@ -97,4 +97,24 @@ test("sandbox request returns to the account order page and shares the server re
     assert.deepEqual(payload.callbacks, { finish: "https://ticket.lemburudjoparahyangan.com/pesanan/LU-012345678901234567890123" });
     assert.deepEqual(payload.expiry, { start_time: "2026-12-01 03:00:00 +0000", unit: "minutes", duration: 15 });
   } finally { process.env = previous; globalThis.fetch = originalFetch; }
+});
+
+test("notification override is HTTPS-only and refuses shared DBs or a missing isolated-test flag", () => {
+  const keys = ["DATABASE_URL", "POSTGRES_URL", "DATABASE_URL_UNPOOLED", "TICKETING_SANDBOX_NOTIFICATION_URL", "TICKETING_ISOLATED_SANDBOX_TEST"];
+  const saved = new Map(keys.map(key => [key, process.env[key]]));
+  try {
+    for (const key of keys.slice(0, 3)) process.env[key] = "postgresql://fixture@127.0.0.1:5432/ticketing_midtrans_e2e";
+    process.env.TICKETING_SANDBOX_NOTIFICATION_URL = "https://fixture.ngrok-free.dev/random/api/ticketing/webhook";
+    delete process.env.TICKETING_ISOLATED_SANDBOX_TEST;
+    assert.throws(() => sandboxNotificationOverride());
+    process.env.TICKETING_ISOLATED_SANDBOX_TEST = "true";
+    assert.equal(sandboxNotificationOverride(), process.env.TICKETING_SANDBOX_NOTIFICATION_URL);
+    process.env.POSTGRES_URL = "postgresql://fixture@database.example.test/shared";
+    assert.throws(() => sandboxNotificationOverride());
+    process.env.POSTGRES_URL = process.env.DATABASE_URL;
+    process.env.TICKETING_SANDBOX_NOTIFICATION_URL = "http://fixture.ngrok-free.dev/random/api/ticketing/webhook";
+    assert.throws(() => sandboxNotificationOverride());
+  } finally {
+    for (const [key, value] of saved) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
+  }
 });

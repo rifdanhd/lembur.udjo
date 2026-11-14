@@ -1,9 +1,10 @@
-// Real Midtrans Sandbox end-to-end verification: reservation → checkout → webhook → PAID → e-ticket.
+// Historical HYBRID smoke test, NOT proof of real payment/webhook delivery.
+// Use test-midtrans-delivery.mjs for actual bank simulator + HTTPS delivery.
 // Uses disposable local PostgreSQL. Real Midtrans sandbox API for transaction creation.
 // Webhook notification is simulated locally with correct SHA512 signature (not delivered by Midtrans).
 // Labeled clearly: REAL = actual Midtrans API call, SIMULATED = local webhook payload.
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, existsSync, writeFileSync } from "node:fs";
 import { tmpdir, userInfo } from "node:os";
 import { join } from "node:path";
 import { createHash, randomBytes } from "node:crypto";
@@ -161,13 +162,14 @@ try {
   record("E2E-11", "E-ticket PDF generation", "Valid PDF with QR codes for each ticket", `PDF ${pdf.length} bytes, ${orderData.tickets.length} tickets`, pdf.subarray(0, 5).toString() === "%PDF-" && orderData.tickets.length === 2 ? "PASS" : "FAIL");
   record("E2E-04-05", "Unique QR codes per ticket", "Every ticket has unique QR token", `${qrTokens.length} tickets, ${new Set(qrTokens).size} unique`, uniqueQr ? "PASS" : "FAIL");
 
+  await db.emailDelivery.deleteMany({ where: { orderId: order.id } });
   await db.ticket.deleteMany({ where: { orderId: order.id } });
   await db.payment.deleteMany({ where: { orderId: order.id } });
   await db.orderItem.deleteMany({ where: { orderId: order.id } });
   await db.order.delete({ where: { id: order.id } });
   await db.schedule.update({ where: { id: schedule.id }, data: { reserved: 0, sold: 0 } });
 
-  console.log("\n=== Midtrans Sandbox E2E Summary ===");
+  console.log("\n=== Hybrid smoke summary — payment completion NOT verified ===");
   const passed = results.filter(r => r.status === "PASS").length;
   const failed = results.filter(r => r.status === "FAIL").length;
   console.log(`PASS: ${passed}, FAIL: ${failed}`);

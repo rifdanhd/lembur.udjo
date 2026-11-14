@@ -1,3 +1,5 @@
+import { configuredEmailTransport } from "@/lib/ticketing/email";
+import { digest } from "@/lib/ticketing/security";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { createReset, emailResetEnabled, resetPassword } from "@/lib/ticketing/password-reset";
@@ -22,8 +24,7 @@ export async function POST(request: NextRequest) {
     const token = await createReset(db, input.data.email);
     if (token) {
       try {
-        const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, signal: AbortSignal.timeout(10000), body: JSON.stringify({ from: process.env.EMAIL_FROM, to: [input.data.email], subject: "Atur ulang kata sandi akun LUP", text: `Buka tautan ini untuk mengatur ulang kata sandi. Berlaku 30 menit dan hanya sekali pakai.\n${bookingOrigin()}/atur-ulang-sandi#${token}\nAbaikan bila Anda tidak meminta perubahan ini.` }) });
-        if (!response.ok) throw new Error();
+        await configuredEmailTransport()!.send({ to: input.data.email, subject: "Atur ulang kata sandi akun LUP", text: `Buka tautan ini untuk mengatur ulang kata sandi. Berlaku 30 menit dan hanya sekali pakai.\n${bookingOrigin()}/atur-ulang-sandi#${token}\nAbaikan bila Anda tidak meminta perubahan ini.` }, digest(`reset:${token}`));
       } catch { console.error("ticketing: reset email delivery failed"); }
     }
     return json({ message: "Jika email terdaftar dengan kata sandi, tautan pemulihan akan dikirim. Periksa kotak masuk dan folder spam." });

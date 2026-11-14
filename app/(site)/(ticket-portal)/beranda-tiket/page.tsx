@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calendar, Ticket, Users, Star } from "lucide-react";
 import { catalogCategories, categoryProducts } from "@/lib/ticketing/portal-data";
-import { PortalTitle, PreviewNotice } from "@/components/ticketing/PortalShared";
+import { PreviewNotice } from "@/components/ticketing/PortalShared";
 import { portalCatalog } from "@/lib/ticketing/portal-catalog";
 import { bookingOrigin } from "@/lib/ticketing/booking-origin";
 import { pricedSessions } from "@/lib/ticketing/availability";

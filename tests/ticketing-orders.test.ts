@@ -15,6 +15,8 @@ import { googleVisitor } from "../lib/ticketing/google-auth";
 import { createReset, resetPassword } from "../lib/ticketing/password-reset";
 import { loginStaff, staffSession } from "../lib/ticketing/staff-auth";
 import { hashPassword } from "../lib/ticketing/visitor-auth";
+import { dispatchEmails } from "../lib/ticketing/email-outbox";
+import { checkInHistory } from "../lib/ticketing/check-in-history";
 import { saveCatalog } from "../lib/ticketing/catalog-admin";
 
 const url = process.env.TICKETING_TEST_DATABASE_URL;
@@ -25,7 +27,7 @@ let productId: string;
 let scheduleId: string;
 
 beforeEach(async () => {
-  await db.$transaction([db.checkIn.deleteMany(), db.ticket.deleteMany(), db.payment.deleteMany(), db.orderItem.deleteMany(), db.order.deleteMany(), db.passwordReset.deleteMany(), db.oAuthAttempt.deleteMany(), db.staffSession.deleteMany(), db.user.deleteMany(), db.visitorSession.deleteMany(), db.visitorAccount.deleteMany(), db.customer.deleteMany(), db.productSchedule.deleteMany(), db.product.deleteMany(), db.bookingCategory.deleteMany(), db.schedule.deleteMany(), db.auditLog.deleteMany(), db.rateLimit.deleteMany()]);
+  await db.$transaction([db.emailDelivery.deleteMany(), db.checkIn.deleteMany(), db.ticket.deleteMany(), db.payment.deleteMany(), db.orderItem.deleteMany(), db.order.deleteMany(), db.passwordReset.deleteMany(), db.oAuthAttempt.deleteMany(), db.staffSession.deleteMany(), db.user.deleteMany(), db.visitorSession.deleteMany(), db.visitorAccount.deleteMany(), db.customer.deleteMany(), db.productSchedule.deleteMany(), db.product.deleteMany(), db.bookingCategory.deleteMany(), db.schedule.deleteMany(), db.auditLog.deleteMany(), db.rateLimit.deleteMany()]);
   const product = await db.product.create({ data: { name: "Tiket Uji", slug: "test", type: "ADULT", price: 75000 } });
   const date = new Date(Date.now() + 86_400_000);
   const schedule = await db.schedule.create({ data: { date, session: "13:00", capacity: 5 } });
@@ -313,4 +315,69 @@ test("configured categories, program photo and policy come from DB; inactive cat
   await saveCatalog(db, { action: "category", id: category.id, slug: category.slug, name: category.name, description: category.description, image: category.image, active: false, sortOrder: 1 });
   assert.equal((await catalog(db, true)).products.length, 0);
   await assert.rejects(reserveOrder(db, input()), isError("PRODUCT_UNAVAILABLE"));
+});
+
+test("email outbox is committed once per booking/payment/ticket event and disabled provider is harmless", async () => {
+  const data = input(2);
+  const order = await reserveOrder(db, data);
+  await reserveOrder(db, data);
+  assert.equal(await db.emailDelivery.count(), 1);
+  assert.deepEqual(await dispatchEmails(db, null), { enabled: false, sent: 0, failed: 0 });
+  assert.equal((await db.emailDelivery.findFirstOrThrow()).attempts, 0);
+  await Promise.all(Array.from({ length: 4 }, () => applyPaymentStatus(db, status(order))));
+  const emails = await db.emailDelivery.findMany({ orderBy: { kind: "asc" } });
+  assert.deepEqual(emails.map(email => email.kind), ["PAYMENT", "RESERVATION", "TICKETS"]);
+  assert.ok(emails.every(email => email.recipient === data.customer.email && email.text.includes(order.orderNumber) && email.text.includes("SIMULASI SANDBOX")));
+  assert.ok(emails.every(email => !email.text.includes("LUP1:") && !email.text.includes("qrToken")));
+});
+
+test("provider delivery failure never reverses paid status or blocks PDF; worker claims are atomic and retry idempotently", async () => {
+  const order = await reserveOrder(db, input(2)); await applyPaymentStatus(db, status(order));
+  const now = new Date(); let attempts = 0;
+  const broken = { async send() { attempts++; throw new Error("QA provider unavailable"); } };
+  await Promise.all(Array.from({ length: 4 }, () => dispatchEmails(db, broken, now)));
+  assert.equal(attempts, 3);
+  assert.equal((await receipt(db, order.orderNumber)).status, "PAID");
+  assert.equal((await ticketDownloadData(db, order.orderNumber)).tickets.length, 2);
+  assert.equal(await db.emailDelivery.count({ where: { state: "PENDING", attempts: 1 } }), 3);
+  const keys = new Set<string>();
+  const transport = { async send(_message: unknown, key: string) { keys.add(key); return { id: `qa-${key}` }; } };
+  await Promise.all(Array.from({ length: 4 }, () => dispatchEmails(db, transport, new Date(now.getTime() + 61000))));
+  assert.equal(keys.size, 3);
+  assert.equal(await db.emailDelivery.count({ where: { state: "SENT", attempts: 2 } }), 3);
+  assert.equal((await dispatchEmails(db, transport, new Date(now.getTime() + 120000))).sent, 0);
+});
+
+test("stale mail is not retried past the provider dedupe window; late settlement does not announce tickets", async () => {
+  const order = await reserveOrder(db, input());
+  await db.emailDelivery.updateMany({ data: { createdAt: new Date(Date.now() - 24 * 3600000) } });
+  let sends = 0;
+  await dispatchEmails(db, { async send() { sends++; return { id: "unexpected" }; } });
+  assert.equal(sends, 0); assert.equal((await db.emailDelivery.findFirstOrThrow()).state, "CANCELLED");
+  await applyPaymentStatus(db, status(order), new Date(order.expiresAt.getTime() + 1));
+  assert.equal(await db.emailDelivery.count(), 1);
+  assert.equal((await receipt(db, order.orderNumber)).status, "PAYMENT_REVIEW");
+});
+
+test("check-in history exposes staff/time/source and order reference without QR secrets", async () => {
+  const staff = await db.user.create({ data: { name: "Petugas Riwayat", email: "history@example.test", role: "STAFF" } });
+  const order = await reserveOrder(db, input()); await applyPaymentStatus(db, status(order));
+  const ticket = await db.ticket.findFirstOrThrow();
+  const session = await db.schedule.findUniqueOrThrow({ where: { id: scheduleId } });
+  await checkInTicket(db, staff.id, ticket.code, new Date(`${session.date.toISOString().slice(0, 10)}T10:00:00+07:00`));
+  const history = await checkInHistory(db, order.orderNumber);
+  assert.equal(history.length, 1); assert.equal(history[0].staff, staff.name); assert.equal(history[0].source, "MANUAL_SANDBOX");
+  assert.ok(!JSON.stringify(history).includes(ticket.qrToken));
+});
+
+test("deny, failure and cancel release pending capacity once and never issue tickets", async () => {
+  for (const terminal of ["deny", "failure", "cancel"] as const) {
+    const order = await reserveOrder(db, input(2));
+    await applyPaymentStatus(db, { ...status(order, terminal), transaction_id: `qa-${terminal}` });
+    await applyPaymentStatus(db, { ...status(order, terminal), transaction_id: `qa-${terminal}` });
+    assert.equal((await receipt(db, order.orderNumber)).status, "CANCELLED");
+    assert.equal(await db.ticket.count({ where: { orderId: order.id } }), 0);
+    assert.equal((await db.payment.findFirstOrThrow({ where: { orderId: order.id } })).status, "FAILED");
+    assert.equal((await db.schedule.findUniqueOrThrow({ where: { id: scheduleId } })).reserved, 0);
+  }
 });

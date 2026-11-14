@@ -232,6 +232,7 @@ export default function TicketApp({
             <p className="mt-0.5 truncate text-sm font-semibold text-forest">Tiket Lembur Udjo</p>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <Link href="/admin/tiket/check-in" className="inline-flex min-h-11 items-center rounded-xl border border-stone-300 px-3 text-sm font-semibold">Riwayat check-in</Link>
             <Link href="/admin/tiket/katalog" className="inline-flex min-h-11 items-center rounded-xl border border-stone-300 px-3 text-sm font-semibold">Katalog & jadwal</Link>
             <Link
               href="/admin"

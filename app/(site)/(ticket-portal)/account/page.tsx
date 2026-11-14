@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { currentVisitor } from "@/lib/ticketing/visitor-server";
 import { ticketingDb } from "@/lib/ticketing/db";
-import { PortalTitle, LoginPrompt } from "@/components/ticketing/PortalShared";
+import { LoginPrompt } from "@/components/ticketing/PortalShared";
 import { jakartaDate } from "@/lib/ticketing/availability";
 import { expireDueOrders } from "@/lib/ticketing/orders";
 import { rupiah } from "@/lib/ticketing/types";

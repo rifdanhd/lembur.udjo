@@ -156,6 +156,7 @@ model Order {
   items       OrderItem[]
   payments    Payment[]
   tickets     Ticket[]
+  emails      EmailDelivery[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -291,4 +292,27 @@ model AuditLog {
   createdAt  DateTime @default(now())
 
   @@index([entityType, entityId, createdAt])
+}
+
+// Optional outbound mail: committed with the event, delivered outside payment requests.
+model EmailDelivery {
+  id                String @id @default(cuid())
+  eventKey          String @unique
+  orderId           String
+  order             Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  kind              String
+  recipient         String
+  subject           String
+  text              String
+  state             String @default("PENDING")
+  attempts          Int @default(0)
+  nextAttemptAt     DateTime @default(now())
+  lockedUntil       DateTime?
+  claimId           String?
+  providerMessageId String?
+  lastError         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  @@index([state, nextAttemptAt])
+  @@index([orderId])
 }

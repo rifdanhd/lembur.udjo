@@ -58,6 +58,15 @@ try {
     assert.equal(await page.locator(`[data-date="${dates[0]}"]`).isDisabled(), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
     record(`UI-${name}-1`, `Earliest available date and responsive width (${width}px)`, "Sold-out disabled; earliest available selected; no page overflow", `${dates[1]} selected, ${dates[0]} disabled`);
+    const strip = page.getByRole("group", { name: "Tanggal kunjungan, gunakan tombol panah untuk berpindah" });
+    const beforeScroll = await strip.evaluate(element => element.scrollLeft);
+    await page.getByRole("button", { name: "Tanggal berikutnya", exact: true }).click();
+    await page.waitForFunction(before => document.querySelector('[role="group"][aria-label^="Tanggal kunjungan"]')?.scrollLeft > before + 5, beforeScroll);
+    const afterScroll = await strip.evaluate(element => element.scrollLeft);
+    await page.getByRole("button", { name: "Tanggal sebelumnya", exact: true }).click();
+    await page.waitForFunction(after => document.querySelector('[role="group"][aria-label^="Tanggal kunjungan"]')?.scrollLeft < after - 5, afterScroll);
+    const unavailable = page.locator(`[data-date="${day(3)}"]`); assert.equal(await unavailable.isDisabled(), true); assert.ok(!(await unavailable.innerText()).includes("Rp"));
+    record(`UI-${name}-6`, "Horizontal arrows scroll and unavailable dates have no fictional price", "Both arrows move the strip; unavailable disabled without IDR price", "Scroll verified both directions; unavailable date disabled");
     await selected.focus(); await page.keyboard.press("ArrowRight"); await page.keyboard.press("Enter");
     await page.waitForFunction(date => document.querySelector(`[data-date="${date}"]`)?.getAttribute("aria-pressed") === "true", dates[2]);
     await page.getByText("Memuat harga dan ketersediaan…", { exact: true }).waitFor({ state: "hidden" });
@@ -95,15 +104,20 @@ try {
   await page.goto(`${base}/masuk`); await page.locator("header").getByRole("button", { name: "Masuk", exact: true }).filter({ visible: true }).click();
   const dialog = page.getByRole("dialog"); await dialog.waitFor(); await page.keyboard.press("Escape"); assert.equal(await dialog.isVisible(), false);
   record("AUTH-MODAL", "Login dialog keyboard close", "Escape closes dialog", "Dialog closed");
+  await page.goto(`${base}/checkout`); await page.getByText("Masuk untuk melanjutkan", { exact: true }).waitFor();
+  const guest = await context.request.post(`${base}/api/ticketing/orders`, { headers: { Origin: base }, data: { requestKey: crypto.randomUUID(), scheduleId: sessions[2].id, items: [{ productId: product.id, quantity: 1 }], customer: { name: "Tamu QA", email: "guest@example.test", whatsapp: "081234567890" }, consent: true } }); assert.equal(guest.status(), 401);
+  record("GUEST-ACCOUNT-POLICY", "Guest can plan but checkout requires an account", "Login prompt and API 401; no guest order", "Login prompt rendered; API 401");
   const login = await context.request.post(`${base}/api/ticketing/auth/login`, { headers: { Origin: base }, data: { email: visitor.email, password: "Browser-Test-Panjang-123" } }); assert.equal(login.status(), 200);
   // Simulated provider status in test harness only; no payment bypass endpoint exists.
   const order = browserOrder || await reserveOrder(db, { requestKey: crypto.randomUUID(), scheduleId: sessions[2].id, items: [{ productId: product.id, quantity: 1 }], customer: { name: visitor.name, email: visitor.email, whatsapp: "081234567890" }, consent: true }, new Date(), visitor.id);
   await applyPaymentStatus(db, { order_id: order.orderNumber, transaction_id: "browser-simulated-provider", gross_amount: `${order.totalAmount}.00`, status_code: "200", transaction_status: "settlement", fraud_status: "accept", currency: "IDR" });
+  await page.goto(`${base}/account/bookings`); await page.getByText(order.orderNumber, { exact: true }).waitFor();
+  record("ACCOUNT-HISTORY", "Owner views booking history", "Owned booking reference listed", "Owned booking listed");
   await page.goto(`${base}/account/bookings/${order.orderNumber}`); await page.getByText("Pembayaran terkonfirmasi", { exact: true }).waitFor();
   const pdf = await context.request.get(`${base}/api/ticketing/orders/${order.orderNumber}/tickets`); assert.equal(pdf.status(), 200); assert.equal((await pdf.body()).subarray(0, 5).toString(), "%PDF-");
   writeFileSync(`${evidence}/ticket-fixture-sandbox.pdf`, await pdf.body());
   record("TICKET-PDF", "Owned paid booking PDF route", "Authenticated owner receives PDF", "200 application/pdf, valid PDF header; provider simulated in harness");
-  const stranger = await browser.newContext(); const forbidden = await stranger.request.get(`${base}/api/ticketing/orders/${order.orderNumber}/tickets`); assert.equal(forbidden.status(), 404); await stranger.close();
+  const stranger = await browser.newContext(); const registeredStranger = await stranger.request.post(`${base}/api/ticketing/auth/register`, { headers: { Origin: base }, data: { name: "Akun QA Lain", email: "stranger-browser@example.test", password: "Stranger-Browser-Panjang-123", consent: true } }); assert.equal(registeredStranger.status(), 201); const forbidden = await stranger.request.get(`${base}/api/ticketing/orders/${order.orderNumber}/tickets`); assert.equal(forbidden.status(), 404); await stranger.close();
   record("TICKET-OWNER", "Another browser cannot download ticket", "404", "404");
   // Failure and empty catalog states, using browser transport fixtures only.
   await page.route("**/api/ticketing/catalog", route => route.fulfill({ status: 503, contentType: "application/json", body: '{"error":"QA transport failure"}' }));
@@ -138,6 +152,16 @@ try {
   assert.equal((await adminContext.request.get(`${base}/api/staff/catalog`)).status(), 200);
   assert.equal((await adminContext.request.get(`${base}/api/staff/orders`)).status(), 200);
   record("ADMIN-RBAC", "Individual ADMIN reads catalog and booking monitor", "200 for both APIs", "200 / 200");
+  assert.equal((await staffContext.request.get(`${base}/api/staff/check-ins`)).status(), 401);
+  const history = await adminContext.request.get(`${base}/api/staff/check-ins?orderNumber=${checkOrder.orderNumber}`);
+  assert.equal(history.status(), 200); assert.equal((await history.json()).checkIns.length, 1);
+  const historyPage = await adminContext.newPage(); historyPage.setDefaultNavigationTimeout(120000);
+  await historyPage.goto(`${base}/admin/tiket/check-in`); await historyPage.getByText(checkTicket.code, { exact: true }).waitFor();
+  await historyPage.screenshot({ path: `${evidence}/check-in-history-admin.png`, fullPage: true });
+  record("ADMIN-CHECKIN-HISTORY", "Admin sees check-in history while STAFF is denied", "Admin sees one event, staff API 401, no QR secret", "Admin history rendered; one event; STAFF 401");
+  const dispatch = await context.request.post(`${base}/api/ticketing/emails/dispatch`, { headers: { Origin: base } }); assert.equal(dispatch.status(), 401);
+  record("EMAIL-WORKER-AUTH", "Public visitor cannot run email worker", "401", "401");
+
   const registration = await context.request.post(`${base}/api/ticketing/auth/register`, { headers: { Origin: base }, data: { name: "QA Registrasi", email: "register-browser@example.test", password: "Register-Browser-Panjang-123", consent: true } }); assert.equal(registration.status(), 201);
   assert.equal((await context.request.post(`${base}/api/ticketing/auth/logout`, { headers: { Origin: base } })).status(), 200);
   assert.equal((await (await context.request.get(`${base}/api/ticketing/auth/session`)).json()).visitor, null);
