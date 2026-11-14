@@ -21,6 +21,8 @@ rectangle "LUP Booking" {
  usecase "Kelola katalog/jadwal/harga" as Manage
  usecase "Pantau status simulasi" as Monitor
  usecase "Kelola akun petugas" as Users
+ usecase "Lihat riwayat check-in" as History
+ usecase "Antrekan notifikasi booking" as EmailQueue
  usecase "Check-in QR/manual sekali" as Checkin
 }
 Pengunjung --> Catalog
@@ -40,6 +42,9 @@ Issue ..> Webhook : <<extend>>\n[paid terverifikasi, hold valid]
 ADMIN --> Manage
 ADMIN --> Monitor
 ADMIN --> Users
+ADMIN --> History
+Reserve ..> EmailQueue : <<include>>
+Issue ..> EmailQueue : <<include>>
 ADMIN --> Checkin
 Staff --> Checkin
 @enduml

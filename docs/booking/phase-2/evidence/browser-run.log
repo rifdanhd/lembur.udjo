@@ -1,0 +1,37 @@
+
+> lembur.udjo@0.1.0 test:booking-browser
+> node --import tsx scripts/test-booking-browser.mjs
+
+PASS UI-desktop-1: Earliest available date and responsive width (1440px)
+PASS UI-desktop-6: Horizontal arrows scroll and unavailable dates have no fictional price
+PASS UI-desktop-2: Keyboard changes date, session and price
+PASS UI-desktop-3: Calendar rejects sold-out day
+PASS UI-desktop-4: Selected date/session survives cart
+PASS UI-desktop-5: Checkout reads current backend session price
+PASS CHECKOUT-HTTP: Browser submits checkout through real reservation API
+PASS UI-tablet-1: Earliest available date and responsive width (768px)
+PASS UI-tablet-6: Horizontal arrows scroll and unavailable dates have no fictional price
+PASS UI-tablet-2: Keyboard changes date, session and price
+PASS UI-tablet-3: Calendar rejects sold-out day
+PASS UI-tablet-4: Selected date/session survives cart
+PASS UI-tablet-5: Checkout reads current backend session price
+PASS UI-mobile-1: Earliest available date and responsive width (390px)
+PASS UI-mobile-6: Horizontal arrows scroll and unavailable dates have no fictional price
+PASS UI-mobile-2: Keyboard changes date, session and price
+PASS UI-mobile-3: Calendar rejects sold-out day
+PASS UI-mobile-4: Selected date/session survives cart
+PASS UI-mobile-5: Checkout reads current backend session price
+PASS AUTH-MODAL: Login dialog keyboard close
+PASS GUEST-ACCOUNT-POLICY: Guest can plan but checkout requires an account
+PASS ACCOUNT-HISTORY: Owner views booking history
+PASS TICKET-PDF: Owned paid booking PDF route
+PASS TICKET-OWNER: Another browser cannot download ticket
+PASS DATE-ERROR: Catalog network error disables booking
+PASS DATE-EMPTY: Empty backend schedules
+PASS STAFF-RBAC: Check-in STAFF cannot read admin catalog or orders
+PASS STAFF-CHECKIN: Authenticated QR endpoint and duplicate manual entry
+PASS ADMIN-RBAC: Individual ADMIN reads catalog and booking monitor
+PASS ADMIN-CHECKIN-HISTORY: Admin sees check-in history while STAFF is denied
+PASS EMAIL-WORKER-AUTH: Public visitor cannot run email worker
+PASS AUTH-REGISTER-LOGOUT: Email registration and secure logout
+Temporary server/database logs: /var/folders/lv/rtzfks5s4vg2v0m1cf8ztb_w0000gn/T/lup-booking-browser-LHb765

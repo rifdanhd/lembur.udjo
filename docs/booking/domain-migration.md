@@ -1,10 +1,12 @@
 # Migrasi domain booking
 
-Status 13 November 2026: **belum cutover, belum deploy**. Pemeriksaan HTTPS langsung: domain lama memberi HTTP 200; domain baru belum ter-resolve dari lingkungan pengujian. DNS provider, Google Console, Midtrans Dashboard dan VPS belum diubah dalam pekerjaan ini.
+Status 14 November 2026: **belum cutover, belum deploy**. Probe read-only terbaru menunjukkan A `ticket` dan `booking` sama-sama `157.10.160.37`. Domain lama HTTPS200 dengan chain valid; koneksi HTTPS domain booking mengembalikan ECONNREFUSED dari lingkungan ini. Probe lanjutan `curl --resolve` ke IP tersebut menemukan hostname mismatch: sertifikat SAN hanya mencakup app/ticket, belum booking. Metadata TLS mengonfirmasi ERR_TLS_CERT_ALTNAME_INVALID; tidak mengirim HTTP dengan verifikasi TLS dimatikan. Penyebab refusal awal di VPS/SNI/firewall belum dikonfirmasi. DNS provider, Google Console, Midtrans Dashboard global dan VPS tidak diubah. [Bukti](phase-2/evidence/domain-probes.json).
+
+Pembayaran nyata berhasil melalui tunnel HTTPS khusus webhook pada database lokal terisolasi. Itu membuktikan integrasi kode/payment, belum membuktikan endpoint target domain.
 
 ## Konfigurasi yang disiapkan
 
-1. DNS: buat record **CNAME** `booking` → `ticket.lemburudjoparahyangan.com` (tanpa path/protokol). Alternatif A/AAAA harus menyalin IP upstream aktual domain lama; jangan menebak IP. Gunakan DNS-only saat menerbitkan sertifikat bila proxy provider menghalangi challenge.
+1. DNS: A `booking` sudah ter-resolve ke IP domain lama pada probe terbaru. Owner perlu memastikan IP sesuai upstream yang dikelolanya; jangan membuat record CNAME yang konflik dengan A yang ada. Periksa propagasi/AAAA dan proxy provider bila challenge TLS terhalang.
 2. Nginx: tambahkan `booking.lemburudjoparahyangan.com` pada server_name upstream aplikasi yang sama. Contoh di `deploy/nginx-subdomains.conf.example`. Pertahankan `Host $host`, overwrite `X-Real-IP`, upstream 3001 dan layanan lain pada port 3000. Jalankan `nginx -t` sebelum reload.
 3. TLS: perluas sertifikat untuk **kedua** domain; verifikasi chain dan masa berlaku dengan klien HTTPS publik. Jangan menghapus sertifikat/routing domain lama.
 4. Jalankan migrasi additive pada schema ticketing melalui direct URL setelah backup dan pengujian pada salinan data: `npm run db:migrate`. Tidak memakai reset, `db push`, atau `migrate dev`.
@@ -26,4 +28,4 @@ Portal tetap noindex/no-store. Metadata portal memakai origin terkonfigurasi dan
 
 ## Blocker eksternal
 
-DNS/hosting/TLS baru, OAuth credentials/console dan webhook Midtrans HTTPS baru belum terverifikasi. Jangan menandai migrasi atau demo end-to-end publik selesai sebelum pemeriksaan tersebut lulus.
+HTTPS/routing host baru, OAuth login/callback dan webhook Midtrans pada target domain belum terverifikasi. Kredensial Google lokal kini ada; authorization page terbuka, tetapi consent dan sesi pelanggan belum selesai. Jangan menandai migrasi atau demo end-to-end publik selesai sebelum pemeriksaan tersebut lulus.

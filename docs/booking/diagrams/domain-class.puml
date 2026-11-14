@@ -69,6 +69,18 @@ class Ticket {
   status
   orderItemId?
 }
+class EmailDelivery {
+  id
+  eventKey <<unique>>
+  orderId
+  kind
+  state
+  attempts
+  nextAttemptAt
+  claimId?
+  lockedUntil?
+  providerMessageId?
+}
 class CheckIn {
   ticketId
   checkedById?
@@ -93,6 +105,7 @@ VisitorAccount "0..1" -- "0..*" Order
 Customer "1" -- "0..*" Order
 Order "1" *-- "1..*" OrderItem
 Order "1" *-- "0..*" Payment
+Order "1" -- "0..*" EmailDelivery
 Order "1" *-- "0..*" Ticket
 Product "1" -- "0..*" OrderItem
 Schedule "1" -- "0..*" OrderItem

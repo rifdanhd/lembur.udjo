@@ -1,0 +1,162 @@
+{
+  "runAt": "2026-11-13T23:40:19.340Z",
+  "database": "Disposable local PostgreSQL only",
+  "gateway": "Real Midtrans Sandbox API and official bank simulator",
+  "webhook": "Actual Midtrans HTTPS delivery through webhook-only tunnel; no synthetic provider status",
+  "callbacks": [
+    {
+      "at": "2026-11-13T23:38:18.395Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "pending",
+      "replay": false,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:38:27.377Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "settlement",
+      "replay": false,
+      "http": 503
+    },
+    {
+      "at": "2026-11-13T23:39:44.140Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "settlement",
+      "replay": false,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:39:44.764Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "settlement",
+      "replay": true,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:39:44.861Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "settlement",
+      "replay": true,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:39:44.863Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "settlement",
+      "replay": true,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:39:45.190Z",
+      "order": "LU-9f531d73e0ccd534ac852915",
+      "providerStatus": "settlement",
+      "replay": true,
+      "http": 403
+    },
+    {
+      "at": "2026-11-13T23:40:10.104Z",
+      "order": "LU-27e6f634f4d733b2dcdaf712",
+      "providerStatus": "pending",
+      "replay": false,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:40:12.058Z",
+      "order": "LU-27e6f634f4d733b2dcdaf712",
+      "providerStatus": "cancel",
+      "replay": false,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:40:15.389Z",
+      "order": "LU-291303bfabc0487ebe3ae0e9",
+      "providerStatus": "pending",
+      "replay": false,
+      "http": 200
+    },
+    {
+      "at": "2026-11-13T23:40:17.191Z",
+      "order": "LU-291303bfabc0487ebe3ae0e9",
+      "providerStatus": "expire",
+      "replay": false,
+      "http": 200
+    }
+  ],
+  "results": [
+    {
+      "id": "REAL-CHECKOUT",
+      "status": "PASS",
+      "actual": "HTTP 201; LU-9f531d73e0ccd534ac852915; amount IDR 20000; 2 tickets pending"
+    },
+    {
+      "id": "REAL-PENDING",
+      "status": "PASS",
+      "actual": "Midtrans GET status pending; amount/order verified; zero tickets"
+    },
+    {
+      "id": "REAL-BANK-SETTLEMENT",
+      "status": "PASS",
+      "actual": "Official BNI simulator completed; trusted Midtrans API reports settlement"
+    },
+    {
+      "id": "REAL-HTTPS-RETRY",
+      "status": "PASS",
+      "actual": "Real Midtrans settlement delivery failed intentionally once (503), then retried successfully (200); application verified signature and fetched real status"
+    },
+    {
+      "id": "REAL-TICKETS",
+      "status": "PASS",
+      "actual": "DB order PAID, payment SETTLED, exactly two unique tickets issued from real notification"
+    },
+    {
+      "id": "REAL-REPLAY",
+      "status": "PASS",
+      "actual": "Three concurrent HTTPS replays of genuine signed notification: 200, still 2 tickets and 1 settlement event"
+    },
+    {
+      "id": "REAL-INVALID",
+      "status": "PASS",
+      "actual": "Tampered signature rejected over HTTPS with 403"
+    },
+    {
+      "id": "REAL-PAID-EMAIL-FAILURE",
+      "status": "PASS",
+      "actual": "Actual Sandbox payment remains PAID with 2 valid tickets after controlled email transport failure; real email delivery is not claimed"
+    },
+    {
+      "id": "REAL-PDF",
+      "status": "PASS",
+      "actual": "Authenticated owner downloaded PDF containing the two paid tickets"
+    },
+    {
+      "id": "REAL-ADMIN",
+      "status": "PASS",
+      "actual": "Authenticated admin sees real Sandbox order and payment record PAID"
+    },
+    {
+      "id": "REAL-CHECKIN",
+      "status": "PASS",
+      "actual": "Real paid ticket: three concurrent QR payload scans produce 200/409/409 and one CheckIn; no physical camera claim"
+    },
+    {
+      "id": "REAL-INVALID-TICKET",
+      "status": "PASS",
+      "actual": "Unknown manual code rejected"
+    },
+    {
+      "id": "REAL-CANCEL",
+      "status": "PASS",
+      "actual": "Real Sandbox cancel API + genuine HTTPS notification: CANCELLED, zero tickets, capacity released"
+    },
+    {
+      "id": "REAL-EXPIRE",
+      "status": "PASS",
+      "actual": "Real Sandbox expire API + genuine HTTPS notification: EXPIRED, zero tickets, capacity released"
+    },
+    {
+      "id": "REAL-CHECKIN-HISTORY",
+      "status": "PASS",
+      "actual": "Admin can inspect the one recorded check-in on the actual paid Sandbox booking"
+    }
+  ]
+}

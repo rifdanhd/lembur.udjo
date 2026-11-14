@@ -1,0 +1,18 @@
+@startuml
+[*] --> PENDING : reservasi / hold 15 menit
+PENDING --> PAID : settlement/capture trusted\namount cocok, hold valid
+PENDING --> EXPIRED : deadline / expire
+PENDING --> CANCELLED : deny / failure / cancel
+PENDING --> PAYMENT_REVIEW : pembayaran terlambat
+EXPIRED --> PAYMENT_REVIEW : late settlement
+CANCELLED --> PAYMENT_REVIEW : late settlement
+PAID --> REFUNDED : full refund / chargeback
+PAID --> CANCELLED : void capture
+PAID --> PAYMENT_REVIEW : partial refund / partial chargeback
+PAYMENT_REVIEW --> REFUNDED : full refund / chargeback
+note right of PAID
+  Terbitkan tiket tepat sekali.
+  Email lewat outbox terpisah.
+  Replay pending tidak membalik PAID.
+end note
+@enduml

@@ -3,9 +3,11 @@ actor Pelanggan
 participant "Portal / API" as API
 database "PostgreSQL ticketing" as DB
 participant "Midtrans Sandbox" as M
+participant "Worker email (cron)" as EW
+participant "Resend (opsional)" as E
 Pelanggan -> API: POST orders (session, requestKey, scheduleId, items)
 API -> DB: transaction: advisory lock + Schedule FOR UPDATE
-API -> DB: baca harga/kuota, create Order PENDING + items
+API -> DB: baca harga/kuota, create Order PENDING + items + email RESERVATION
 DB --> API: order tersimpan, reserved bertambah
 API -> DB: claim Payment.checkoutStartedAt
 API -> M: Snap create (server key privat)
@@ -19,12 +21,20 @@ M --> API: status terpercaya
 API -> DB: lock Order FOR UPDATE
 alt paid sah dan hold belum habis
  API -> DB: reserved -> sold, Order PAID, Ticket + AuditLog
+ API -> DB: email PAYMENT + TICKETS (eventKey unique)
 else late settlement
  API -> DB: PAYMENT_REVIEW, tanpa tiket/kuota baru
 else status terminal gagal/expired
  API -> DB: release reserved sekali
 end
 API --> M: hasil webhook
+EW -> DB: claim email atomik + lease
+EW -> E: kirim (Idempotency-Key stabil)
+alt delivery sukses
+ EW -> DB: SENT + providerMessageId
+else provider gagal
+ EW -> DB: retry / FAILED; Order tetap PAID
+end
 Pelanggan -> API: GET PDF (session pemilik)
 API -> DB: cek ownership + status PAID
 API --> Pelanggan: PDF + QR privat

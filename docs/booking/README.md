@@ -2,7 +2,11 @@
 
 Branch: `feat/lup-booking-platform`. Repositori aplikasi yang benar telah diverifikasi dari remote dan source ticketing. Perubahan awal milik pengguna tetap dipertahankan. Tidak ada push, deploy, atau migrasi database bersama.
 
-## Status per fase master prompt
+## Status terbaru — 14 November 2026
+
+[Laporan penyelesaian Phase 2](phase-2-completion-2026-11-14.md) dan [matriks E2E-01–20](phase-2/e2e-matrix.md) adalah acuan terbaru. Pembayaran Sandbox nyata + notifikasi HTTPS + PAID + PDF + one-time check-in berhasil, 15/15 pemeriksaan. Integrasi 50/50; browser 32/32; hero/media 13/13. Advisory critical/high 0/0; moderate/low masih ada. Google authorization page terbuka tetapi login belum selesai; email nyata, HTTPS booking, kamera fisik, dan UAT stakeholder belum terverifikasi. Tidak ada deployment atau migrasi shared DB.
+
+## Status baseline historis per fase master prompt
 
 | Fase | Implementasi | Pengujian dan sisa pekerjaan |
 | --- | --- | --- |

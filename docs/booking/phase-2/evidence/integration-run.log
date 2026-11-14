@@ -1,0 +1,315 @@
+
+> lembur.udjo@0.1.0 test:ticketing
+> node scripts/test-ticketing.mjs
+
+TAP version 13
+# Subtest: website and local previews keep existing public routes
+ok 1 - website and local previews keep existing public routes
+  ---
+  duration_ms: 20.21997
+  type: 'test'
+  ...
+# Subtest: staff URLs reach the existing protected CRM and preserve queries
+ok 2 - staff URLs reach the existing protected CRM and preserve queries
+  ---
+  duration_ms: 3.778009
+  type: 'test'
+  ...
+# Subtest: ticket hostname cannot reach staff pages or APIs
+ok 3 - ticket hostname cannot reach staff pages or APIs
+  ---
+  duration_ms: 10.560418
+  type: 'test'
+  ...
+# Subtest: karier subdomain serves the careers page and isolates staff, ticket, and API routes
+ok 4 - karier subdomain serves the careers page and isolates staff, ticket, and API routes
+  ---
+  duration_ms: 6.21482
+  type: 'test'
+  ...
+# Subtest: static assets remain accessible, private pages are not cached or indexed
+ok 5 - static assets remain accessible, private pages are not cached or indexed
+  ---
+  duration_ms: 17.597274
+  type: 'test'
+  ...
+# Subtest: staff API retains session handlers and rejects cross-origin writes
+ok 6 - staff API retains session handlers and rejects cross-origin writes
+  ---
+  duration_ms: 3.372284
+  type: 'test'
+  ...
+# Subtest: local subdomains use the same mappings without production redirects
+ok 7 - local subdomains use the same mappings without production redirects
+  ---
+  duration_ms: 1.569883
+  type: 'test'
+  ...
+# Subtest: complete ticket portal routes are isolated and the original reservation remains reachable
+ok 8 - complete ticket portal routes are isolated and the original reservation remains reachable
+  ---
+  duration_ms: 42.894993
+  type: 'test'
+  ...
+# Subtest: ticket API allowlist keeps visitor checkout separate from staff and website
+ok 9 - ticket API allowlist keeps visitor checkout separate from staff and website
+  ---
+  duration_ms: 7.902922
+  type: 'test'
+  ...
+# Subtest: retired logo is unavailable on ticket host while website assets remain unchanged
+ok 10 - retired logo is unavailable on ticket host while website assets remain unchanged
+  ---
+  duration_ms: 2.602614
+  type: 'test'
+  ...
+# Subtest: booking alias has the same visitor isolation and serves webhook POST directly
+ok 11 - booking alias has the same visitor isolation and serves webhook POST directly
+  ---
+  duration_ms: 5.026424
+  type: 'test'
+  ...
+# Subtest: verified cutover redirects customer GET only and leaves old webhook POST and API intact
+ok 12 - verified cutover redirects customer GET only and leaves old webhook POST and API intact
+  ---
+  duration_ms: 1.027855
+  type: 'test'
+  ...
+# Subtest: 10 simultaneous buyers cannot oversell 5 seats; totals and 15-minute hold come from server
+ok 13 - 10 simultaneous buyers cannot oversell 5 seats; totals and 15-minute hold come from server
+  ---
+  duration_ms: 307.599776
+  type: 'test'
+  ...
+# Subtest: concurrent retries create exactly one order; changed payload cannot reuse its key
+ok 14 - concurrent retries create exactly one order; changed payload cannot reuse its key
+  ---
+  duration_ms: 68.722381
+  type: 'test'
+  ...
+# Subtest: inactive and past sessions cannot be booked, and inactive examples remain hidden
+ok 15 - inactive and past sessions cannot be booked, and inactive examples remain hidden
+  ---
+  duration_ms: 30.129223
+  type: 'test'
+  ...
+# Subtest: expired reservation releases quota exactly once under concurrent expiry
+ok 16 - expired reservation releases quota exactly once under concurrent expiry
+  ---
+  duration_ms: 67.205149
+  type: 'test'
+  ...
+# Subtest: concurrent signed webhook replay issues tickets and converts reserved quota only once
+ok 17 - concurrent signed webhook replay issues tickets and converts reserved quota only once
+  ---
+  duration_ms: 116.513428
+  type: 'test'
+  ...
+# Subtest: valid signature with forged success cannot override provider pending; bad signature never calls provider
+ok 18 - valid signature with forged success cannot override provider pending; bad signature never calls provider
+  ---
+  duration_ms: 53.122558
+  type: 'test'
+  ...
+# Subtest: wrong amount and challenged capture cannot issue tickets
+ok 19 - wrong amount and challenged capture cannot issue tickets
+  ---
+  duration_ms: 52.895811
+  type: 'test'
+  ...
+# Subtest: late settlement goes to manual review without overselling or issuing tickets
+ok 20 - late settlement goes to manual review without overselling or issuing tickets
+  ---
+  duration_ms: 76.932092
+  type: 'test'
+  ...
+# Subtest: provider expiry releases hold and full refunds revoke tickets without reopening used capacity
+ok 21 - provider expiry releases hold and full refunds revoke tickets without reopening used capacity
+  ---
+  duration_ms: 100.7788
+  type: 'test'
+  ...
+# Subtest: gateway timeout never retries a possibly created payment or releases its quota early
+ok 22 - gateway timeout never retries a possibly created payment or releases its quota early
+  ---
+  duration_ms: 41.566771
+  type: 'test'
+  ...
+# Subtest: buyer cannot overwrite another customer's profile and receipts never expose customer PII or QR secrets
+ok 23 - buyer cannot overwrite another customer's profile and receipts never expose customer PII or QR secrets
+  ---
+  duration_ms: 39.777104
+  type: 'test'
+  ...
+# Subtest: database rate limiting remains atomic under concurrent requests
+ok 24 - database rate limiting remains atomic under concurrent requests
+  ---
+  duration_ms: 16.01203
+  type: 'test'
+  ...
+# Subtest: visitor registration hashes passwords; login, session expiry and server-side revocation work
+ok 25 - visitor registration hashes passwords; login, session expiry and server-side revocation work
+  ---
+  duration_ms: 584.643129
+  type: 'test'
+  ...
+# Subtest: orders are account-owned; matching email never claims historical orders; another account cannot replay an order
+ok 26 - orders are account-owned; matching email never claims historical orders; another account cannot replay an order
+  ---
+  duration_ms: 369.412358
+  type: 'test'
+  ...
+# Subtest: date-specific prices, product sessions and checkout share authoritative configuration
+ok 27 - date-specific prices, product sessions and checkout share authoritative configuration
+  ---
+  duration_ms: 86.656344
+  type: 'test'
+  ...
+# Subtest: disabled and unconfigured product sessions cannot bypass checkout, including stale carts
+ok 28 - disabled and unconfigured product sessions cannot bypass checkout, including stale carts
+  ---
+  duration_ms: 36.244035
+  type: 'test'
+  ...
+# Subtest: earliest available day skips sold out dates; unavailable days have no invented price; WIB boundary
+ok 29 - earliest available day skips sold out dates; unavailable days have no invented price; WIB boundary
+  ---
+  duration_ms: 19.960881
+  type: 'test'
+  ...
+# Subtest: admin cannot shrink held quota or move a reserved session; price constraints and audit are persisted
+ok 30 - admin cannot shrink held quota or move a reserved session; price constraints and audit are persisted
+  ---
+  duration_ms: 45.166818
+  type: 'test'
+  ...
+# Subtest: paid tickets are item-bound, downloadable PDFs contain QR; unpaid orders cannot download
+ok 31 - paid tickets are item-bound, downloadable PDFs contain QR; unpaid orders cannot download
+  ---
+  duration_ms: 205.016449
+  type: 'test'
+  ...
+# Subtest: concurrent QR/manual check-in permits exactly one entry and records individual staff
+ok 32 - concurrent QR/manual check-in permits exactly one entry and records individual staff
+  ---
+  duration_ms: 99.663126
+  type: 'test'
+  ...
+# Subtest: refunded tickets and inactive staff cannot check in; staff sessions revoke immediately
+ok 33 - refunded tickets and inactive staff cannot check in; staff sessions revoke immediately
+  ---
+  duration_ms: 483.327786
+  type: 'test'
+  ...
+# Subtest: Google verified identity never links matching local email or accepts unverified email
+ok 34 - Google verified identity never links matching local email or accepts unverified email
+  ---
+  duration_ms: 213.06767
+  type: 'test'
+  ...
+# Subtest: password reset is hashed, single-use under concurrency and revokes every visitor session
+ok 35 - password reset is hashed, single-use under concurrency and revokes every visitor session
+  ---
+  duration_ms: 575.312246
+  type: 'test'
+  ...
+# Subtest: configured categories, program photo and policy come from DB; inactive category closes checkout
+ok 36 - configured categories, program photo and policy come from DB; inactive category closes checkout
+  ---
+  duration_ms: 30.388514
+  type: 'test'
+  ...
+# Subtest: email outbox is committed once per booking/payment/ticket event and disabled provider is harmless
+ok 37 - email outbox is committed once per booking/payment/ticket event and disabled provider is harmless
+  ---
+  duration_ms: 73.646354
+  type: 'test'
+  ...
+# Subtest: provider delivery failure never reverses paid status or blocks PDF; worker claims are atomic and retry idempotently
+ok 38 - provider delivery failure never reverses paid status or blocks PDF; worker claims are atomic and retry idempotently
+  ---
+  duration_ms: 97.679081
+  type: 'test'
+  ...
+# Subtest: stale mail is not retried past the provider dedupe window; late settlement does not announce tickets
+ok 39 - stale mail is not retried past the provider dedupe window; late settlement does not announce tickets
+  ---
+  duration_ms: 49.063973
+  type: 'test'
+  ...
+# Subtest: check-in history exposes staff/time/source and order reference without QR secrets
+ok 40 - check-in history exposes staff/time/source and order reference without QR secrets
+  ---
+  duration_ms: 70.274799
+  type: 'test'
+  ...
+# Subtest: deny, failure and cancel release pending capacity once and never issue tickets
+ok 41 - deny, failure and cancel release pending capacity once and never issue tickets
+  ---
+  duration_ms: 143.305388
+  type: 'test'
+  ...
+# Subtest: checkout rejects client pricing, fractional/negative quantities, duplicate lines, missing consent and totals above 20
+ok 42 - checkout rejects client pricing, fractional/negative quantities, duplicate lines, missing consent and totals above 20
+  ---
+  duration_ms: 16.210201
+  type: 'test'
+  ...
+# Subtest: same-origin checks reject missing, opaque and sibling origins even behind TLS termination
+ok 43 - same-origin checks reject missing, opaque and sibling origins even behind TLS termination
+  ---
+  duration_ms: 46.886708
+  type: 'test'
+  ...
+# Subtest: request body limit works without Content-Length and rejects invalid JSON
+ok 44 - request body limit works without Content-Length and rejects invalid JSON
+  ---
+  duration_ms: 29.069174
+  type: 'test'
+  ...
+# Subtest: order capabilities are scope-bound and signature verification rejects tampering
+ok 45 - order capabilities are scope-bound and signature verification rejects tampering
+  ---
+  duration_ms: 1.715578
+  type: 'test'
+  ...
+# Subtest: checkout redirects allow only the sandbox hosted payment domain
+ok 46 - checkout redirects allow only the sandbox hosted payment domain
+  ---
+  duration_ms: 0.509574
+  type: 'test'
+  ...
+# Subtest: production keys and missing settings cannot enable sandbox sales
+ok 47 - production keys and missing settings cannot enable sandbox sales
+  ---
+  duration_ms: 3.191715
+  type: 'test'
+  ...
+# Subtest: cart planning rejects impossible dates and oversized or duplicate selections; account redirect stays internal
+ok 48 - cart planning rejects impossible dates and oversized or duplicate selections; account redirect stays internal
+  ---
+  duration_ms: 4.946216
+  type: 'test'
+  ...
+# Subtest: sandbox request returns to the account order page and shares the server reservation deadline
+ok 49 - sandbox request returns to the account order page and shares the server reservation deadline
+  ---
+  duration_ms: 4.124361
+  type: 'test'
+  ...
+# Subtest: notification override is HTTPS-only and refuses shared DBs or a missing isolated-test flag
+ok 50 - notification override is HTTPS-only and refuses shared DBs or a missing isolated-test flag
+  ---
+  duration_ms: 0.922437
+  type: 'test'
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7499.755903
+Test database stopped. Temporary logs: /var/folders/lv/rtzfks5s4vg2v0m1cf8ztb_w0000gn/T/lembur-ticketing-tests-a1B3RR

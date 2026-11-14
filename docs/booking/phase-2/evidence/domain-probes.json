@@ -1,0 +1,33 @@
+{
+  "runAt": "2026-11-13T23:32:25.679Z",
+  "results": [
+    {
+      "host": "ticket.lemburudjoparahyangan.com",
+      "addresses": [
+        "157.10.160.37"
+      ],
+      "http": 200,
+      "server": "nginx/1.26.3",
+      "certificateExpires": "Jan 28 06:44:05 2027 GMT",
+      "tlsAuthorized": true
+    },
+    {
+      "host": "booking.lemburudjoparahyangan.com",
+      "addresses": [
+        "157.10.160.37"
+      ],
+      "httpsError": "ECONNREFUSED"
+    }
+  ],
+  "followUpPinnedTls": {
+    "runAt": "2026-11-14T00:07:50.586Z",
+    "target": "booking.lemburudjoparahyangan.com",
+    "ip": "157.10.160.37",
+    "authorized": false,
+    "authorizationError": "ERR_TLS_CERT_ALTNAME_INVALID",
+    "certificateSubject": "app.lemburudjoparahyangan.com",
+    "subjectAltName": "DNS:app.lemburudjoparahyangan.com, DNS:ticket.lemburudjoparahyangan.com",
+    "validTo": "Jan 28 06:44:05 2027 GMT",
+    "note": "Read-only certificate inspection; no HTTP request sent with verification disabled. Standard curl rejects certificate hostname mismatch."
+  }
+}

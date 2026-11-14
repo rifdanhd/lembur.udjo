@@ -1,0 +1,38 @@
+{
+  "runAt": "2026-11-13T23:29:56.395Z",
+  "scope": "Synthetic populated legacy COPY, NOT a production data clone",
+  "backupSha256": "b39d46cc4313ad35509d7f96e4f5dd618f2b7ec3fa51254f0efd7f2dc05abc2a",
+  "snapshot": [
+    {
+      "id": "order-history",
+      "status": "PAID",
+      "totalAmount": 100000,
+      "visitorId": "visitor-history",
+      "payment_status": "SETTLED",
+      "productName": "Nama snapshot historis",
+      "unitPrice": 50000,
+      "sold": 2,
+      "reserved": 0,
+      "tickets": 2,
+      "checkins": 1,
+      "sessions": 1
+    }
+  ],
+  "checks": [
+    {
+      "id": "DB-COPY-RESTORE",
+      "status": "PASS",
+      "actual": "Populated synthetic legacy schema dumped and actually restored into a separate local database"
+    },
+    {
+      "id": "DB-ADDITIVE-UPGRADE",
+      "status": "PASS",
+      "actual": "Pending additive email migration applied on restored copy; historical account/session/order/payment/items/tickets/check-in and quota unchanged"
+    },
+    {
+      "id": "DB-CONSTRAINTS-ROLLBACK",
+      "status": "PASS",
+      "actual": "Quota and FK constraints reject invalid writes; second migrate deploy is idempotent; old-field queries remain compatible for code rollback"
+    }
+  ]
+}

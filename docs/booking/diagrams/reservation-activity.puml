@@ -12,7 +12,7 @@ endif
 :Lock request key dan Schedule;
 :Validasi produk, sesi, harga, kuota;
 if (Valid?) then (ya)
- :Simpan PENDING + item snapshot;
+ :Simpan PENDING + item snapshot + email RESERVATION;
  :Tambah reserved, deadline 15 menit;
  :Claim pembuatan Snap sekali;
 else (tidak)
@@ -25,6 +25,11 @@ if (Paid sah sebelum deadline?) then (ya)
  :Lock Order;
  :Reserved menjadi sold;
  :Simpan PAID + terbitkan Ticket item-bound;
+ :Antrekan email PAYMENT/TICKETS dalam transaksi;
+ note right
+  Worker email berjalan terpisah.
+  Provider gagal tidak membatalkan PAID.
+ end note
  :Pemilik mengunduh PDF/QR;
 else (tidak)
  if (Expired / cancelled?) then (ya)

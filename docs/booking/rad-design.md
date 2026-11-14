@@ -23,7 +23,9 @@ Sumber kebutuhan: master prompt dan feature request pengguna pada 13 November 20
 | F11 | Admin katalog dan pemantauan | kategori, program/foto/ketentuan, sesi, kuota, harga; pencarian pesanan, status, statistik simulasi, pengelolaan petugas |
 | F12 | Domain migration tanpa memutus webhook | booking alias, origin terkonfigurasi, cutover GET/HEAD opt-in; endpoint POST lama tetap langsung |
 | F13 | UI/UX redesign booking portal | Premium hero, kategori horizontal, date selector kartu horizontal, login modal dua kolom, dashboard pelanggan, checkout dua kolom, e-ticket dengan QR |
-| F14 | Preview deployment | Vercel preview deployment untuk branch feat/lup-booking-platform, tidak mengganggu produksi |
+| F14 | Preview deployment (rencana) | Deployment preview belum diverifikasi dalam eksekusi ini; VPS/Nginx existing dipertahankan |
+| F15 | Notifikasi email booking opsional | EmailDelivery outbox transaksional, worker berotorisasi, retry/idempotensi; provider Resend belum dikonfigurasi |
+| F16 | Riwayat check-in admin | Admin melihat maksimal 100 event dan memfilter referensi pesanan; tidak mengirim qrToken |
 
 | ID | Kebutuhan nonfungsional | Bukti/batas |
 | --- | --- | --- |
@@ -41,7 +43,7 @@ Guest checkout tidak diaktifkan: arsitektur yang sudah ada mewajibkan akun. SMS/
 
 Pola navigasi kategori, program, tanggal, sesi, dan checkout dipelajari dari https://booking.eigernature.com; tidak menyalin merek atau asetnya. Screenshot referensi yang disebut pengguna tidak tersedia pada pesan ini.
 
-Token aktual portal, yang menimpa token global: forest/cokelat `#442e25`, light `#604536`, cream `#faf6ef`, bamboo `#a56b3e`, Barlow Condensed lokal. Date selector memakai `bg-forest` sehingga mengikuti token portal ini. Homepage publik tidak didesain ulang.
+Token aktual portal, yang menimpa token global: forest/cokelat `#442e25`, light `#604536`, cream `#faf6ef`, bamboo `#a56b3e`, Barlow Condensed lokal. Date selector memakai `bg-bamboo` untuk pilihan aktif sehingga mengikuti token portal ini. Homepage publik tidak didesain ulang.
 
 Wireframe aktual:
 
@@ -76,7 +78,12 @@ flowchart LR
   M --> W[POST webhook: signature + Get Status]
   W --> D
   V --> G[Google OIDC]
-  V --> E[Resend: reset sandi bila dikonfigurasi]
+  V --> E[EmailTransport: reset sandi bila dikonfigurasi]
+  W --> O[EmailDelivery: antrean transaksional]
+  V --> O
+  CR[POST worker + cron secret] --> O
+  CR --> E
+  E --> RS[Resend: delivery belum diuji]
   V --> T[PDF + QR privat]
 ```
 
@@ -93,6 +100,7 @@ erDiagram
   VisitorAccount ||--o{ PasswordReset : resets
   Order ||--|{ OrderItem : contains
   Order ||--o{ Payment : payments
+  Order ||--o{ EmailDelivery : notifications
   Order ||--o{ Ticket : tickets
   OrderItem o|--o{ Ticket : category
   Ticket ||--o| CheckIn : admits_once
@@ -117,6 +125,7 @@ Source of truth kolom/constraint: `prisma/schema.prisma` dan SQL migrasi; tabel 
 | Payment | provider/providerPaymentId unique; jumlah, status, hosted URL dan checkout claim |
 | Ticket | code unique acak 96 bit; qrToken unique acak 256 bit; optional orderItemId untuk kompatibilitas histori |
 | CheckIn | ticketId unique; waktu, petugas, sumber QR/manual simulasi |
+| EmailDelivery | id PK; eventKey unique; orderId FK RESTRICT; kind/state/attempt CHECK; index state/nextAttemptAt dan orderId; claimId/lease, retry, providerMessageId |
 | VisitorAccount | email unique; Google subject unique nullable; passwordHash nullable untuk Google; emailVerifiedAt |
 | VisitorSession | tokenHash unique; expiry; FK akun |
 | PasswordReset | tokenHash PK; expiry 30 menit; FK akun; dihapus atomik saat dipakai |
@@ -156,10 +165,15 @@ Webhook pending/replay tidak mengembalikan order paid menjadi pending. Tiket han
 | 5 | QA browser tiga viewport; inspeksi screenshot menemukan overflow setelah keyboard | Perbaikan grid dan scroll lokal; assertion pasca interaksi ditambahkan; hasil final di test-report |
 | 6 | Audit dependency menemukan advisory kritis dan build/QA berebut generated types | Patch dependency; tsconfig QA terpisah; final check dicatat tanpa menghapus kegagalan awal dari catatan |
 | 7 | UI/UX redesign Phase 3: desain sistem token, homepage premium, date selector kartu horizontal, login modal dua kolom, dashboard pelanggan, checkout dua kolom, halaman e-ticket | 44/44 tes integrasi, 25/25 tes browser, TypeScript/lint/build lulus; semua uji dijalankan pada disposable local DB |
+| 8 | Run pembayaran nyata Snap BNI, webhook HTTPS asli melalui tunnel terbatas, retry 503, replay, cancel/expire, PDF dan concurrent check-in | 15/15 pemeriksaan; pembayaran Sandbox sungguhan, bukan status stub |
+| 9 | Service email opsional + outbox durable, history check-in admin, update dependency terarah | Integrasi 50/50, browser 32/32, kompatibilitas 3/3; critical/high 0/0; provider email nyata belum tersedia |
+| 10 | Pemilih tanggal menyembunyikan hari tanpa jadwal dan arrow memakai pilihan aktif sebagai batas | Semua tanggal backend ditampilkan dengan disabled state; arrow mengikuti scroll aktual; desktop/tablet/mobile dan keyboard PASS |
 
 ## Cutover
 
 [Runbook domain](domain-migration.md) mencatat DNS, Nginx/TLS, OAuth origins/callback dan Midtrans notification yang harus diverifikasi. Belum ada push/deploy/migrasi database bersama dalam pekerjaan ini. Cookie host-only membutuhkan login ulang pada domain baru; akun dan reservasi tetap pada database yang sama.
+
+Verifikasi terbaru: [Phase 2 completion](phase-2-completion-2026-11-14.md), [E2E20](phase-2/e2e-matrix.md), [migration copy](phase-2/migration-safety.md). DNS A tersedia, HTTPS booking belum berhasil. Google baru authorization page; email delivery, kamera fisik dan UAT belum dilakukan. Cutover tetap rencana; backup/restore diuji pada populated synthetic copy, belum clone produksi.
 
 Hasil tes, screenshot dan bukti yang bisa direproduksi: [test-report](test-report.md), [evidence](evidence/). UAT belum dilakukan oleh perwakilan PT Angklung Udjo Heritage; checklist bukan bukti penerimaan.
 

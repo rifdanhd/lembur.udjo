@@ -1,5 +1,5 @@
 {
-  "runAt": "2026-11-13T21:06:15.670Z",
+  "runAt": "2026-11-13T23:41:41.729Z",
   "database": "Disposable local PostgreSQL; never the shared database",
   "provider": "Stubbed provider responses in integration suite",
   "exitCode": 0,
@@ -258,57 +258,99 @@
     },
     {
       "id": "INT-37",
+      "scenario": "email outbox is committed once per booking/payment/ticket event and disabled provider is harmless",
+      "expected": "email outbox is committed once per booking/payment/ticket event and disabled provider is harmless",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-38",
+      "scenario": "provider delivery failure never reverses paid status or blocks PDF; worker claims are atomic and retry idempotently",
+      "expected": "provider delivery failure never reverses paid status or blocks PDF; worker claims are atomic and retry idempotently",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-39",
+      "scenario": "stale mail is not retried past the provider dedupe window; late settlement does not announce tickets",
+      "expected": "stale mail is not retried past the provider dedupe window; late settlement does not announce tickets",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-40",
+      "scenario": "check-in history exposes staff/time/source and order reference without QR secrets",
+      "expected": "check-in history exposes staff/time/source and order reference without QR secrets",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-41",
+      "scenario": "deny, failure and cancel release pending capacity once and never issue tickets",
+      "expected": "deny, failure and cancel release pending capacity once and never issue tickets",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-42",
       "scenario": "checkout rejects client pricing, fractional/negative quantities, duplicate lines, missing consent and totals above 20",
       "expected": "checkout rejects client pricing, fractional/negative quantities, duplicate lines, missing consent and totals above 20",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-38",
+      "id": "INT-43",
       "scenario": "same-origin checks reject missing, opaque and sibling origins even behind TLS termination",
       "expected": "same-origin checks reject missing, opaque and sibling origins even behind TLS termination",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-39",
+      "id": "INT-44",
       "scenario": "request body limit works without Content-Length and rejects invalid JSON",
       "expected": "request body limit works without Content-Length and rejects invalid JSON",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-40",
+      "id": "INT-45",
       "scenario": "order capabilities are scope-bound and signature verification rejects tampering",
       "expected": "order capabilities are scope-bound and signature verification rejects tampering",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-41",
+      "id": "INT-46",
       "scenario": "checkout redirects allow only the sandbox hosted payment domain",
       "expected": "checkout redirects allow only the sandbox hosted payment domain",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-42",
+      "id": "INT-47",
       "scenario": "production keys and missing settings cannot enable sandbox sales",
       "expected": "production keys and missing settings cannot enable sandbox sales",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-43",
+      "id": "INT-48",
       "scenario": "cart planning rejects impossible dates and oversized or duplicate selections; account redirect stays internal",
       "expected": "cart planning rejects impossible dates and oversized or duplicate selections; account redirect stays internal",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     },
     {
-      "id": "INT-44",
+      "id": "INT-49",
       "scenario": "sandbox request returns to the account order page and shares the server reservation deadline",
       "expected": "sandbox request returns to the account order page and shares the server reservation deadline",
+      "actual": "All assertions passed on disposable local PostgreSQL",
+      "status": "PASS"
+    },
+    {
+      "id": "INT-50",
+      "scenario": "notification override is HTTPS-only and refuses shared DBs or a missing isolated-test flag",
+      "expected": "notification override is HTTPS-only and refuses shared DBs or a missing isolated-test flag",
       "actual": "All assertions passed on disposable local PostgreSQL",
       "status": "PASS"
     }

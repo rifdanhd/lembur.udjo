@@ -1,3 +1,5 @@
+> **Catatan historis:** hasil di bawah berasal dari iterasi sebelumnya, bukan eksekusi terbaru. Gunakan [verifikasi 14 November 2026](phase-2-completion-2026-11-14.md). Laporan Phase 2 lama memakai webhook/provider terkontrol; itu bukan bukti payment end-to-end nyata. Run nyata terbaru, status domain/OAuth, dan advisory berada pada laporan baru.
+
 # Pemeriksaan keamanan dependency
 
 Audit npm aktual setelah patch: 0 critical, 7 high, 13 moderate, 6 low.

@@ -1,5 +1,5 @@
 {
-  "runAt": "2026-11-13T21:05:02.320Z",
+  "runAt": "2026-11-13T23:54:00.594Z",
   "database": "disposable local PostgreSQL",
   "payment": "provider simulated in harness; no real Midtrans transaction",
   "results": [
@@ -8,6 +8,13 @@
       "feature": "Earliest available date and responsive width (1440px)",
       "expected": "Sold-out disabled; earliest available selected; no page overflow",
       "actual": "2026-11-15 selected, 2026-11-14 disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "UI-desktop-6",
+      "feature": "Horizontal arrows scroll and unavailable dates have no fictional price",
+      "expected": "Both arrows move the strip; unavailable disabled without IDR price",
+      "actual": "Scroll verified both directions; unavailable date disabled",
       "status": "PASS"
     },
     {
@@ -53,6 +60,13 @@
       "status": "PASS"
     },
     {
+      "id": "UI-tablet-6",
+      "feature": "Horizontal arrows scroll and unavailable dates have no fictional price",
+      "expected": "Both arrows move the strip; unavailable disabled without IDR price",
+      "actual": "Scroll verified both directions; unavailable date disabled",
+      "status": "PASS"
+    },
+    {
       "id": "UI-tablet-2",
       "feature": "Keyboard changes date, session and price",
       "expected": "Next available date and IDR 63,000",
@@ -88,6 +102,13 @@
       "status": "PASS"
     },
     {
+      "id": "UI-mobile-6",
+      "feature": "Horizontal arrows scroll and unavailable dates have no fictional price",
+      "expected": "Both arrows move the strip; unavailable disabled without IDR price",
+      "actual": "Scroll verified both directions; unavailable date disabled",
+      "status": "PASS"
+    },
+    {
       "id": "UI-mobile-2",
       "feature": "Keyboard changes date, session and price",
       "expected": "Next available date and IDR 63,000",
@@ -120,6 +141,20 @@
       "feature": "Login dialog keyboard close",
       "expected": "Escape closes dialog",
       "actual": "Dialog closed",
+      "status": "PASS"
+    },
+    {
+      "id": "GUEST-ACCOUNT-POLICY",
+      "feature": "Guest can plan but checkout requires an account",
+      "expected": "Login prompt and API 401; no guest order",
+      "actual": "Login prompt rendered; API 401",
+      "status": "PASS"
+    },
+    {
+      "id": "ACCOUNT-HISTORY",
+      "feature": "Owner views booking history",
+      "expected": "Owned booking reference listed",
+      "actual": "Owned booking listed",
       "status": "PASS"
     },
     {
@@ -169,6 +204,20 @@
       "feature": "Individual ADMIN reads catalog and booking monitor",
       "expected": "200 for both APIs",
       "actual": "200 / 200",
+      "status": "PASS"
+    },
+    {
+      "id": "ADMIN-CHECKIN-HISTORY",
+      "feature": "Admin sees check-in history while STAFF is denied",
+      "expected": "Admin sees one event, staff API 401, no QR secret",
+      "actual": "Admin history rendered; one event; STAFF 401",
+      "status": "PASS"
+    },
+    {
+      "id": "EMAIL-WORKER-AUTH",
+      "feature": "Public visitor cannot run email worker",
+      "expected": "401",
+      "actual": "401",
       "status": "PASS"
     },
     {

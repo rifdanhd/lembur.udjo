@@ -1,3 +1,5 @@
+> **Catatan historis:** hasil di bawah berasal dari iterasi sebelumnya, bukan eksekusi terbaru. Gunakan [verifikasi 14 November 2026](phase-2-completion-2026-11-14.md). Laporan Phase 2 lama memakai webhook/provider terkontrol; itu bukan bukti payment end-to-end nyata. Run nyata terbaru, status domain/OAuth, dan advisory berada pada laporan baru.
+
 # Hasil pengujian LUP Booking — 13 November 2026
 
 **Implementasi lokal teruji; demo end-to-end publik belum dinyatakan siap.** Tidak ada push, deploy, aktivasi harga/jadwal resmi, atau migrasi pada database bersama.

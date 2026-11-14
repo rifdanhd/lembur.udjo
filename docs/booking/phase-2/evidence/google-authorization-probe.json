@@ -1,0 +1,9 @@
+{
+  "runAt": "2026-11-13T23:56:04.905Z",
+  "credentialPresence": true,
+  "callback": "http://localhost:3000/api/ticketing/auth/google/callback",
+  "errors": [],
+  "googleLoginPrompt": true,
+  "status": "NOT COMPLETED",
+  "result": "Authorization page opened; user consent and completed customer session not observed"
+}
