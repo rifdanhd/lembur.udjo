@@ -1,0 +1,21 @@
+[Unit]
+Description=Angklung Pride 2026 invitation and RSVP
+After=network.target
+
+[Service]
+Type=simple
+User=maxis
+Group=maxis
+WorkingDirectory=/home/maxis/angklung-pride
+EnvironmentFile=/etc/angklung-pride.env
+ExecStart=/usr/bin/node /home/maxis/angklung-pride/server.mjs
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/maxis/angklung-pride/data
+
+[Install]
+WantedBy=multi-user.target

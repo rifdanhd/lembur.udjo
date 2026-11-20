@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f8f4e8"><meta name="robots" content="noindex,nofollow"><title>Dashboard Kehadiran · Angklung Pride 2026</title><link rel="stylesheet" href="./style.css"><script src="./dashboard.js" defer></script></head>
+<body>
+<main class="dashboard">
+  <header class="dashboard-header"><div><p class="eyebrow">ANGKLUNG PRIDE 2026</p><h1>Konfirmasi kehadiran</h1><p>27 November 2026 · Saung Angklung Udjo</p></div><button id="logout" class="small-button" hidden>Keluar</button></header>
+  <form class="login-card" id="login-form"><h2>Masuk dashboard</h2><p class="form-caption">Lihat nama tamu dan konfirmasi kehadiran.</p><input type="text" name="username" autocomplete="username" value="panitia" hidden><label for="password">Kata sandi panitia</label><input id="password" type="password" name="password" autocomplete="current-password" required maxlength="200"><button class="primary-button" type="submit">Masuk <span aria-hidden="true">↗</span></button><p id="login-message" class="error" role="alert"></p></form>
+  <section id="dashboard-content" hidden aria-label="Daftar konfirmasi">
+    <section class="invitation-maker" aria-labelledby="maker-title">
+      <h2 id="maker-title">Buat undangan</h2><p class="form-caption">Isi nama tamu, pilih kategori, lalu salin untuk dikirim.</p>
+      <form id="invitation-form">
+        <label class="field-label" for="invite-name">Nama tamu</label><input id="invite-name" name="name" type="text" placeholder="Nama lengkap penerima undangan" required minlength="2" maxlength="160">
+        <label class="field-label category-label" for="invite-category">Kategori &amp; waktu kedatangan</label>
+        <select id="invite-category" name="category" required><option value="vvip">VVIP · 17.30 WIB</option><option value="vip">VIP · 18.00 WIB</option><option value="reguler">Reguler · 18.00 WIB</option></select>
+        <button class="primary-button" id="create-invitation" type="submit">Buat undangan <span aria-hidden="true">↗</span></button>
+        <p id="maker-message" role="status" class="dashboard-note"></p>
+      </form>
+      <div id="invitation-result" hidden><label class="field-label" for="invite-text">Pesan undangan siap dikirim</label><textarea id="invite-text" rows="9" readonly></textarea><div class="copy-actions"><button id="copy-message" type="button" class="small-button">Salin pesan</button><button id="copy-link" type="button" class="small-button">Salin tautan</button><a id="preview-link" class="small-button" target="_blank" rel="noopener">Lihat undangan ↗</a></div><p id="copy-message-status" role="status" class="dashboard-note"></p></div>
+    </section>
+    <h2 class="guest-list-title">Daftar tamu</h2>
+    <div class="summary"><div class="stat"><strong id="total">0</strong><span>Total tamu</span></div><div class="stat"><strong id="present">0</strong><span>Hadir</span></div><div class="stat"><strong id="absent">0</strong><span>Berhalangan hadir</span></div><div class="stat"><strong id="pending">0</strong><span>Belum konfirmasi</span></div></div>
+    <div class="dashboard-tools"><input id="search" type="search" placeholder="Cari nama tamu…" aria-label="Cari nama tamu"><button id="refresh" class="small-button">Perbarui</button></div>
+    <p id="dashboard-message" role="status" class="dashboard-note"></p>
+    <ul id="responses" class="response-list" aria-label="Nama dan konfirmasi kehadiran"></ul>
+    <p class="dashboard-note">Data diperbarui otomatis setiap 15 detik.</p>
+  </section>
+</main>
+</body></html>
